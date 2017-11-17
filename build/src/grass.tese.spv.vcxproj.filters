@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt" />
+    <CustomBuild Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\18f8b49dd5fe0b6474adb0352bb42adc\grass.tese.spv.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\grass.tese.spv" />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\grass.tese">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{5D4ED829-156A-34CA-B01F-77C457AFCC27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{1FFB5016-D5AE-3875-86D2-D96C7C40F2CE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

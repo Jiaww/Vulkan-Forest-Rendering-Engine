@@ -1,0 +1,398 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{B94138EC-CAA8-3364-82FE-B5B42B038CE8}</ProjectGUID>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>vulkan_grass_rendering</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+    <PropertyGroup>
+      <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\</OutDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vulkan_grass_rendering.dir\Debug\</IntDir>
+      <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vulkan_grass_rendering</TargetName>
+      <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Release\</OutDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vulkan_grass_rendering.dir\Release\</IntDir>
+      <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vulkan_grass_rendering</TargetName>
+      <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\MinSizeRel\</OutDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">vulkan_grass_rendering.dir\MinSizeRel\</IntDir>
+      <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">vulkan_grass_rendering</TargetName>
+      <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
+      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\RelWithDebInfo\</OutDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">vulkan_grass_rendering.dir\RelWithDebInfo\</IntDir>
+      <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">vulkan_grass_rendering</TargetName>
+      <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
+      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+    </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="Debug";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions)  /machine:x64</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\VulkanSDK\1.0.61.1\Lib\vulkan-1.lib;..\external\GLFW\src\Debug\glfw3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>Debug</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/Debug/vulkan_grass_rendering.lib</ImportLibrary>
+      <ProgramDataBaseFile>F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/bin/Debug/vulkan_grass_rendering.pdb</ProgramDataBaseFile>
+      <SubSystem>Windows</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="Release";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat></DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions)  /machine:x64</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\VulkanSDK\1.0.61.1\Lib\vulkan-1.lib;..\external\GLFW\src\Release\glfw3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>No</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/Release/vulkan_grass_rendering.lib</ImportLibrary>
+      <ProgramDataBaseFile>F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/bin/Release/vulkan_grass_rendering.pdb</ProgramDataBaseFile>
+      <SubSystem>Windows</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="MinSizeRel";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat></DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions)  /machine:x64</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\VulkanSDK\1.0.61.1\Lib\vulkan-1.lib;..\external\GLFW\src\MinSizeRel\glfw3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>No</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/MinSizeRel/vulkan_grass_rendering.lib</ImportLibrary>
+      <ProgramDataBaseFile>F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/bin/MinSizeRel/vulkan_grass_rendering.pdb</ProgramDataBaseFile>
+      <SubSystem>Windows</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <CppLanguageStandard>c++11</CppLanguageStandard>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="RelWithDebInfo";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;NOMINMAX;_USE_MATH_DEFINES;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\glm;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\stb;C:\VulkanSDK\1.0.61.1\Include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions>%(AdditionalOptions)  /machine:x64</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\VulkanSDK\1.0.61.1\Lib\vulkan-1.lib;..\external\GLFW\src\RelWithDebInfo\glfw3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>Debug</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/RelWithDebInfo/vulkan_grass_rendering.lib</ImportLibrary>
+      <ProgramDataBaseFile>F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/bin/RelWithDebInfo/vulkan_grass_rendering.pdb</ProgramDataBaseFile>
+      <SubSystem>Windows</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\images\grass.jpg;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\images\grass.jpg;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\images\grass.jpg;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\images\grass.jpg;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Blades.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\BufferUtils.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Camera.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Device.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Image.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Instance.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Model.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\QueueFlags.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Renderer.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Scene.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\ShaderModule.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\SwapChain.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Vertex.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Window.h" />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Blades.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\BufferUtils.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Camera.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Device.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Image.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Instance.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Model.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Renderer.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Scene.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\ShaderModule.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\SwapChain.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Window.cpp"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\main.cpp"  />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\graphics.vert" />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\grass.vert" />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\graphics.frag" />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\grass.frag" />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\compute.comp" />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\grass.tese" />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\grass.tesc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\ZERO_CHECK.vcxproj">
+      <Project>3C5D53AC-3106-3328-A67C-6F825C9A55D5</Project>
+      <Name>ZERO_CHECK</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\compute.comp.spv.vcxproj">
+      <Project>7586F0E2-1057-3E88-B8BA-67F0E78C5183</Project>
+      <Name>compute.comp.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\glfw.vcxproj">
+      <Project>01865DB5-3603-3CA6-87D4-9944CF94921E</Project>
+      <Name>glfw</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\graphics.frag.spv.vcxproj">
+      <Project>6F770157-D4D6-3A96-A56D-CCF9830642C5</Project>
+      <Name>graphics.frag.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\graphics.vert.spv.vcxproj">
+      <Project>8BCA4CC5-45D9-384C-86DE-B8E4F0C6BFC2</Project>
+      <Name>graphics.vert.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\grass.frag.spv.vcxproj">
+      <Project>E6FB278B-EF7B-3D99-8F7F-B05574C80EC0</Project>
+      <Name>grass.frag.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\grass.tesc.spv.vcxproj">
+      <Project>08BC3395-3CAF-3F79-A5DD-4B7D8E0A08FE</Project>
+      <Name>grass.tesc.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\grass.tese.spv.vcxproj">
+      <Project>D95AE23E-44F5-3413-B764-E57EA4B02D1E</Project>
+      <Name>grass.tese.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\grass.vert.spv.vcxproj">
+      <Project>AF915916-9AEA-3D7A-863C-BEF7B6CD6B86</Project>
+      <Name>grass.vert.spv</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\d56e9de9105970989c4daf1f675a725e\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{5D4ED829-156A-34CA-B01F-77C457AFCC27}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{08BC3395-3CAF-3F79-A5DD-4B7D8E0A08FE}</ProjectGUID>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>grass.tesc.spv</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+    <PropertyGroup>
+      <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\images\grass.jpg;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\images\grass.jpg;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\images\grass.jpg;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\images\grass.jpg;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\18f8b49dd5fe0b6474adb0352bb42adc\grass.tesc.spv.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -E make_directory F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/shaders &amp;&amp; C:\VulkanSDK\1.0.61.1/Bin/glslangValidator.exe -V F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/shaders/grass.tesc -o F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/shaders/grass.tesc.spv
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/18f8b49dd5fe0b6474adb0352bb42adc/grass.tesc.spv.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\grass.tesc.spv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -E make_directory F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/shaders &amp;&amp; C:\VulkanSDK\1.0.61.1/Bin/glslangValidator.exe -V F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/shaders/grass.tesc -o F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/shaders/grass.tesc.spv
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/18f8b49dd5fe0b6474adb0352bb42adc/grass.tesc.spv.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\grass.tesc.spv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -E make_directory F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/shaders &amp;&amp; C:\VulkanSDK\1.0.61.1/Bin/glslangValidator.exe -V F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/shaders/grass.tesc -o F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/shaders/grass.tesc.spv
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/18f8b49dd5fe0b6474adb0352bb42adc/grass.tesc.spv.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\grass.tesc.spv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"E:\Program Files\CMake\bin\cmake.exe" -E make_directory F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/shaders &amp;&amp; C:\VulkanSDK\1.0.61.1/Bin/glslangValidator.exe -V F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/shaders/grass.tesc -o F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/shaders/grass.tesc.spv
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/18f8b49dd5fe0b6474adb0352bb42adc/grass.tesc.spv.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\grass.tesc.spv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\src\CMakeFiles\grass.tesc.spv" />
+    <None Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\shaders\grass.tesc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\ZERO_CHECK.vcxproj">
+      <Project>3C5D53AC-3106-3328-A67C-6F825C9A55D5</Project>
+      <Name>ZERO_CHECK</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
