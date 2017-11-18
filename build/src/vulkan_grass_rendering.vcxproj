@@ -329,6 +329,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\FbxLoader.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Blades.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\BufferUtils.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Camera.h" />
@@ -343,6 +344,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\SwapChain.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Vertex.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Window.h" />
+    <ClCompile Include="..\..\src\FbxLoader.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Blades.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\BufferUtils.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Camera.cpp" />
