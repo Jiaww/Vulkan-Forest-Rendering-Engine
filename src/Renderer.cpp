@@ -153,14 +153,21 @@ void Renderer::CreateModelDescriptorSetLayout() {
 	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 	uboLayoutBinding.pImmutableSamplers = nullptr;
 
-	VkDescriptorSetLayoutBinding samplerLayoutBinding = {};
-	samplerLayoutBinding.binding = 1;
-	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	samplerLayoutBinding.descriptorCount = 1;
-	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	samplerLayoutBinding.pImmutableSamplers = nullptr;
+	VkDescriptorSetLayoutBinding diffuseSamplerLayoutBinding = {};
+	diffuseSamplerLayoutBinding.binding = 1;
+	diffuseSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	diffuseSamplerLayoutBinding.descriptorCount = 1;
+	diffuseSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	diffuseSamplerLayoutBinding.pImmutableSamplers = nullptr;
 
-	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding, samplerLayoutBinding };
+	VkDescriptorSetLayoutBinding normalSamplerLayoutBinding = {};
+	normalSamplerLayoutBinding.binding = 2;
+	normalSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	normalSamplerLayoutBinding.descriptorCount = 1;
+	normalSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	normalSamplerLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding, diffuseSamplerLayoutBinding, normalSamplerLayoutBinding };
 
 	// Create the descriptor set layout
 	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
@@ -263,7 +270,7 @@ void Renderer::CreateDescriptorPool() {
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
 
 		// Models + Blades
-		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size()) },
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 2 * (static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size())) },
 
 		// Models + Blades
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size()) },
@@ -337,7 +344,7 @@ void Renderer::CreateModelDescriptorSets() {
 		throw std::runtime_error("Failed to allocate descriptor set");
 	}
 
-	std::vector<VkWriteDescriptorSet> descriptorWrites(2 * modelDescriptorSets.size());
+	std::vector<VkWriteDescriptorSet> descriptorWrites(3 * modelDescriptorSets.size());
 
 	for (uint32_t i = 0; i < scene->GetModels().size(); ++i) {
 		VkDescriptorBufferInfo modelBufferInfo = {};
@@ -346,28 +353,40 @@ void Renderer::CreateModelDescriptorSets() {
 		modelBufferInfo.range = sizeof(ModelBufferObject);
 
 		// Bind image and sampler resources to the descriptor
-		VkDescriptorImageInfo imageInfo = {};
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		imageInfo.imageView = scene->GetModels()[i]->GetTextureView();
-		imageInfo.sampler = scene->GetModels()[i]->GetTextureSampler();
+		VkDescriptorImageInfo diffuseMapInfo = {};
+		diffuseMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		diffuseMapInfo.imageView = scene->GetModels()[i]->GetDiffuseMapView();
+		diffuseMapInfo.sampler = scene->GetModels()[i]->GetDiffuseMapSampler();
+		VkDescriptorImageInfo normalMapInfo = {};
+		normalMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		normalMapInfo.imageView = scene->GetModels()[i]->GetNormalMapView();
+		normalMapInfo.sampler = scene->GetModels()[i]->GetNormalMapSampler();
 
-		descriptorWrites[2 * i + 0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[2 * i + 0].dstSet = modelDescriptorSets[i];
-		descriptorWrites[2 * i + 0].dstBinding = 0;
-		descriptorWrites[2 * i + 0].dstArrayElement = 0;
-		descriptorWrites[2 * i + 0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrites[2 * i + 0].descriptorCount = 1;
-		descriptorWrites[2 * i + 0].pBufferInfo = &modelBufferInfo;
-		descriptorWrites[2 * i + 0].pImageInfo = nullptr;
-		descriptorWrites[2 * i + 0].pTexelBufferView = nullptr;
+		descriptorWrites[3 * i + 0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[3 * i + 0].dstSet = modelDescriptorSets[i];
+		descriptorWrites[3 * i + 0].dstBinding = 0;
+		descriptorWrites[3 * i + 0].dstArrayElement = 0;
+		descriptorWrites[3 * i + 0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrites[3 * i + 0].descriptorCount = 1;
+		descriptorWrites[3 * i + 0].pBufferInfo = &modelBufferInfo;
+		descriptorWrites[3 * i + 0].pImageInfo = nullptr;
+		descriptorWrites[3 * i + 0].pTexelBufferView = nullptr;
 
-		descriptorWrites[2 * i + 1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[2 * i + 1].dstSet = modelDescriptorSets[i];
-		descriptorWrites[2 * i + 1].dstBinding = 1;
-		descriptorWrites[2 * i + 1].dstArrayElement = 0;
-		descriptorWrites[2 * i + 1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		descriptorWrites[2 * i + 1].descriptorCount = 1;
-		descriptorWrites[2 * i + 1].pImageInfo = &imageInfo;
+		descriptorWrites[3 * i + 1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[3 * i + 1].dstSet = modelDescriptorSets[i];
+		descriptorWrites[3 * i + 1].dstBinding = 1;
+		descriptorWrites[3 * i + 1].dstArrayElement = 0;
+		descriptorWrites[3 * i + 1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[3 * i + 1].descriptorCount = 1;
+		descriptorWrites[3 * i + 1].pImageInfo = &diffuseMapInfo;
+
+		descriptorWrites[3 * i + 2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[3 * i + 2].dstSet = modelDescriptorSets[i];
+		descriptorWrites[3 * i + 2].dstBinding = 2;
+		descriptorWrites[3 * i + 2].dstArrayElement = 0;
+		descriptorWrites[3 * i + 2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[3 * i + 2].descriptorCount = 1;
+		descriptorWrites[3 * i + 2].pImageInfo = &normalMapInfo;
 	}
 
 	// Update descriptor sets
@@ -526,8 +545,8 @@ void Renderer::CreateComputeDescriptorSets() {
 }
 
 void Renderer::CreateGraphicsPipeline() {
-	VkShaderModule vertShaderModule = ShaderModule::Create("shaders/graphics.vert.spv", logicalDevice);
-	VkShaderModule fragShaderModule = ShaderModule::Create("shaders/graphics.frag.spv", logicalDevice);
+	VkShaderModule vertShaderModule = ShaderModule::Create("shaders/bark.vert.spv", logicalDevice);
+	VkShaderModule fragShaderModule = ShaderModule::Create("shaders/bark.frag.spv", logicalDevice);
 
 	// Assign each shader module to the appropriate stage in the pipeline
 	VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
@@ -1164,6 +1183,7 @@ void Renderer::RecordCommandBuffers() {
 		}
 	}
 }
+
 
 void Renderer::Frame() {
 

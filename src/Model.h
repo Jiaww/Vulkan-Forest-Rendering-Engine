@@ -28,16 +28,22 @@ protected:
 
     ModelBufferObject modelBufferObject;
 
-    VkImage texture = VK_NULL_HANDLE;
-    VkImageView textureView = VK_NULL_HANDLE;
-    VkSampler textureSampler = VK_NULL_HANDLE;
+	// diffusse map
+    VkImage diffuseMap = VK_NULL_HANDLE;
+    VkImageView diffuseMapView = VK_NULL_HANDLE;
+    VkSampler diffuseMapSampler = VK_NULL_HANDLE;
+	// normal map
+	VkImage normalMap = VK_NULL_HANDLE;
+	VkImageView normalMapView = VK_NULL_HANDLE;
+	VkSampler normalMapSampler = VK_NULL_HANDLE;
 
 public:
     Model() = delete;
     Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices);
     virtual ~Model();
 
-    void SetTexture(VkImage texture);
+    void SetDiffuseMap(VkImage texture);
+	void SetNormalMap(VkImage texture);
 
     const std::vector<Vertex>& getVertices() const;
 
@@ -50,6 +56,8 @@ public:
     const ModelBufferObject& getModelBufferObject() const;
 
     VkBuffer GetModelBuffer() const;
-    VkImageView GetTextureView() const;
-    VkSampler GetTextureSampler() const;
+    VkImageView GetDiffuseMapView() const;
+    VkSampler GetDiffuseMapSampler() const;
+	VkImageView GetNormalMapView() const;
+	VkSampler GetNormalMapSampler() const;
 };

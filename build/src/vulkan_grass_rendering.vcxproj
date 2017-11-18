@@ -325,11 +325,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\FbxLoader.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Blades.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\BufferUtils.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Camera.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Device.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\FbxLoader.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Image.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Instance.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Model.h" />
@@ -340,11 +340,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\SwapChain.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Vertex.h" />
     <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Window.h" />
-    <ClCompile Include="..\..\src\FbxLoader.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Blades.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\BufferUtils.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Camera.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Device.cpp" />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\FbxLoader.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Image.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Instance.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Model.cpp" />
@@ -354,10 +354,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\SwapChain.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Window.cpp" />
     <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\main.cpp" />
+    <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\bark.vert" />
     <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\graphics.vert" />
     <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\grass.vert" />
+    <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\leaf.vert" />
+    <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\bark.frag" />
     <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\graphics.frag" />
     <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\grass.frag" />
+    <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\leaf.frag" />
     <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\compute.comp" />
     <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\grass.tese" />
     <None Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\shaders\grass.tesc" />
@@ -366,6 +370,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ProjectReference Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\ZERO_CHECK.vcxproj">
       <Project>BC952DF6-EE86-3AEB-8D55-52218964DA19</Project>
       <Name>ZERO_CHECK</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\src\bark.frag.spv.vcxproj">
+      <Project>5D94F822-460D-3540-9355-4838DD176FA6</Project>
+      <Name>bark.frag.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\src\bark.vert.spv.vcxproj">
+      <Project>5F24DFA3-2B97-3107-A0D0-50E4A41D2B7B</Project>
+      <Name>bark.vert.spv</Name>
     </ProjectReference>
     <ProjectReference Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\src\compute.comp.spv.vcxproj">
       <Project>06208531-53DA-35F5-91FF-E18DF6CBA86A</Project>
@@ -398,6 +410,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ProjectReference Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\src\grass.vert.spv.vcxproj">
       <Project>F16B6C77-446D-3F87-AD8E-4898D32FF5AD</Project>
       <Name>grass.vert.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\src\leaf.frag.spv.vcxproj">
+      <Project>2C4D2384-5FE5-3554-A0FF-2A534EE95E3B</Project>
+      <Name>leaf.frag.spv</Name>
+    </ProjectReference>
+    <ProjectReference Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\src\leaf.vert.spv.vcxproj">
+      <Project>6BBA380E-289A-35EA-9FA3-29A63E0880EB</Project>
+      <Name>leaf.vert.spv</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -120,6 +120,35 @@ int main() {
 		grassImageMemory
 	);
 
+	VkImage barkImage;
+	VkDeviceMemory barkImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Bark_png/BroadleafBark_Tex_Tree0.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		barkImage,
+		barkImageMemory
+	);
+
+	
+	VkImage barkNormalImage;
+	VkDeviceMemory barkNormalImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Bark_png/BroadleafBark_Normal_Tex_Tree0.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		barkNormalImage,
+		barkNormalImageMemory
+	);
+
 	float planeDim = 50.f;
 	float halfWidth = planeDim * 0.5f;
 	Model* plane = new Model(device, transferCommandPool,
@@ -134,13 +163,14 @@ int main() {
 
 	FbxLoader *fbxloader = new FbxLoader("../../media/models/tree1_bark_rgba.FBX");
 
-	Model* leave = new Model(device, transferCommandPool,
+	Model* bark = new Model(device, transferCommandPool,
 		fbxloader->vertices,
 		fbxloader->indices
 	);
-	leave->SetTexture(grassImage);
-	plane->SetTexture(grassImage);
-
+	bark->SetDiffuseMap(barkImage);
+	plane->SetDiffuseMap(grassImage);
+	bark->SetNormalMap(barkNormalImage);
+	plane->SetNormalMap(grassImage);
 
 	Blades* blades = new Blades(device, transferCommandPool, planeDim);
 
@@ -148,7 +178,7 @@ int main() {
 
 	Scene* scene = new Scene(device);
 	scene->AddModel(plane);
-	scene->AddModel(leave);
+	scene->AddModel(bark );
 	scene->AddBlades(blades);
 
 	renderer = new Renderer(device, swapChain, scene, camera);

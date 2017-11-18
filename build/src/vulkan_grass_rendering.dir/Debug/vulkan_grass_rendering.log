@@ -1,23 +1,4 @@
-﻿  FbxLoader.cpp
-..\..\src\FbxLoader.cpp(63): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  Blades.cpp
-  BufferUtils.cpp
-  Camera.cpp
-  Device.cpp
-  Image.cpp
-  Instance.cpp
-  Model.cpp
-  Renderer.cpp
-F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Renderer.cpp(1113): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-  Scene.cpp
-  ShaderModule.cpp
-  SwapChain.cpp
-F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\SwapChain.cpp(193): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\SwapChain.cpp(210): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\SwapChain.cpp(241): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Window.cpp
-  main.cpp
+﻿  main.cpp
 F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\main.cpp(20): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\main.cpp(65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
   vulkan_grass_rendering.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\bin\Debug\vulkan_grass_rendering.exe

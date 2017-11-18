@@ -31,18 +31,26 @@ Model::~Model() {
     vkDestroyBuffer(device->GetVkDevice(), modelBuffer, nullptr);
     vkFreeMemory(device->GetVkDevice(), modelBufferMemory, nullptr);
 
-    if (textureView != VK_NULL_HANDLE) {
-        vkDestroyImageView(device->GetVkDevice(), textureView, nullptr);
+    if (diffuseMapView != VK_NULL_HANDLE) {
+        vkDestroyImageView(device->GetVkDevice(), diffuseMapView, nullptr);
     }
 
-    if (textureSampler != VK_NULL_HANDLE) {
-        vkDestroySampler(device->GetVkDevice(), textureSampler, nullptr);
+    if (diffuseMapSampler != VK_NULL_HANDLE) {
+        vkDestroySampler(device->GetVkDevice(), diffuseMapSampler, nullptr);
     }
+
+	if (normalMapView != VK_NULL_HANDLE) {
+		vkDestroyImageView(device->GetVkDevice(), normalMapView, nullptr);
+	}
+
+	if (normalMapSampler != VK_NULL_HANDLE) {
+		vkDestroySampler(device->GetVkDevice(), normalMapSampler, nullptr);
+	}
 }
 
-void Model::SetTexture(VkImage texture) {
-    this->texture = texture;
-    this->textureView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+void Model::SetDiffuseMap(VkImage texture) {
+    this->diffuseMap = texture;
+    this->diffuseMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 
     // --- Specify all filters and transformations ---
     VkSamplerCreateInfo samplerInfo = {};
@@ -77,9 +85,51 @@ void Model::SetTexture(VkImage texture) {
     samplerInfo.minLod = 0.0f;
     samplerInfo.maxLod = 0.0f;
 
-    if (vkCreateSampler(device->GetVkDevice(), &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
+    if (vkCreateSampler(device->GetVkDevice(), &samplerInfo, nullptr, &diffuseMapSampler) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create texture sampler");
     }
+}
+
+void Model::SetNormalMap(VkImage texture) {
+	this->normalMap = texture;
+	this->normalMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+
+	// --- Specify all filters and transformations ---
+	VkSamplerCreateInfo samplerInfo = {};
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+
+	// Interpolation of texels that are magnified or minified
+	samplerInfo.magFilter = VK_FILTER_LINEAR;
+	samplerInfo.minFilter = VK_FILTER_LINEAR;
+
+	// Addressing mode
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+
+	// Anisotropic filtering
+	samplerInfo.anisotropyEnable = VK_TRUE;
+	samplerInfo.maxAnisotropy = 16;
+
+	// Border color
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+
+	// Choose coordinate system for addressing texels --> [0, 1) here
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+
+	// Comparison function used for filtering operations
+	samplerInfo.compareEnable = VK_FALSE;
+	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+
+	// Mipmapping
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	samplerInfo.mipLodBias = 0.0f;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = 0.0f;
+
+	if (vkCreateSampler(device->GetVkDevice(), &samplerInfo, nullptr, &normalMapSampler) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create texture sampler");
+	}
 }
 
 const std::vector<Vertex>& Model::getVertices() const {
@@ -106,10 +156,18 @@ VkBuffer Model::GetModelBuffer() const {
     return modelBuffer;
 }
 
-VkImageView Model::GetTextureView() const {
-    return textureView;
+VkImageView Model::GetDiffuseMapView() const {
+    return diffuseMapView;
 }
 
-VkSampler Model::GetTextureSampler() const {
-    return textureSampler;
+VkSampler Model::GetDiffuseMapSampler() const {
+    return diffuseMapSampler;
+}
+
+VkImageView Model::GetNormalMapView() const {
+	return normalMapView;
+}
+
+VkSampler Model::GetNormalMapSampler() const {
+	return normalMapSampler;
 }

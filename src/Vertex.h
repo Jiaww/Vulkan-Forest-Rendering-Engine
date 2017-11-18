@@ -12,6 +12,7 @@ struct Vertex {
 	glm::vec3 normal;
 	glm::vec3 tangent;
 	glm::vec3 bitangent;
+
 	// Get the binding description, which describes the rate to load data from memory
 	static VkVertexInputBindingDescription getBindingDescription() {
 		VkVertexInputBindingDescription bindingDescription = {};
@@ -35,7 +36,7 @@ struct Vertex {
 		// Color
 		attributeDescriptions[1].binding = 0;
 		attributeDescriptions[1].location = 1;
-		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+		attributeDescriptions[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		attributeDescriptions[1].offset = offsetof(Vertex, color);
 
 		// Texture coordinate

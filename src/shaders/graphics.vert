@@ -11,7 +11,7 @@ layout(set = 1, binding = 0) uniform ModelBufferObject {
 };
 
 layout(location = 0) in vec3 inPosition;
-layout(location = 1) in vec3 inColor;
+layout(location = 1) in vec4 inColor;
 layout(location = 2) in vec2 inTexCoord;
 
 layout(location = 0) out vec3 fragColor;
@@ -27,6 +27,6 @@ void main() {
 	scale[1][1] = 0.01;
 	scale[2][2] = 0.01;
     gl_Position = camera.proj * camera.view * model * scale * vec4(inPosition, 1.0);
-    fragColor = inColor;
+    fragColor = vec3(inColor);
     fragTexCoord = inTexCoord;
 }
