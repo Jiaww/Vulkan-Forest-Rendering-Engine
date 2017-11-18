@@ -1,4 +1,4 @@
-# Install script for directory: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW
+# Install script for directory: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -29,7 +29,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/external/GLFW/src/cmake_install.cmake")
+  include("F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/external/GLFW/src/cmake_install.cmake")
 
 endif()
 

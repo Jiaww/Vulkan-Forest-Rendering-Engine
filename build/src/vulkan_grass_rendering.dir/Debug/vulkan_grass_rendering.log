@@ -1,7 +1,5 @@
-﻿  Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/src/CMakeLists.txt
-  CMake does not need to re-run because F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/CMakeFiles/generate.stamp is up-to-date.
-  FbxLoader.cpp
-..\..\src\FbxLoader.cpp(67): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+﻿  FbxLoader.cpp
+..\..\src\FbxLoader.cpp(63): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   Blades.cpp
   BufferUtils.cpp
   Camera.cpp
@@ -10,31 +8,16 @@
   Instance.cpp
   Model.cpp
   Renderer.cpp
-F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\Renderer.cpp(1113): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\Renderer.cpp(1113): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
   Scene.cpp
   ShaderModule.cpp
   SwapChain.cpp
-F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\SwapChain.cpp(193): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\SwapChain.cpp(210): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\SwapChain.cpp(241): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\SwapChain.cpp(193): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\SwapChain.cpp(210): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\SwapChain.cpp(241): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   Window.cpp
   main.cpp
-F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\main.cpp(20): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\src\main.cpp(63): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\main.cpp(20): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\main.cpp(65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   Generating Code...
-glfw3.lib(context.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(context.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(init.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(init.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(input.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(input.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(monitor.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(monitor.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(vulkan.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(vulkan.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(window.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(window.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_init.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_init.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_joystick.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_monitor.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_time.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_time.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_thread.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_thread.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_window.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_window.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(wgl_context.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(wgl_context.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(egl_context.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(egl_context.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(osmesa_context.obj)' or at 'F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\glfw.pdb'; linking object as if no debug info
-  vulkan_grass_rendering.vcxproj -> F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\bin\Debug\vulkan_grass_rendering.exe
+  vulkan_grass_rendering.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\bin\Debug\vulkan_grass_rendering.exe

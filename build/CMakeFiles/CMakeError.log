@@ -1,38 +1,38 @@
 Determining if the include file pthread.h exists failed with the following output:
-Change Dir: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp
+Change Dir: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_23f30.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_2d2c8.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
 Microsoft (R) 生成引擎版本 14.0.25420.1
 版权所有(C) Microsoft Corporation。保留所有权利。
 
-生成启动时间为 2017/11/1 15:21:29。
-节点 1 上的项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_23f30.vcxproj”(默认目标)。
+生成启动时间为 2017/11/17 22:20:46。
+节点 1 上的项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_2d2c8.vcxproj”(默认目标)。
 PrepareForBuild:
-  正在创建目录“cmTC_23f30.dir\Debug\”。
-  正在创建目录“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\”。
-  正在创建目录“cmTC_23f30.dir\Debug\cmTC_23f30.tlog\”。
+  正在创建目录“cmTC_2d2c8.dir\Debug\”。
+  正在创建目录“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\”。
+  正在创建目录“cmTC_2d2c8.dir\Debug\cmTC_2d2c8.tlog\”。
 InitializeBuildStatus:
-  正在创建“cmTC_23f30.dir\Debug\cmTC_23f30.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在创建“cmTC_2d2c8.dir\Debug\cmTC_2d2c8.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
 ClCompile:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_23f30.dir\Debug\\" /Fd"cmTC_23f30.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c"
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_2d2c8.dir\Debug\\" /Fd"cmTC_2d2c8.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c"
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24210 for x64
   Copyright (C) Microsoft Corporation.  All rights reserved.
   
-  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_23f30.dir\Debug\\" /Fd"cmTC_23f30.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c"
+  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_2d2c8.dir\Debug\\" /Fd"cmTC_2d2c8.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c"
   
   CheckIncludeFile.c
-F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory [F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_23f30.vcxproj]
-已完成生成项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_23f30.vcxproj”(默认目标)的操作 - 失败。
+F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory [F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_2d2c8.vcxproj]
+已完成生成项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_2d2c8.vcxproj”(默认目标)的操作 - 失败。
 
 生成失败。
 
-“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_23f30.vcxproj”(默认目标) (1) ->
+“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_2d2c8.vcxproj”(默认目标) (1) ->
 (ClCompile 目标) -> 
-  F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory [F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_23f30.vcxproj]
+  F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c(1): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory [F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_2d2c8.vcxproj]
 
     0 个警告
     1 个错误
 
-已用时间 00:00:00.40
+已用时间 00:00:00.92
 
 

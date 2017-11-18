@@ -25,37 +25,33 @@ void FbxLoader::processNode(aiNode* node, const aiScene* scene) {
 		this->meshes.push_back(mesh);
 		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
 		{
-			glm::vec3 vertex;
+			Vertex vertex;
 			// pos,normal,color ....
-			vertex.x = mesh->mVertices[i].x;
-			vertex.y = mesh->mVertices[i].z;
-			vertex.z = -mesh->mVertices[i].y;
+			vertex.pos.x = mesh->mVertices[i].x;
+			vertex.pos.y = mesh->mVertices[i].z;
+			vertex.pos.z = -mesh->mVertices[i].y;
+
+			vertex.texCoord.x = mesh->mTextureCoords[0][i].x;
+			vertex.texCoord.y = mesh->mTextureCoords[0][i].y;
+
+			vertex.normal.x = mesh->mNormals[i].x;
+			vertex.normal.y = mesh->mNormals[i].z;
+			vertex.normal.z = -mesh->mNormals[i].y;
+
+			vertex.tangent.x = mesh->mTangents[i].x;
+			vertex.tangent.y = mesh->mTangents[i].z;
+			vertex.tangent.z = -mesh->mTangents[i].y;
+
+			vertex.bitangent.x = mesh->mBitangents[i].x;
+			vertex.bitangent.y = mesh->mBitangents[i].z;
+			vertex.bitangent.z = -mesh->mBitangents[i].y;
+
+			vertex.color.x = mesh->mColors[0][i].r;
+			vertex.color.y = mesh->mColors[0][i].g;
+			vertex.color.z = mesh->mColors[0][i].b;
+			vertex.color.w = mesh->mColors[0][i].a;
+
 			vertices.push_back(vertex);
-			glm::vec2 texCoord;
-			texCoord.x = mesh->mTextureCoords[0][i].x;
-			texCoord.y = mesh->mTextureCoords[0][i].y;
-			texCoords.push_back(texCoord);
-			glm::vec3 normal;
-			normal.x = mesh->mNormals[i].x;
-			normal.y = mesh->mNormals[i].z;
-			normal.z = -mesh->mNormals[i].y;
-			normals.push_back(normal);
-			glm::vec3 tangent;
-			tangent.x = mesh->mTangents[i].x;
-			tangent.y = mesh->mTangents[i].z;
-			tangent.z = -mesh->mTangents[i].y;
-			tangents.push_back(tangent);
-			glm::vec3 bitangent;
-			bitangent.x = mesh->mBitangents[i].x;
-			bitangent.y = mesh->mBitangents[i].z;
-			bitangent.z = -mesh->mBitangents[i].y;
-			bitangents.push_back(bitangent);
-			glm::vec4 color;
-			color.x = mesh->mColors[0][i].r;
-			color.y = mesh->mColors[0][i].g;
-			color.z = mesh->mColors[0][i].b;
-			color.w = mesh->mColors[0][i].a;
-			colors.push_back(color);
 		}
 		// indices
 		for (uint32_t i = 0; i < mesh->mNumFaces; i++)

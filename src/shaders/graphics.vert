@@ -22,7 +22,11 @@ out gl_PerVertex {
 };
 
 void main() {
-    gl_Position = camera.proj * camera.view * model * vec4(inPosition, 1.0);
+	mat4 scale = mat4(1.0);
+	scale[0][0] = 0.01;
+	scale[1][1] = 0.01;
+	scale[2][2] = 0.01;
+    gl_Position = camera.proj * camera.view * model * scale * vec4(inPosition, 1.0);
     fragColor = inColor;
     fragTexCoord = inTexCoord;
 }

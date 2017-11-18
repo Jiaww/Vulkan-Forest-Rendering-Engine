@@ -1,4 +1,4 @@
-# Install script for directory: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src
+# Install script for directory: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

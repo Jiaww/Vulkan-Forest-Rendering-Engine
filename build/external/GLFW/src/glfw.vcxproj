@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGUID>{01865DB5-3603-3CA6-87D4-9944CF94921E}</ProjectGUID>
+    <ProjectGUID>{F906F811-C4C2-32B0-9E62-DA80E350061D}</ProjectGUID>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <Platform>x64</Platform>
@@ -60,26 +60,26 @@
   <PropertyGroup Label="UserMacros" />
     <PropertyGroup>
       <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\Debug\</OutDir>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\Debug\</OutDir>
       <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">glfw.dir\Debug\</IntDir>
       <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">glfw3</TargetName>
       <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\Release\</OutDir>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\Release\</OutDir>
       <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">glfw.dir\Release\</IntDir>
       <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">glfw3</TargetName>
       <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\MinSizeRel\</OutDir>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\MinSizeRel\</OutDir>
       <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">glfw.dir\MinSizeRel\</IntDir>
       <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">glfw3</TargetName>
       <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
-      <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\RelWithDebInfo\</OutDir>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\RelWithDebInfo\</OutDir>
       <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">glfw.dir\RelWithDebInfo\</IntDir>
       <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">glfw3</TargetName>
       <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
     </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsC</CompileAs>
@@ -97,10 +97,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_GLFW_USE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -113,7 +113,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <CompileAs>CompileAsC</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -130,10 +130,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -146,7 +146,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
       <CompileAs>CompileAsC</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -163,10 +163,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -179,7 +179,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
       <CompileAs>CompileAsC</CompileAs>
       <CppLanguageStandard>c++11</CppLanguageStandard>
@@ -196,10 +196,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -211,10 +211,10 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src/CMakeLists.txt</Message>
+    <CustomBuild Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/external/GLFW/src/CMakeFiles/generate.stamp
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine -BF:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build --check-stamp-file F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/external/GLFW/src/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -222,12 +222,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src/CMakeLists.txt;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/external/GLFW/src/CMakeFiles/generate.stamp
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine -BF:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build --check-stamp-file F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/external/GLFW/src/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -235,12 +235,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src/CMakeLists.txt;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/external/GLFW/src/CMakeFiles/generate.stamp
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine -BF:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build --check-stamp-file F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/external/GLFW/src/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -248,12 +248,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src/CMakeLists.txt;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering -BF:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build --check-stamp-file F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/external/GLFW/src/CMakeFiles/generate.stamp
+"E:\Program Files\CMake\bin\cmake.exe" -HF:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine -BF:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build --check-stamp-file F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/external/GLFW/src/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -261,41 +261,41 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/external/GLFW/src/CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt;F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/external/GLFW/src/CMakeLists.txt;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt;F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\internal.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\mappings.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\external\GLFW\src\glfw_config.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include\GLFW\glfw3.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\include\GLFW\glfw3native.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\win32_platform.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\win32_joystick.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\wgl_context.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\egl_context.h" />
-    <ClInclude Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\osmesa_context.h" />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\context.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\init.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\input.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\monitor.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\vulkan.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\window.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\win32_init.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\win32_joystick.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\win32_monitor.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\win32_time.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\win32_thread.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\win32_window.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\wgl_context.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\egl_context.c"  />
-    <ClCompile Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\external\GLFW\src\osmesa_context.c"  />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\internal.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\mappings.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\external\GLFW\src\glfw_config.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include\GLFW\glfw3.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\include\GLFW\glfw3native.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\win32_platform.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\win32_joystick.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\wgl_context.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\egl_context.h" />
+    <ClInclude Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\osmesa_context.h" />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\context.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\init.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\input.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\monitor.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\vulkan.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\window.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\win32_init.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\win32_joystick.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\win32_monitor.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\win32_time.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\win32_thread.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\win32_window.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\wgl_context.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\egl_context.c"  />
+    <ClCompile Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\external\GLFW\src\osmesa_context.c"  />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\ZERO_CHECK.vcxproj">
-      <Project>3C5D53AC-3106-3328-A67C-6F825C9A55D5</Project>
+    <ProjectReference Include="F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\ZERO_CHECK.vcxproj">
+      <Project>BC952DF6-EE86-3AEB-8D55-52218964DA19</Project>
       <Name>ZERO_CHECK</Name>
     </ProjectReference>
   </ItemGroup>

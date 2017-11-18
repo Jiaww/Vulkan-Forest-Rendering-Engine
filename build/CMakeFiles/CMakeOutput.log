@@ -9,8 +9,8 @@ The output was:
 Microsoft (R) ��������汾 14.0.25420.1
 ��Ȩ����(C) Microsoft Corporation����������Ȩ����
 
-��������ʱ��Ϊ 2017/11/1 15:21:21��
-�ڵ� 1 �ϵ���Ŀ��F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\3.8.0-rc3\CompilerIdC\CompilerIdC.vcxproj��(Ĭ��Ŀ��)��
+��������ʱ��Ϊ 2017/11/17 22:20:29��
+�ڵ� 1 �ϵ���Ŀ��F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\3.8.0-rc3\CompilerIdC\CompilerIdC.vcxproj��(Ĭ��Ŀ��)��
 PrepareForBuild:
   ���ڴ���Ŀ¼��Debug\����
   ���ڴ���Ŀ¼��Debug\CompilerIdC.tlog\����
@@ -21,7 +21,7 @@ ClCompile:
   CMakeCCompilerId.c
 Link:
   D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdC.lib" /MACHINE:X64 Debug\CMakeCCompilerId.obj
-  CompilerIdC.vcxproj -> F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\3.8.0-rc3\CompilerIdC\.\CompilerIdC.exe
+  CompilerIdC.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\3.8.0-rc3\CompilerIdC\.\CompilerIdC.exe
 PostBuildEvent:
   for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
   :VCEnd
@@ -29,20 +29,20 @@ PostBuildEvent:
 FinalizeBuildStatus:
   ����ɾ���ļ���Debug\CompilerIdC.tlog\unsuccessfulbuild����
   ���ڶԡ�Debug\CompilerIdC.tlog\CompilerIdC.lastbuildstate��ִ�� Touch ����
-�����������Ŀ��F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\3.8.0-rc3\CompilerIdC\CompilerIdC.vcxproj��(Ĭ��Ŀ��)�Ĳ�����
+�����������Ŀ��F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\3.8.0-rc3\CompilerIdC\CompilerIdC.vcxproj��(Ĭ��Ŀ��)�Ĳ�����
 
 �ѳɹ����ɡ�
     0 ������
     0 ������
 
-����ʱ�� 00:00:01.56
+����ʱ�� 00:00:03.26
 
 
 Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
 
 Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
 
-The C compiler identification is MSVC, found in "F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/3.8.0-rc3/CompilerIdC/CompilerIdC.exe"
+The C compiler identification is MSVC, found in "F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/3.8.0-rc3/CompilerIdC/CompilerIdC.exe"
 
 Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
 Compiler:  
@@ -54,8 +54,8 @@ The output was:
 Microsoft (R) ��������汾 14.0.25420.1
 ��Ȩ����(C) Microsoft Corporation����������Ȩ����
 
-��������ʱ��Ϊ 2017/11/1 15:21:23��
-�ڵ� 1 �ϵ���Ŀ��F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\3.8.0-rc3\CompilerIdCXX\CompilerIdCXX.vcxproj��(Ĭ��Ŀ��)��
+��������ʱ��Ϊ 2017/11/17 22:20:33��
+�ڵ� 1 �ϵ���Ŀ��F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\3.8.0-rc3\CompilerIdCXX\CompilerIdCXX.vcxproj��(Ĭ��Ŀ��)��
 PrepareForBuild:
   ���ڴ���Ŀ¼��Debug\����
   ���ڴ���Ŀ¼��Debug\CompilerIdCXX.tlog\����
@@ -66,7 +66,7 @@ ClCompile:
   CMakeCXXCompilerId.cpp
 Link:
   D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdCXX.lib" /MACHINE:X64 Debug\CMakeCXXCompilerId.obj
-  CompilerIdCXX.vcxproj -> F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\3.8.0-rc3\CompilerIdCXX\.\CompilerIdCXX.exe
+  CompilerIdCXX.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\3.8.0-rc3\CompilerIdCXX\.\CompilerIdCXX.exe
 PostBuildEvent:
   for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
   :VCEnd
@@ -74,211 +74,211 @@ PostBuildEvent:
 FinalizeBuildStatus:
   ����ɾ���ļ���Debug\CompilerIdCXX.tlog\unsuccessfulbuild����
   ���ڶԡ�Debug\CompilerIdCXX.tlog\CompilerIdCXX.lastbuildstate��ִ�� Touch ����
-�����������Ŀ��F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\3.8.0-rc3\CompilerIdCXX\CompilerIdCXX.vcxproj��(Ĭ��Ŀ��)�Ĳ�����
+�����������Ŀ��F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\3.8.0-rc3\CompilerIdCXX\CompilerIdCXX.vcxproj��(Ĭ��Ŀ��)�Ĳ�����
 
 �ѳɹ����ɡ�
     0 ������
     0 ������
 
-����ʱ�� 00:00:00.95
+����ʱ�� 00:00:02.57
 
 
 Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
 
 Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
 
-The CXX compiler identification is MSVC, found in "F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/3.8.0-rc3/CompilerIdCXX/CompilerIdCXX.exe"
+The CXX compiler identification is MSVC, found in "F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/3.8.0-rc3/CompilerIdCXX/CompilerIdCXX.exe"
 
 Determining if the C compiler works passed with the following output:
-Change Dir: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp
+Change Dir: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_3489b.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_36a44.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
 Microsoft (R) 生成引擎版本 14.0.25420.1
 版权所有(C) Microsoft Corporation。保留所有权利。
 
-生成启动时间为 2017/11/1 15:21:24。
-节点 1 上的项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_3489b.vcxproj”(默认目标)。
+生成启动时间为 2017/11/17 22:20:36。
+节点 1 上的项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_36a44.vcxproj”(默认目标)。
 PrepareForBuild:
-  正在创建目录“cmTC_3489b.dir\Debug\”。
-  正在创建目录“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\”。
-  正在创建目录“cmTC_3489b.dir\Debug\cmTC_3489b.tlog\”。
+  正在创建目录“cmTC_36a44.dir\Debug\”。
+  正在创建目录“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\”。
+  正在创建目录“cmTC_36a44.dir\Debug\cmTC_36a44.tlog\”。
 InitializeBuildStatus:
-  正在创建“cmTC_3489b.dir\Debug\cmTC_3489b.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在创建“cmTC_36a44.dir\Debug\cmTC_36a44.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
 ClCompile:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_3489b.dir\Debug\\" /Fd"cmTC_3489b.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\testCCompiler.c"
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_36a44.dir\Debug\\" /Fd"cmTC_36a44.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\testCCompiler.c"
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24210 for x64
   Copyright (C) Microsoft Corporation.  All rights reserved.
   
-  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_3489b.dir\Debug\\" /Fd"cmTC_3489b.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\testCCompiler.c"
+  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_36a44.dir\Debug\\" /Fd"cmTC_36a44.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\testCCompiler.c"
   
   testCCompiler.c
 Link:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_3489b.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_3489b.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_3489b.lib" /MACHINE:X64   /machine:x64 cmTC_3489b.dir\Debug\testCCompiler.obj
-  cmTC_3489b.vcxproj -> F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_3489b.exe
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_36a44.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_36a44.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_36a44.lib" /MACHINE:X64   /machine:x64 cmTC_36a44.dir\Debug\testCCompiler.obj
+  cmTC_36a44.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_36a44.exe
 FinalizeBuildStatus:
-  正在删除文件“cmTC_3489b.dir\Debug\cmTC_3489b.tlog\unsuccessfulbuild”。
-  正在对“cmTC_3489b.dir\Debug\cmTC_3489b.tlog\cmTC_3489b.lastbuildstate”执行 Touch 任务。
-已完成生成项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_3489b.vcxproj”(默认目标)的操作。
+  正在删除文件“cmTC_36a44.dir\Debug\cmTC_36a44.tlog\unsuccessfulbuild”。
+  正在对“cmTC_36a44.dir\Debug\cmTC_36a44.tlog\cmTC_36a44.lastbuildstate”执行 Touch 任务。
+已完成生成项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_36a44.vcxproj”(默认目标)的操作。
 
 已成功生成。
     0 个警告
     0 个错误
 
-已用时间 00:00:01.06
+已用时间 00:00:01.98
 
 
 Detecting C compiler ABI info compiled with the following output:
-Change Dir: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp
+Change Dir: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_a27dd.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_8bf58.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
 Microsoft (R) 生成引擎版本 14.0.25420.1
 版权所有(C) Microsoft Corporation。保留所有权利。
 
-生成启动时间为 2017/11/1 15:21:26。
-节点 1 上的项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_a27dd.vcxproj”(默认目标)。
+生成启动时间为 2017/11/17 22:20:38。
+节点 1 上的项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_8bf58.vcxproj”(默认目标)。
 PrepareForBuild:
-  正在创建目录“cmTC_a27dd.dir\Debug\”。
-  正在创建目录“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\”。
-  正在创建目录“cmTC_a27dd.dir\Debug\cmTC_a27dd.tlog\”。
+  正在创建目录“cmTC_8bf58.dir\Debug\”。
+  正在创建目录“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\”。
+  正在创建目录“cmTC_8bf58.dir\Debug\cmTC_8bf58.tlog\”。
 InitializeBuildStatus:
-  正在创建“cmTC_a27dd.dir\Debug\cmTC_a27dd.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在创建“cmTC_8bf58.dir\Debug\cmTC_8bf58.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
 ClCompile:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_a27dd.dir\Debug\\" /Fd"cmTC_a27dd.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "E:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCCompilerABI.c"
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_8bf58.dir\Debug\\" /Fd"cmTC_8bf58.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "E:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCCompilerABI.c"
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24210 for x64
   Copyright (C) Microsoft Corporation.  All rights reserved.
   
-  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_a27dd.dir\Debug\\" /Fd"cmTC_a27dd.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "E:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCCompilerABI.c"
+  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_8bf58.dir\Debug\\" /Fd"cmTC_8bf58.dir\Debug\vc140.pdb" /Gd /TC /errorReport:queue "E:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCCompilerABI.c"
   
   CMakeCCompilerABI.c
 Link:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_a27dd.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_a27dd.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_a27dd.lib" /MACHINE:X64   /machine:x64 cmTC_a27dd.dir\Debug\CMakeCCompilerABI.obj
-  cmTC_a27dd.vcxproj -> F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_a27dd.exe
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_8bf58.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_8bf58.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_8bf58.lib" /MACHINE:X64   /machine:x64 cmTC_8bf58.dir\Debug\CMakeCCompilerABI.obj
+  cmTC_8bf58.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_8bf58.exe
 FinalizeBuildStatus:
-  正在删除文件“cmTC_a27dd.dir\Debug\cmTC_a27dd.tlog\unsuccessfulbuild”。
-  正在对“cmTC_a27dd.dir\Debug\cmTC_a27dd.tlog\cmTC_a27dd.lastbuildstate”执行 Touch 任务。
-已完成生成项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_a27dd.vcxproj”(默认目标)的操作。
+  正在删除文件“cmTC_8bf58.dir\Debug\cmTC_8bf58.tlog\unsuccessfulbuild”。
+  正在对“cmTC_8bf58.dir\Debug\cmTC_8bf58.tlog\cmTC_8bf58.lastbuildstate”执行 Touch 任务。
+已完成生成项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_8bf58.vcxproj”(默认目标)的操作。
 
 已成功生成。
     0 个警告
     0 个错误
 
-已用时间 00:00:00.63
+已用时间 00:00:01.47
 
 
 Determining if the CXX compiler works passed with the following output:
-Change Dir: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp
+Change Dir: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_321eb.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_cc259.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
 Microsoft (R) 生成引擎版本 14.0.25420.1
 版权所有(C) Microsoft Corporation。保留所有权利。
 
-生成启动时间为 2017/11/1 15:21:27。
-节点 1 上的项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_321eb.vcxproj”(默认目标)。
+生成启动时间为 2017/11/17 22:20:40。
+节点 1 上的项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_cc259.vcxproj”(默认目标)。
 PrepareForBuild:
-  正在创建目录“cmTC_321eb.dir\Debug\”。
-  正在创建目录“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\”。
-  正在创建目录“cmTC_321eb.dir\Debug\cmTC_321eb.tlog\”。
+  正在创建目录“cmTC_cc259.dir\Debug\”。
+  正在创建目录“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\”。
+  正在创建目录“cmTC_cc259.dir\Debug\cmTC_cc259.tlog\”。
 InitializeBuildStatus:
-  正在创建“cmTC_321eb.dir\Debug\cmTC_321eb.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在创建“cmTC_cc259.dir\Debug\cmTC_cc259.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
 ClCompile:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_321eb.dir\Debug\\" /Fd"cmTC_321eb.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\testCXXCompiler.cxx"
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_cc259.dir\Debug\\" /Fd"cmTC_cc259.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\testCXXCompiler.cxx"
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24210 for x64
   Copyright (C) Microsoft Corporation.  All rights reserved.
   
-  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_321eb.dir\Debug\\" /Fd"cmTC_321eb.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\testCXXCompiler.cxx"
+  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_cc259.dir\Debug\\" /Fd"cmTC_cc259.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\testCXXCompiler.cxx"
   
   testCXXCompiler.cxx
 Link:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_321eb.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_321eb.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_321eb.lib" /MACHINE:X64   /machine:x64 cmTC_321eb.dir\Debug\testCXXCompiler.obj
-  cmTC_321eb.vcxproj -> F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_321eb.exe
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_cc259.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_cc259.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_cc259.lib" /MACHINE:X64   /machine:x64 cmTC_cc259.dir\Debug\testCXXCompiler.obj
+  cmTC_cc259.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_cc259.exe
 FinalizeBuildStatus:
-  正在删除文件“cmTC_321eb.dir\Debug\cmTC_321eb.tlog\unsuccessfulbuild”。
-  正在对“cmTC_321eb.dir\Debug\cmTC_321eb.tlog\cmTC_321eb.lastbuildstate”执行 Touch 任务。
-已完成生成项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_321eb.vcxproj”(默认目标)的操作。
+  正在删除文件“cmTC_cc259.dir\Debug\cmTC_cc259.tlog\unsuccessfulbuild”。
+  正在对“cmTC_cc259.dir\Debug\cmTC_cc259.tlog\cmTC_cc259.lastbuildstate”执行 Touch 任务。
+已完成生成项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_cc259.vcxproj”(默认目标)的操作。
 
 已成功生成。
     0 个警告
     0 个错误
 
-已用时间 00:00:00.63
+已用时间 00:00:01.53
 
 
 Detecting CXX compiler ABI info compiled with the following output:
-Change Dir: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp
+Change Dir: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_0643e.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_6fdf0.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
 Microsoft (R) 生成引擎版本 14.0.25420.1
 版权所有(C) Microsoft Corporation。保留所有权利。
 
-生成启动时间为 2017/11/1 15:21:27。
-节点 1 上的项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_0643e.vcxproj”(默认目标)。
+生成启动时间为 2017/11/17 22:20:42。
+节点 1 上的项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_6fdf0.vcxproj”(默认目标)。
 PrepareForBuild:
-  正在创建目录“cmTC_0643e.dir\Debug\”。
-  正在创建目录“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\”。
-  正在创建目录“cmTC_0643e.dir\Debug\cmTC_0643e.tlog\”。
+  正在创建目录“cmTC_6fdf0.dir\Debug\”。
+  正在创建目录“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\”。
+  正在创建目录“cmTC_6fdf0.dir\Debug\cmTC_6fdf0.tlog\”。
 InitializeBuildStatus:
-  正在创建“cmTC_0643e.dir\Debug\cmTC_0643e.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在创建“cmTC_6fdf0.dir\Debug\cmTC_6fdf0.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
 ClCompile:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_0643e.dir\Debug\\" /Fd"cmTC_0643e.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "E:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCXXCompilerABI.cpp"
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_6fdf0.dir\Debug\\" /Fd"cmTC_6fdf0.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "E:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCXXCompilerABI.cpp"
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24210 for x64
   Copyright (C) Microsoft Corporation.  All rights reserved.
   
-  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_0643e.dir\Debug\\" /Fd"cmTC_0643e.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "E:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCXXCompilerABI.cpp"
+  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_6fdf0.dir\Debug\\" /Fd"cmTC_6fdf0.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "E:\Program Files\CMake\share\cmake-3.8\Modules\CMakeCXXCompilerABI.cpp"
   
   CMakeCXXCompilerABI.cpp
 Link:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_0643e.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_0643e.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_0643e.lib" /MACHINE:X64   /machine:x64 cmTC_0643e.dir\Debug\CMakeCXXCompilerABI.obj
-  cmTC_0643e.vcxproj -> F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_0643e.exe
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_6fdf0.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_6fdf0.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_6fdf0.lib" /MACHINE:X64   /machine:x64 cmTC_6fdf0.dir\Debug\CMakeCXXCompilerABI.obj
+  cmTC_6fdf0.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_6fdf0.exe
 FinalizeBuildStatus:
-  正在删除文件“cmTC_0643e.dir\Debug\cmTC_0643e.tlog\unsuccessfulbuild”。
-  正在对“cmTC_0643e.dir\Debug\cmTC_0643e.tlog\cmTC_0643e.lastbuildstate”执行 Touch 任务。
-已完成生成项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_0643e.vcxproj”(默认目标)的操作。
+  正在删除文件“cmTC_6fdf0.dir\Debug\cmTC_6fdf0.tlog\unsuccessfulbuild”。
+  正在对“cmTC_6fdf0.dir\Debug\cmTC_6fdf0.tlog\cmTC_6fdf0.lastbuildstate”执行 Touch 任务。
+已完成生成项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_6fdf0.vcxproj”(默认目标)的操作。
 
 已成功生成。
     0 个警告
     0 个错误
 
-已用时间 00:00:00.61
+已用时间 00:00:01.63
 
 
 
 
 Detecting CXX [] compiler features compiled with the following output:
-Change Dir: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp
+Change Dir: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_ccf80.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_85de3.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
 Microsoft (R) 生成引擎版本 14.0.25420.1
 版权所有(C) Microsoft Corporation。保留所有权利。
 
-生成启动时间为 2017/11/1 15:21:28。
-节点 1 上的项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_ccf80.vcxproj”(默认目标)。
+生成启动时间为 2017/11/17 22:20:44。
+节点 1 上的项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_85de3.vcxproj”(默认目标)。
 PrepareForBuild:
-  正在创建目录“cmTC_ccf80.dir\Debug\”。
-  正在创建目录“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\”。
-  正在创建目录“cmTC_ccf80.dir\Debug\cmTC_ccf80.tlog\”。
+  正在创建目录“cmTC_85de3.dir\Debug\”。
+  正在创建目录“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\”。
+  正在创建目录“cmTC_85de3.dir\Debug\cmTC_85de3.tlog\”。
 InitializeBuildStatus:
-  正在创建“cmTC_ccf80.dir\Debug\cmTC_ccf80.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
+  正在创建“cmTC_85de3.dir\Debug\cmTC_85de3.tlog\unsuccessfulbuild”，因为已指定“AlwaysCreate”。
 ClCompile:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_ccf80.dir\Debug\\" /Fd"cmTC_ccf80.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\feature_tests.cxx"
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_85de3.dir\Debug\\" /Fd"cmTC_85de3.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\feature_tests.cxx"
   Microsoft (R) C/C++ Optimizing Compiler Version 19.00.24210 for x64
   Copyright (C) Microsoft Corporation.  All rights reserved.
   
-  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_ccf80.dir\Debug\\" /Fd"cmTC_ccf80.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\feature_tests.cxx"
+  cl /c /Zi /W3 /WX- /Od /Ob0 /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_85de3.dir\Debug\\" /Fd"cmTC_85de3.dir\Debug\vc140.pdb" /Gd /TP /errorReport:queue "F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\feature_tests.cxx"
   
   feature_tests.cxx
 Link:
-  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_ccf80.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_ccf80.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/CMakeFiles/CMakeTmp/Debug/cmTC_ccf80.lib" /MACHINE:X64   /machine:x64 cmTC_ccf80.dir\Debug\feature_tests.obj
-  cmTC_ccf80.vcxproj -> F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\Debug\cmTC_ccf80.exe
+  D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:QUEUE /OUT:"F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_85de3.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_85de3.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/CMakeFiles/CMakeTmp/Debug/cmTC_85de3.lib" /MACHINE:X64   /machine:x64 cmTC_85de3.dir\Debug\feature_tests.obj
+  cmTC_85de3.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\Debug\cmTC_85de3.exe
 FinalizeBuildStatus:
-  正在删除文件“cmTC_ccf80.dir\Debug\cmTC_ccf80.tlog\unsuccessfulbuild”。
-  正在对“cmTC_ccf80.dir\Debug\cmTC_ccf80.tlog\cmTC_ccf80.lastbuildstate”执行 Touch 任务。
-已完成生成项目“F:\CIS565GPU_projects\Project6\Project6-Vulkan-Grass-Rendering\build\CMakeFiles\CMakeTmp\cmTC_ccf80.vcxproj”(默认目标)的操作。
+  正在删除文件“cmTC_85de3.dir\Debug\cmTC_85de3.tlog\unsuccessfulbuild”。
+  正在对“cmTC_85de3.dir\Debug\cmTC_85de3.tlog\cmTC_85de3.lastbuildstate”执行 Touch 任务。
+已完成生成项目“F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\build\CMakeFiles\CMakeTmp\cmTC_85de3.vcxproj”(默认目标)的操作。
 
 已成功生成。
     0 个警告
     0 个错误
 
-已用时间 00:00:00.61
+已用时间 00:00:01.56
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers

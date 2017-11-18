@@ -1,4 +1,4 @@
-# Install script for directory: F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering
+# Install script for directory: F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -29,8 +29,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/external/cmake_install.cmake")
-  include("F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/src/cmake_install.cmake")
+  include("F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/external/cmake_install.cmake")
+  include("F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/src/cmake_install.cmake")
 
 endif()
 
@@ -42,5 +42,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "F:/CIS565GPU_projects/Project6/Project6-Vulkan-Grass-Rendering/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "F:/CIS565GPU_projects/Final_Project/Vulkan-Forest-Rendering-Engine/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
