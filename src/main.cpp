@@ -54,24 +54,28 @@ namespace {
 		float deltaY = static_cast<float>((previousY - yPosition) * sensitivity);
 		if (leftMouseDown) {
 
-			camera->CameraTranslate(deltaX, deltaY);
-			//camera->UpdateOrbit(deltaX, deltaY, 0.0f);
-
+			camera->CameraRotate(deltaX, deltaY);
+			/*camera->UpdateOrbit(deltaX, deltaY, 0.0f);
 			previousX = xPosition;
-			previousY = yPosition;
+			previousY = yPosition;*/
 		}
 		else if (rightMouseDown) {
 
 			
 			/*double deltaZ = static_cast<float>((previousY - yPosition) * 0.05);
-
-			camera->UpdateOrbit(0.0f, 0.0f, deltaZ);*/
-
+			
+			camera->UpdateOrbit(0.0f, 0.0f, deltaZ);
 			previousX = xPosition;
-			previousY = yPosition;
-
+			previousY = yPosition;*/
+			camera->CameraTranslate(deltaX, deltaY);
 
 		}
+		previousX = xPosition;
+		previousY = yPosition;
+	}
+	void mouseWheelCallback(GLFWwindow* window, double xoffset, double yoffset)
+	{
+		camera->CameraScale(yoffset);
 	}
 }
 
@@ -233,6 +237,7 @@ int main() {
 	glfwSetWindowSizeCallback(GetGLFWWindow(), resizeCallback);
 	glfwSetMouseButtonCallback(GetGLFWWindow(), mouseDownCallback);
 	glfwSetCursorPosCallback(GetGLFWWindow(), mouseMoveCallback);
+	glfwSetScrollCallback(GetGLFWWindow(), mouseWheelCallback);
 
 	int time_start = GetTickCount();
 	int count = 0;
