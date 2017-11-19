@@ -54,7 +54,10 @@ public:
 	void TranslateAlongRight(float amt);
 	void TranslateAlongUp(float amt);
 	void TranslateAlongWorldUp(float amt);
+
+	void CameraRotate(float deltaX, float deltaY);
 	void CameraTranslate(float deltaX, float deltaY);
+	void CameraScale(float amt);
 
     void UpdateOrbit(float deltaX, float deltaY, float deltaZ);
 	void UpdateAspectRatio(float aspectRatio,int w,int h);

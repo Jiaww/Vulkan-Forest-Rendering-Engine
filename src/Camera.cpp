@@ -130,7 +130,7 @@ void Camera::TranslateAlongWorldUp(float amt)
 	eye += translation;
 	ref += translation;
 }
-void Camera::CameraTranslate(float deltaX, float deltaY) {
+void Camera::CameraRotate(float deltaX, float deltaY) {
 	float delta_w = 2 * deltaX / float(width)*glm::length(H);
 	float delta_h = 2 * deltaY / float(height)*glm::length(V);
 	float theta = atan(delta_w / glm::length(ref - eye)) * 180 / M_PI;
@@ -141,7 +141,20 @@ void Camera::CameraTranslate(float deltaX, float deltaY) {
 	RecomputeAttributes();
 	UpdateViewMatrix();
 }
-
+void Camera::CameraTranslate(float deltaX, float deltaY) {
+	float sensitive = 0.1;
+	TranslateAlongRight(deltaX*sensitive);
+	RecomputeAttributes();
+	TranslateAlongUp(-deltaY*sensitive);
+	RecomputeAttributes();
+	UpdateViewMatrix();
+}
+void Camera::CameraScale(float amt) {
+	float sensitive = 1;
+	TranslateAlongLook(amt*sensitive);
+	RecomputeAttributes();
+	UpdateViewMatrix();
+}
 Camera::~Camera() {
   vkUnmapMemory(device->GetVkDevice(), bufferMemory);
   vkDestroyBuffer(device->GetVkDevice(), buffer, nullptr);
