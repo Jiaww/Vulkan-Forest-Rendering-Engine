@@ -23,11 +23,11 @@ file(GLOB_RECURSE SHADER_SOURCES
 source_group("Shaders" FILES ${SHADER_SOURCES})
 
 if(WIN32)
-    add_executable(vulkan_grass_rendering WIN32 ${SOURCES} ${SHADER_SOURCES})
-    target_link_libraries(vulkan_grass_rendering ${WINLIBS})
+    add_executable(vulkan_forest_rendering WIN32 ${SOURCES} ${SHADER_SOURCES})
+    target_link_libraries(vulkan_forest_rendering ${WINLIBS})
 else(WIN32)
-    add_executable(vulkan_grass_rendering ${SOURCES})
-    target_link_libraries(vulkan_grass_rendering ${CMAKE_THREAD_LIBS_INIT})
+    add_executable(vulkan_forest_rendering ${SOURCES})
+    target_link_libraries(vulkan_forest_rendering ${CMAKE_THREAD_LIBS_INIT})
 endif(WIN32)
 
 foreach(SHADER_SOURCE ${SHADER_SOURCES})
@@ -41,17 +41,20 @@ foreach(SHADER_SOURCE ${SHADER_SOURCES})
             SOURCES ${SHADER_SOURCE}
         )
         ExternalTarget("Shaders" ${fname}.spv)
-        add_dependencies(vulkan_grass_rendering ${fname}.spv)
+        add_dependencies(vulkan_forest_rendering ${fname}.spv)
     endif(WIN32)
 
     # TODO: Build shaders on not windows
 endforeach()
 
-target_link_libraries(vulkan_grass_rendering ${ASSIMP_LIBRARIES} Vulkan::Vulkan glfw)
-target_include_directories(vulkan_grass_rendering PRIVATE
+target_link_libraries(vulkan_forest_rendering ${ASSIMP_LIBRARIES} Vulkan::Vulkan glfw)
+target_link_libraries(vulkan_forest_rendering assimp-vc140-mt)
+target_link_libraries(vulkan_forest_rendering zlibstatic)
+
+target_include_directories(vulkan_forest_rendering PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${GLM_INCLUDE_DIR}
   ${STB_INCLUDE_DIR}
 )
 
-InternalTarget("" vulkan_grass_rendering)
+InternalTarget("" vulkan_forest_rendering)

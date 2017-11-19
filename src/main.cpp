@@ -18,7 +18,7 @@ namespace {
 
 		vkDeviceWaitIdle(device->GetVkDevice());
 		swapChain->Recreate(width, height);
-		camera->UpdateAspectRatio(float(width) / height);
+		camera->UpdateAspectRatio(float(width) / height,width,height);
 		renderer->RecreateFrameResources();
 	}
 
@@ -49,29 +49,36 @@ namespace {
 	}
 
 	void mouseMoveCallback(GLFWwindow* window, double xPosition, double yPosition) {
+		double sensitivity = 1;
+		float deltaX = static_cast<float>((previousX - xPosition) * sensitivity);
+		float deltaY = static_cast<float>((previousY - yPosition) * sensitivity);
 		if (leftMouseDown) {
-			double sensitivity = 0.5;
-			float deltaX = static_cast<float>((previousX - xPosition) * sensitivity);
-			float deltaY = static_cast<float>((previousY - yPosition) * sensitivity);
 
-			camera->UpdateOrbit(deltaX, deltaY, 0.0f);
+			camera->CameraTranslate(deltaX, deltaY);
+			//camera->UpdateOrbit(deltaX, deltaY, 0.0f);
 
 			previousX = xPosition;
 			previousY = yPosition;
 		}
 		else if (rightMouseDown) {
-			double deltaZ = static_cast<float>((previousY - yPosition) * 0.05);
 
-			camera->UpdateOrbit(0.0f, 0.0f, deltaZ);
+			
+			/*double deltaZ = static_cast<float>((previousY - yPosition) * 0.05);
 
+			camera->UpdateOrbit(0.0f, 0.0f, deltaZ);*/
+
+			previousX = xPosition;
 			previousY = yPosition;
+
+
 		}
 	}
 }
 
 int main() {
 	static constexpr char* applicationName = "Vulkan Grass Rendering";
-	InitializeWindow(1280, 960, applicationName);
+	int width = 1280, height = 960;
+	InitializeWindow(width, height, applicationName);
 
 	unsigned int glfwExtensionCount = 0;
 	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -94,7 +101,7 @@ int main() {
 
 	swapChain = device->CreateSwapChain(surface, 5);
 
-	camera = new Camera(device, 1280.f / 960.f);
+	camera = new Camera(device, float(width) /float(height),width,height);
 
 	VkCommandPoolCreateInfo transferPoolInfo = {};
 	transferPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
