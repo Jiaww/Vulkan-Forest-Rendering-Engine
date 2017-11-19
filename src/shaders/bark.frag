@@ -29,5 +29,5 @@ void main() {
 	// Avoid negative lighting values
 	float ambientTerm = vertAmbient * 0.2f;
 
-    outColor = vec4(diffuseColor.rgb * diffuseTerm + diffuseColor.rgb * ambientTerm, 1.0f);
+    outColor = vec4(diffuseColor.rgb * diffuseTerm + diffuseColor.rgb * ambientTerm, diffuseColor.a);
 }

@@ -113,6 +113,7 @@ int main() {
 		throw std::runtime_error("Failed to create command pool");
 	}
 
+// Texture Loading
 	VkImage grassImage;
 	VkDeviceMemory grassImageMemory;
 	Image::FromFile(device,
@@ -126,7 +127,7 @@ int main() {
 		grassImage,
 		grassImageMemory
 	);
-
+	// Bark
 	VkImage barkImage;
 	VkDeviceMemory barkImageMemory;
 	Image::FromFile(device,
@@ -140,8 +141,6 @@ int main() {
 		barkImage,
 		barkImageMemory
 	);
-
-	
 	VkImage barkNormalImage;
 	VkDeviceMemory barkNormalImageMemory;
 	Image::FromFile(device,
@@ -155,7 +154,36 @@ int main() {
 		barkNormalImage,
 		barkNormalImageMemory
 	);
+	// Leaf
+	VkImage leafImage;
+	VkDeviceMemory leafImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Leaf_png/leaf_Tex_Tree0.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		leafImage,
+		leafImageMemory
+	);
+	VkImage leafNormalImage;
+	VkDeviceMemory leafNormalImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Leaf_png/Normal_Tex_Tree0.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		leafNormalImage,
+		leafNormalImageMemory
+	);
 
+// Model Initializations
+	// Plane
 	float planeDim = 50.f;
 	float halfWidth = planeDim * 0.5f;
 	Model* plane = new Model(device, transferCommandPool,
@@ -167,25 +195,37 @@ int main() {
 	},
 	{ 0, 1, 2, 2, 3, 0 }
 	);
+	plane->SetDiffuseMap(grassImage);
+	plane->SetNormalMap(grassImage);
 
-	FbxLoader *fbxloader = new FbxLoader("../../media/models/tree1_bark_rgba.FBX");
-
+	FbxLoader *fbxloader;
+	// Bark
+	fbxloader = new FbxLoader("../../media/models/tree1_bark_rgba.FBX");
 	Model* bark = new Model(device, transferCommandPool,
 		fbxloader->vertices,
 		fbxloader->indices
 	);
 	bark->SetDiffuseMap(barkImage);
-	plane->SetDiffuseMap(grassImage);
 	bark->SetNormalMap(barkNormalImage);
-	plane->SetNormalMap(grassImage);
 
+	// Leaf
+	fbxloader = new FbxLoader("../../media/models/tree1_leaf_rgba.FBX");
+	Model* leaf = new Model(device, transferCommandPool,
+		fbxloader->vertices,
+		fbxloader->indices
+	);
+	leaf->SetDiffuseMap(leafImage);
+	leaf->SetNormalMap(leafNormalImage);
+
+	// Blades
 	Blades* blades = new Blades(device, transferCommandPool, planeDim);
 
 	vkDestroyCommandPool(device->GetVkDevice(), transferCommandPool, nullptr);
 
 	Scene* scene = new Scene(device);
 	scene->AddModel(plane);
-	scene->AddModel(bark );
+	scene->AddModel(bark);
+	scene->AddModel(leaf);
 	scene->AddBlades(blades);
 
 	renderer = new Renderer(device, swapChain, scene, camera);

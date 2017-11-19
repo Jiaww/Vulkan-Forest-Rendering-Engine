@@ -17,6 +17,10 @@ public:
 
     void CreateCameraDescriptorSetLayout();
     void CreateModelDescriptorSetLayout();
+
+	//void CreateBarkDescriptorSetLayout();
+
+
     void CreateGrassDescriptorSetLayout();
 	void CreateTimeDescriptorSetLayout();
     
@@ -33,6 +37,8 @@ public:
     void CreateGraphicsPipeline();
     void CreateGrassPipeline();
     void CreateComputePipeline();
+	void CreateBarkPipeline();
+	void CreateLeafPipeline();
 
     void CreateFrameResources();
     void DestroyFrameResources();
@@ -57,6 +63,7 @@ private:
 
 	VkDescriptorSetLayout cameraDescriptorSetLayout;
 	VkDescriptorSetLayout modelDescriptorSetLayout;
+	VkDescriptorSetLayout barkDescriptorSetLayout;
 	VkDescriptorSetLayout grassDescriptorSetLayout;
 	VkDescriptorSetLayout timeDescriptorSetLayout;
 
@@ -66,17 +73,22 @@ private:
 
 	VkDescriptorSet cameraDescriptorSet;
 	std::vector<VkDescriptorSet> modelDescriptorSets;
+	VkDescriptorSet barkDescriptorSet;
 	VkDescriptorSet timeDescriptorSet;
 
 	std::vector<VkDescriptorSet> grassDescriptorSets;
 	std::vector<VkDescriptorSet> computeDescriptorSets;
 
-    VkPipelineLayout graphicsPipelineLayout;
+	VkPipelineLayout graphicsPipelineLayout;
+	VkPipelineLayout barkPipelineLayout;
+	VkPipelineLayout leafPipelineLayout;
     VkPipelineLayout grassPipelineLayout;
     VkPipelineLayout computePipelineLayout;
 
-    VkPipeline graphicsPipeline;
-    VkPipeline grassPipeline;
+	VkPipeline graphicsPipeline;
+	VkPipeline barkPipeline;
+	VkPipeline leafPipeline;
+	VkPipeline grassPipeline;
     VkPipeline computePipeline;
 
     std::vector<VkImageView> imageViews;
