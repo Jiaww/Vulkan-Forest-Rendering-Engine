@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 2.8.12)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-project(cis565_project6_vulkan_grass_rendering)
+project(vulkan_forest_rendering_engine)
 
 OPTION(USE_D2D_WSI "Build the project using Direct to Display swapchain" OFF)
 
+#Set up include and lib paths
+include_directories("includes")
+set(ASSIMP_LIB_PATH "libs") 
+link_directories(${ASSIMP_LIB_PATH})
+
+# Set preprocessor defines
 find_package(Vulkan REQUIRED)
 
 IF(WIN32)
