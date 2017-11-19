@@ -1,4 +1,0 @@
-﻿  main.cpp
-F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\main.cpp(20): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\src\main.cpp(65): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  vulkan_grass_rendering.vcxproj -> F:\CIS565GPU_projects\Final_Project\Vulkan-Forest-Rendering-Engine\bin\Debug\vulkan_grass_rendering.exe
