@@ -185,6 +185,20 @@ int main() {
 		leafNormalImage,
 		leafNormalImageMemory
 	);
+	//Noise
+	VkImage noiseImage;
+	VkDeviceMemory noiseImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/noise.jpg",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		noiseImage,
+		noiseImageMemory
+	);
 
 // Model Initializations
 	// Plane
@@ -201,6 +215,7 @@ int main() {
 	);
 	plane->SetDiffuseMap(grassImage);
 	plane->SetNormalMap(grassImage);
+	plane->SetNoiseMap(grassImage);
 
 	FbxLoader *fbxloader;
 	// Bark
@@ -211,7 +226,7 @@ int main() {
 	);
 	bark->SetDiffuseMap(barkImage);
 	bark->SetNormalMap(barkNormalImage);
-
+	bark->SetNoiseMap(noiseImage);
 	// Leaf
 	fbxloader = new FbxLoader("../../media/models/tree1_leaf_rgba.FBX");
 	Model* leaf = new Model(device, transferCommandPool,
@@ -220,6 +235,7 @@ int main() {
 	);
 	leaf->SetDiffuseMap(leafImage);
 	leaf->SetNormalMap(leafNormalImage);
+	leaf->SetNoiseMap(noiseImage);
 
 	// Blades
 	Blades* blades = new Blades(device, transferCommandPool, planeDim);

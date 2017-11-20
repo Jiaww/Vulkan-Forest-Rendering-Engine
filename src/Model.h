@@ -36,6 +36,10 @@ protected:
 	VkImage normalMap = VK_NULL_HANDLE;
 	VkImageView normalMapView = VK_NULL_HANDLE;
 	VkSampler normalMapSampler = VK_NULL_HANDLE;
+	// noise map
+	VkImage noiseMap = VK_NULL_HANDLE;
+	VkImageView noiseMapView = VK_NULL_HANDLE;
+	VkSampler noiseMapSampler = VK_NULL_HANDLE;
 
 public:
     Model() = delete;
@@ -44,6 +48,7 @@ public:
 
     void SetDiffuseMap(VkImage texture);
 	void SetNormalMap(VkImage texture);
+	void SetNoiseMap(VkImage texture);
 
     const std::vector<Vertex>& getVertices() const;
 
@@ -60,4 +65,6 @@ public:
     VkSampler GetDiffuseMapSampler() const;
 	VkImageView GetNormalMapView() const;
 	VkSampler GetNormalMapSampler() const;
+	VkImageView GetNoiseMapView() const;
+	VkSampler GetNoiseMapSampler() const;
 };

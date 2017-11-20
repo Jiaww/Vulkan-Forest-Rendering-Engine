@@ -169,7 +169,14 @@ void Renderer::CreateModelDescriptorSetLayout() {
 	normalSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 	normalSamplerLayoutBinding.pImmutableSamplers = nullptr;
 
-	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding, diffuseSamplerLayoutBinding, normalSamplerLayoutBinding };
+	VkDescriptorSetLayoutBinding noiseSamplerLayoutBinding = {};
+	noiseSamplerLayoutBinding.binding = 3;
+	noiseSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	noiseSamplerLayoutBinding.descriptorCount = 1;
+	noiseSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	noiseSamplerLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding, diffuseSamplerLayoutBinding, normalSamplerLayoutBinding, noiseSamplerLayoutBinding };
 
 	// Create the descriptor set layout
 	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
@@ -191,7 +198,7 @@ void Renderer::CreateTimeDescriptorSetLayout() {
 	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	uboLayoutBinding.descriptorCount = 1;
 	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_ALL;
-;
+	;
 	uboLayoutBinding.pImmutableSamplers = nullptr;
 
 	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding };
@@ -272,8 +279,8 @@ void Renderer::CreateDescriptorPool() {
 		// Camera
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
 
-		// Models + Blades
-		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 2 * (static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size())) },
+		// Models + blades (diffuse, normal, noise)
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 3 * (static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size())) },
 
 		// Models + Blades
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size()) },
@@ -349,8 +356,8 @@ void Renderer::CreateModelDescriptorSets() {
 
 
 	for (uint32_t i = 0; i < scene->GetModels().size(); ++i) {
-		std::vector<VkWriteDescriptorSet> descriptorWrites(3);
-		
+		std::vector<VkWriteDescriptorSet> descriptorWrites(4);
+
 		VkDescriptorBufferInfo modelBufferInfo = {};
 		modelBufferInfo.buffer = scene->GetModels()[i]->GetModelBuffer();
 		modelBufferInfo.offset = 0;
@@ -365,6 +372,10 @@ void Renderer::CreateModelDescriptorSets() {
 		normalMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		normalMapInfo.imageView = scene->GetModels()[i]->GetNormalMapView();
 		normalMapInfo.sampler = scene->GetModels()[i]->GetNormalMapSampler();
+		VkDescriptorImageInfo noiseMapInfo = {};
+		noiseMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		noiseMapInfo.imageView = scene->GetModels()[i]->GetNoiseMapView();
+		noiseMapInfo.sampler = scene->GetModels()[i]->GetNoiseMapSampler();
 
 		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrites[0].dstSet = modelDescriptorSets[i];
@@ -391,6 +402,14 @@ void Renderer::CreateModelDescriptorSets() {
 		descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		descriptorWrites[2].descriptorCount = 1;
 		descriptorWrites[2].pImageInfo = &normalMapInfo;
+
+		descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[3].dstSet = modelDescriptorSets[i];
+		descriptorWrites[3].dstBinding = 3;
+		descriptorWrites[3].dstArrayElement = 0;
+		descriptorWrites[3].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[3].descriptorCount = 1;
+		descriptorWrites[3].pImageInfo = &noiseMapInfo;
 
 		// Update descriptor sets
 		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
@@ -1466,7 +1485,7 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
 			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[0]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-			
+
 			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 			// Bind the descriptor set for each model
@@ -1488,7 +1507,7 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
 			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[1]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-			
+
 			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 			// Bind the descriptor set for each model
@@ -1512,7 +1531,7 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
 			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[2]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-			
+
 			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 			// Bind the descriptor set for each model

@@ -182,10 +182,10 @@ void main() {
 	//Distance Culling
 	bool distance_culled = false;
 	float min_distance = 0.1;
-	float far_distance = 100;
+	float far_distance = 200;
 
 	//seperate into 10 buckets
-	//the distance between each bucket is 10
+	//the distance between each bucket is 20
 	vec4 view_v0 = camera.view * vec4(this_v0, 1.0f);
 	float horizontal_distance = abs(dot(view_v0.xyz, vec3(0,0,1)));
 
@@ -193,7 +193,7 @@ void main() {
 		distance_culled = true;
 	}
 	else{
-		int bucket_level = int(horizontal_distance) / 10;
+		int bucket_level = int(horizontal_distance) / 20;
 		if(bucket_level > 0){
 			if(index % bucket_level < int(bucket_level * (1.0 - horizontal_distance/far_distance))){
 				distance_culled = true;

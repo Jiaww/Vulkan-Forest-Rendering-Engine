@@ -4,6 +4,7 @@
 layout(set = 0, binding = 0) uniform CameraBufferObject {
     mat4 view;
 	mat4 proj;
+	vec3 camPos;
 } camera;
 
 layout(set = 1, binding = 0) uniform ModelBufferObject {
@@ -28,8 +29,9 @@ layout(location = 2) out vec3 worldPosition;
 layout(location = 3) out vec3 worldN;
 layout(location = 4) out vec3 worldB;
 layout(location = 5) out vec3 worldT;
-layout(location = 7) out float vertAmbient;
-
+layout(location = 6) out float vertAmbient;
+layout(location = 7) out float distanceLevel;
+layout(location = 8) out vec2 noiseTexCoord;
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -88,9 +90,9 @@ void main() {
 	vPos += objectPosition;
 
 	mat4 scale = mat4(1.0);
-	scale[0][0] = 0.01;
-	scale[1][1] = 0.01;
-	scale[2][2] = 0.01;
+	scale[0][0] = 0.015;
+	scale[1][1] = 0.015;
+	scale[2][2] = 0.015;
 	worldPosition = vPos;
 
     //gl_Position = camera.proj * camera.view * model * scale * vec4(inPosition, 1.0);
@@ -100,4 +102,9 @@ void main() {
 	//vertColor=vec3(w);
     fragTexCoord = inTexCoord;
 
+//LOD Effect
+	noiseTexCoord.x = (vPos.x - 0.0) / 9.7f;
+	noiseTexCoord.y = (vPos.y - 0.0) / 9.4f;
+	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
+	
 }
