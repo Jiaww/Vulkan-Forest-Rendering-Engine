@@ -142,7 +142,7 @@ void Camera::CameraRotate(float deltaX, float deltaY) {
 	UpdateViewMatrix();
 }
 void Camera::CameraTranslate(float deltaX, float deltaY) {
-	float sensitive = 0.1;
+	float sensitive = 0.05;
 	TranslateAlongRight(deltaX*sensitive);
 	RecomputeAttributes();
 	TranslateAlongUp(-deltaY*sensitive);

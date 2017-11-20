@@ -30,4 +30,5 @@ void main() {
 	float ambientTerm = vertAmbient * 0.15f;
 
     outColor = vec4(diffuseColor.rgb * diffuseTerm + diffuseColor.rgb * ambientTerm, diffuseColor.a);
+	//outColor=vec4(vertColor,diffuseColor.a);
 }
