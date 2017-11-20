@@ -83,7 +83,7 @@ void main() {
 
 	vec3 objectPosition = vec3(0,0,0);
 	vPos -= objectPosition;	// Reset the vertex to base-zero
-	float BendScale=0.001;
+	float BendScale=0.0009;
 	ApplyMainBending(vPos, Wind, BendScale);
 	vPos += objectPosition;
 

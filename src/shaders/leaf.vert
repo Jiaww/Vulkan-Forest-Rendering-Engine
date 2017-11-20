@@ -33,6 +33,13 @@ out gl_PerVertex {
     vec4 gl_Position;
 };
 
+// The suggested frequencies from the Crytek paper
+// The side-to-side motion has a much higher frequency than the up-and-down.
+#define SIDE_TO_SIDE_FREQ1 1.500
+#define SIDE_TO_SIDE_FREQ2 0.500
+#define UP_AND_DOWN_FREQ1 0.375
+#define UP_AND_DOWN_FREQ2 0.193
+
 vec4 SmoothCurve( vec4 x ) {
   return x * x * ( vec4(3.0f,3.0f,3.0f,3.0f) - 2.0 * x ) ;
 }
@@ -73,28 +80,35 @@ void ApplyDetailBending(
 	float fSpeed,			// Controls how quickly the leaf oscillates
 	float fDetailFreq,		// Same thing as fSpeed (they could really be combined, but I suspect
 		// this could be used to let you additionally control the speed per vertex).
-	float fDetailAmp,		// Controls how much back and forth
-	float fOccilateFreq,    // Ojasdhkas
-	float fDetailShakeAmp
+	float fDetailAmp		// Controls how much back and forth
 	)		
 {
-	float fObjPhase = dot(objectPosition.xyz, vec3(1.0f, 1.0f, 1.0f));  
+	// Phases (object, vertex, branch)
+	// fObjPhase: This ensures phase is different for different plant instances, but it should be
+	// the same value for all vertices of the same plant.
+	float fObjPhase = dot(objectPosition.xyz, vec3(1));  
 	fBranchPhase += fObjPhase;
-	float SIDE_TO_SIDE_FREQ1=1.975;
-	float SIDE_TO_SIDE_FREQ2=0.793;
-	float UP_AND_DOWN_FREQ1=0.375;
-	float UP_AND_DOWN_FREQ2=0.193;
-	float fVtxPhase = dot(vPos.xyz, vec3(fDetailPhase + fBranchPhase,fDetailPhase + fBranchPhase,fDetailPhase + fBranchPhase));  
-	vec2 vWavesIn = vec2(fTime,fTime) + vec2(fVtxPhase, fBranchPhase );
-	vec4 vWaves = (fract(fOccilateFreq * vWavesIn.xxyy *
-			vec4(SIDE_TO_SIDE_FREQ1, SIDE_TO_SIDE_FREQ2, UP_AND_DOWN_FREQ1, UP_AND_DOWN_FREQ2)) *
-			 2.0 - 1.0 );
-	vec4 vWaves1 = SmoothTriangleWave( vWaves * fSpeed);
-	vec2 vWavesSum1 = vWaves1.xz + vWaves1.yw;
-	vPos.xyz += vWavesSum1.x * vec3(fEdgeAtten * fDetailAmp * vNormal.xyz);
-	vPos.y += vWavesSum1.y * fBranchAtten * fBranchAmp;
-	vec4 vWaves2 = SmoothTriangleWave( vWaves * fDetailFreq);
-	vPos.xz = vPos.xz + Wind.xy * fBranchAtten * fDetailShakeAmp * (vWaves2.x + 1.0f);
+	float fVtxPhase = dot(vPos.xyz, vec3(fDetailPhase + fBranchPhase));  
+
+	vec2 vWavesIn = vec2(fTime) + vec2(fVtxPhase, fBranchPhase );
+	vec4 vWaves = (fract( vWavesIn.xxyy *
+					   vec4(SIDE_TO_SIDE_FREQ1, SIDE_TO_SIDE_FREQ2, UP_AND_DOWN_FREQ1, UP_AND_DOWN_FREQ2) ) *
+					   2.0 - 1.0 ) * fSpeed * fDetailFreq;
+	vWaves = SmoothTriangleWave( vWaves );
+	vec2 vWavesSum = vWaves.xz + vWaves.yw;  
+
+	// -fBranchAtten is how restricted this vertex of the leaf/branch is. e.g. close to the stem
+	//  it should be 0 (maximum stiffness). At the far outer edge it might be 1.
+	//  In this sample, this is controlled by the blue vertex color.
+	// -fEdgeAtten controls movement in the plane of the leaf/branch. It is controlled by the
+	//  red vertex color in this sample. It is supposed to represent "leaf stiffness". Generally, it
+	//  should be 0 in the middle of the leaf (maximum stiffness), and 1 on the outer edges.
+	// -Note that this is different from the Crytek code, in that we use vPos.xzy instead of vPos.xyz,
+	//  because I treat y as the up-and-down direction.
+    // vPos.xyz += vWavesSum.x * vec3(fEdgeAtten * fDetailAmp * vNormal.xyz);
+    // vPos.y += vWavesSum.y * fBranchAtten * fBranchAmp;
+    vPos.xyz +=  vWavesSum.xxy * vec3(fEdgeAtten * fDetailAmp *
+                            vNormal.xy, fBranchAtten * fBranchAmp);
 }
 
 void main() {
@@ -127,30 +141,27 @@ void main() {
 	vPos += objectPosition;
 
 
-	float BranchAmp=0.1;
-	float DetailAmp=0.1;
-	float DetailShakeAmp=0.1;
+	float BranchAmp=1.3;
+	float DetailAmp=0.7;
 	vec2 WindDetail = vec2(w.x * 0.5,w.z*0.5);
 	float windStrength = length(WindDetail);
-	//ApplyDetailBending(
-		//vPos,
-		//WindDetail,
-		//normalDirection,
-		//objectPosition,
-		//0,					// Leaf phase - not used in this scenario, but would allow for variation in side-to-side motion
-		//inColor.g,		// Branch phase - should be the same for all verts in a leaf/branch.
-		//uTime,
-		//inColor.r,		// edge attenuation, leaf stiffness
-		//1 - inColor.b,  // branch attenuation. High values close to stem, low values furthest from stem.
+	ApplyDetailBending(
+		vPos,
+		WindDetail,
+		normalDir,
+		objectPosition,
+		0,					// Leaf phase - not used in this scenario, but would allow for variation in side-to-side motion
+		inColor.g,		// Branch phase - should be the same for all verts in a leaf/branch.
+		totalTime,
+		inColor.r,		// edge attenuation, leaf stiffness
+		1 - inColor.b,  // branch attenuation. High values close to stem, low values furthest from stem.
 				// For some reason, Crysis uses solid blue for non-moving, and black for most movement.
 				// So we invert the blue value here.
-		//BranchAmp * windStrength, // branch amplitude. Play with this until it looks good.
-		//Speed,					// Speed. Play with this until it looks good.
-		//DetailFreq,					// Detail frequency. Keep this at 1 unless you want to have different per-leaf frequency
-		//DetailAmp * windStrength,	// Detail amplitude. Play with this until it looks good.
-		//0.002f,
-		//DetailShakeAmp
-		//);
+		BranchAmp * windStrength, // branch amplitude. Play with this until it looks good.
+		1.0f,					// Speed. Play with this until it looks good.
+		1.3f,					// Detail frequency. Keep this at 1 unless you want to have different per-leaf frequency
+		DetailAmp * windStrength	// Detail amplitude. Play with this until it looks good.
+		);
 
 	mat4 scale = mat4(1.0);
 	scale[0][0] = 0.01;
