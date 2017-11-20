@@ -346,9 +346,10 @@ void Renderer::CreateModelDescriptorSets() {
 		throw std::runtime_error("Failed to allocate descriptor set");
 	}
 
-	std::vector<VkWriteDescriptorSet> descriptorWrites(3 * modelDescriptorSets.size());
 
 	for (uint32_t i = 0; i < scene->GetModels().size(); ++i) {
+		std::vector<VkWriteDescriptorSet> descriptorWrites(modelDescriptorSets.size());
+		
 		VkDescriptorBufferInfo modelBufferInfo = {};
 		modelBufferInfo.buffer = scene->GetModels()[i]->GetModelBuffer();
 		modelBufferInfo.offset = 0;
@@ -364,35 +365,35 @@ void Renderer::CreateModelDescriptorSets() {
 		normalMapInfo.imageView = scene->GetModels()[i]->GetNormalMapView();
 		normalMapInfo.sampler = scene->GetModels()[i]->GetNormalMapSampler();
 
-		descriptorWrites[3 * i + 0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[3 * i + 0].dstSet = modelDescriptorSets[i];
-		descriptorWrites[3 * i + 0].dstBinding = 0;
-		descriptorWrites[3 * i + 0].dstArrayElement = 0;
-		descriptorWrites[3 * i + 0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrites[3 * i + 0].descriptorCount = 1;
-		descriptorWrites[3 * i + 0].pBufferInfo = &modelBufferInfo;
-		descriptorWrites[3 * i + 0].pImageInfo = nullptr;
-		descriptorWrites[3 * i + 0].pTexelBufferView = nullptr;
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = modelDescriptorSets[i];
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &modelBufferInfo;
+		descriptorWrites[0].pImageInfo = nullptr;
+		descriptorWrites[0].pTexelBufferView = nullptr;
 
-		descriptorWrites[3 * i + 1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[3 * i + 1].dstSet = modelDescriptorSets[i];
-		descriptorWrites[3 * i + 1].dstBinding = 1;
-		descriptorWrites[3 * i + 1].dstArrayElement = 0;
-		descriptorWrites[3 * i + 1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		descriptorWrites[3 * i + 1].descriptorCount = 1;
-		descriptorWrites[3 * i + 1].pImageInfo = &diffuseMapInfo;
+		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[1].dstSet = modelDescriptorSets[i];
+		descriptorWrites[1].dstBinding = 1;
+		descriptorWrites[1].dstArrayElement = 0;
+		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[1].descriptorCount = 1;
+		descriptorWrites[1].pImageInfo = &diffuseMapInfo;
 
-		descriptorWrites[3 * i + 2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[3 * i + 2].dstSet = modelDescriptorSets[i];
-		descriptorWrites[3 * i + 2].dstBinding = 2;
-		descriptorWrites[3 * i + 2].dstArrayElement = 0;
-		descriptorWrites[3 * i + 2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		descriptorWrites[3 * i + 2].descriptorCount = 1;
-		descriptorWrites[3 * i + 2].pImageInfo = &normalMapInfo;
+		descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[2].dstSet = modelDescriptorSets[i];
+		descriptorWrites[2].dstBinding = 2;
+		descriptorWrites[2].dstArrayElement = 0;
+		descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[2].descriptorCount = 1;
+		descriptorWrites[2].pImageInfo = &normalMapInfo;
+
+		// Update descriptor sets
+		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
-
-	// Update descriptor sets
-	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 void Renderer::CreateGrassDescriptorSets() {
@@ -413,27 +414,26 @@ void Renderer::CreateGrassDescriptorSets() {
 		throw std::runtime_error("Failed to allocate descriptor set");
 	}
 
-	std::vector<VkWriteDescriptorSet> descriptorWrites(grassDescriptorSets.size());
 
 	for (uint32_t i = 0; i < scene->GetBlades().size(); ++i) {
+		std::vector<VkWriteDescriptorSet> descriptorWrites(grassDescriptorSets.size());
 		VkDescriptorBufferInfo modelBufferInfo = {};
 		modelBufferInfo.buffer = scene->GetBlades()[i]->GetModelBuffer();
 		modelBufferInfo.offset = 0;
 		modelBufferInfo.range = sizeof(ModelBufferObject);
 
-		descriptorWrites[i + 0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[i + 0].dstSet = grassDescriptorSets[i];
-		descriptorWrites[i + 0].dstBinding = 0;
-		descriptorWrites[i + 0].dstArrayElement = 0;
-		descriptorWrites[i + 0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrites[i + 0].descriptorCount = 1;
-		descriptorWrites[i + 0].pBufferInfo = &modelBufferInfo;
-		descriptorWrites[i + 0].pImageInfo = nullptr;
-		descriptorWrites[i + 0].pTexelBufferView = nullptr;
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = grassDescriptorSets[i];
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &modelBufferInfo;
+		descriptorWrites[0].pImageInfo = nullptr;
+		descriptorWrites[0].pTexelBufferView = nullptr;
+		// Update descriptor sets
+		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
-
-	// Update descriptor sets
-	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 void Renderer::CreateTimeDescriptorSet() {
@@ -489,9 +489,9 @@ void Renderer::CreateComputeDescriptorSets() {
 		throw std::runtime_error("Failed to allocate descriptor set");
 	}
 
-	std::vector<VkWriteDescriptorSet> descriptorWrites(3 * computeDescriptorSets.size());
 
 	for (uint32_t i = 0; i < scene->GetBlades().size(); ++i) {
+		std::vector<VkWriteDescriptorSet> descriptorWrites(computeDescriptorSets.size());
 		//Blades
 		VkDescriptorBufferInfo bladesBufferInfo = {};
 		bladesBufferInfo.buffer = scene->GetBlades()[i]->GetBladesBuffer();
@@ -511,39 +511,38 @@ void Renderer::CreateComputeDescriptorSets() {
 		numBaldesBufferInfo.range = sizeof(BladeDrawIndirect);
 
 
-		descriptorWrites[3 * i + 0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[3 * i + 0].dstSet = computeDescriptorSets[i];
-		descriptorWrites[3 * i + 0].dstBinding = 0;
-		descriptorWrites[3 * i + 0].dstArrayElement = 0;
-		descriptorWrites[3 * i + 0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		descriptorWrites[3 * i + 0].descriptorCount = 1;
-		descriptorWrites[3 * i + 0].pBufferInfo = &bladesBufferInfo;
-		descriptorWrites[3 * i + 0].pImageInfo = nullptr;
-		descriptorWrites[3 * i + 0].pTexelBufferView = nullptr;
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = computeDescriptorSets[i];
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &bladesBufferInfo;
+		descriptorWrites[0].pImageInfo = nullptr;
+		descriptorWrites[0].pTexelBufferView = nullptr;
 
-		descriptorWrites[3 * i + 1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[3 * i + 1].dstSet = computeDescriptorSets[i];
-		descriptorWrites[3 * i + 1].dstBinding = 1;
-		descriptorWrites[3 * i + 1].dstArrayElement = 0;
-		descriptorWrites[3 * i + 1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		descriptorWrites[3 * i + 1].descriptorCount = 1;
-		descriptorWrites[3 * i + 1].pBufferInfo = &culledBaldesBufferInfo;
-		descriptorWrites[3 * i + 1].pImageInfo = nullptr;
-		descriptorWrites[3 * i + 1].pTexelBufferView = nullptr;
+		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[1].dstSet = computeDescriptorSets[i];
+		descriptorWrites[1].dstBinding = 1;
+		descriptorWrites[1].dstArrayElement = 0;
+		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		descriptorWrites[1].descriptorCount = 1;
+		descriptorWrites[1].pBufferInfo = &culledBaldesBufferInfo;
+		descriptorWrites[1].pImageInfo = nullptr;
+		descriptorWrites[1].pTexelBufferView = nullptr;
 
-		descriptorWrites[3 * i + 2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrites[3 * i + 2].dstSet = computeDescriptorSets[i];
-		descriptorWrites[3 * i + 2].dstBinding = 2;
-		descriptorWrites[3 * i + 2].dstArrayElement = 0;
-		descriptorWrites[3 * i + 2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		descriptorWrites[3 * i + 2].descriptorCount = 1;
-		descriptorWrites[3 * i + 2].pBufferInfo = &numBaldesBufferInfo;
-		descriptorWrites[3 * i + 2].pImageInfo = nullptr;
-		descriptorWrites[3 * i + 2].pTexelBufferView = nullptr;
+		descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[2].dstSet = computeDescriptorSets[i];
+		descriptorWrites[2].dstBinding = 2;
+		descriptorWrites[2].dstArrayElement = 0;
+		descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		descriptorWrites[2].descriptorCount = 1;
+		descriptorWrites[2].pBufferInfo = &numBaldesBufferInfo;
+		descriptorWrites[2].pImageInfo = nullptr;
+		descriptorWrites[2].pTexelBufferView = nullptr;
+		// Update descriptor sets
+		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
-
-	// Update descriptor sets
-	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 void Renderer::CreateGraphicsPipeline() {

@@ -17,10 +17,6 @@ public:
 
     void CreateCameraDescriptorSetLayout();
     void CreateModelDescriptorSetLayout();
-
-	//void CreateBarkDescriptorSetLayout();
-
-
     void CreateGrassDescriptorSetLayout();
 	void CreateTimeDescriptorSetLayout();
     
@@ -63,7 +59,6 @@ private:
 
 	VkDescriptorSetLayout cameraDescriptorSetLayout;
 	VkDescriptorSetLayout modelDescriptorSetLayout;
-	VkDescriptorSetLayout barkDescriptorSetLayout;
 	VkDescriptorSetLayout grassDescriptorSetLayout;
 	VkDescriptorSetLayout timeDescriptorSetLayout;
 
@@ -73,7 +68,6 @@ private:
 
 	VkDescriptorSet cameraDescriptorSet;
 	std::vector<VkDescriptorSet> modelDescriptorSets;
-	VkDescriptorSet barkDescriptorSet;
 	VkDescriptorSet timeDescriptorSet;
 
 	std::vector<VkDescriptorSet> grassDescriptorSets;
