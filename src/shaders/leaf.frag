@@ -27,7 +27,7 @@ void main() {
 	vec3 lightDir = normalize(vec3(-1.0, 5.0, -3.0));
 	float diffuseTerm = clamp(dot(TextureNormal_worldspace, normalize(lightDir)), 0.15f, 1);
 	// Avoid negative lighting values
-	float ambientTerm = vertAmbient * 0.2f;
+	float ambientTerm = vertAmbient * 0.4f;
 
 	if(diffuseColor.a < 1.0f)
 		discard;

@@ -190,7 +190,8 @@ void Renderer::CreateTimeDescriptorSetLayout() {
 	uboLayoutBinding.binding = 0;
 	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	uboLayoutBinding.descriptorCount = 1;
-	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_ALL;
+;
 	uboLayoutBinding.pImmutableSamplers = nullptr;
 
 	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding };
@@ -348,7 +349,7 @@ void Renderer::CreateModelDescriptorSets() {
 
 
 	for (uint32_t i = 0; i < scene->GetModels().size(); ++i) {
-		std::vector<VkWriteDescriptorSet> descriptorWrites(modelDescriptorSets.size());
+		std::vector<VkWriteDescriptorSet> descriptorWrites(3);
 		
 		VkDescriptorBufferInfo modelBufferInfo = {};
 		modelBufferInfo.buffer = scene->GetModels()[i]->GetModelBuffer();
@@ -416,7 +417,7 @@ void Renderer::CreateGrassDescriptorSets() {
 
 
 	for (uint32_t i = 0; i < scene->GetBlades().size(); ++i) {
-		std::vector<VkWriteDescriptorSet> descriptorWrites(grassDescriptorSets.size());
+		std::vector<VkWriteDescriptorSet> descriptorWrites(1);
 		VkDescriptorBufferInfo modelBufferInfo = {};
 		modelBufferInfo.buffer = scene->GetBlades()[i]->GetModelBuffer();
 		modelBufferInfo.offset = 0;
@@ -491,7 +492,7 @@ void Renderer::CreateComputeDescriptorSets() {
 
 
 	for (uint32_t i = 0; i < scene->GetBlades().size(); ++i) {
-		std::vector<VkWriteDescriptorSet> descriptorWrites(computeDescriptorSets.size());
+		std::vector<VkWriteDescriptorSet> descriptorWrites(3);
 		//Blades
 		VkDescriptorBufferInfo bladesBufferInfo = {};
 		bladesBufferInfo.buffer = scene->GetBlades()[i]->GetBladesBuffer();
@@ -822,7 +823,7 @@ void Renderer::CreateBarkPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -981,7 +982,7 @@ void Renderer::CreateLeafPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -1452,9 +1453,6 @@ void Renderer::RecordCommandBuffers() {
 
 		vkCmdPipelineBarrier(commandBuffers[i], VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
 
-		// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
-		vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
-
 		vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 		//Planes: graphics
@@ -1468,7 +1466,9 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
 			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[0]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
+			
+			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 			// Bind the descriptor set for each model
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelineLayout, 1, 1, &modelDescriptorSets[0], 0, nullptr);
 
@@ -1488,9 +1488,13 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
 			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[1]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
+			
+			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 			// Bind the descriptor set for each model
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 1, 1, &modelDescriptorSets[1], 0, nullptr);
+			// Bind the time descriptor.
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
@@ -1508,9 +1512,13 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
 			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[2]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
+			
+			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 			// Bind the descriptor set for each model
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 1, 1, &modelDescriptorSets[2], 0, nullptr);
+			// Bind the time descriptor.
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
@@ -1528,12 +1536,14 @@ void Renderer::RecordCommandBuffers() {
 			// TODO: Uncomment this when the buffers are populated
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
+			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 			// TODO: Bind the descriptor set for each grass blades model
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipelineLayout, 1, 1, &grassDescriptorSets[j], 0, nullptr);
 
 			// Draw
 			// TODO: Uncomment this when the buffers are populated
-			//vkCmdDrawIndirect(commandBuffers[i], scene->GetBlades()[j]->GetNumBladesBuffer(), 0, 1, sizeof(BladeDrawIndirect));
+			vkCmdDrawIndirect(commandBuffers[i], scene->GetBlades()[j]->GetNumBladesBuffer(), 0, 1, sizeof(BladeDrawIndirect));
 		}
 
 		// End render pass

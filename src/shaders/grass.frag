@@ -15,8 +15,8 @@ layout(location = 0) out vec4 outColor;
 
 void main() {
     // TODO: Compute fragment color
-	vec3 upper_color = vec3(0.3,0.9,0.1);
-	vec3 lower_color = vec3(0.0,0.4,0.1);
+	vec3 upper_color = vec3(0.3,0.75,0.2);
+	vec3 lower_color = vec3(0.2,0.4,0.1);
 
 	vec3 yellow_upper_color = vec3(0.6,0.8,0.35);
 	vec3 yellow_lower_color = vec3(0.6,0.55,0.23);
