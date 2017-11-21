@@ -5,6 +5,7 @@ layout(set = 0, binding = 0) uniform CameraBufferObject {
     mat4 view;
 	mat4 proj;
 	vec3 camPos;
+	vec3 camDir;
 } camera;
 
 layout(set = 1, binding = 0) uniform ModelBufferObject {
@@ -38,8 +39,8 @@ out gl_PerVertex {
 
 // The suggested frequencies from the Crytek paper
 // The side-to-side motion has a much higher frequency than the up-and-down.
-#define SIDE_TO_SIDE_FREQ1 1.500
-#define SIDE_TO_SIDE_FREQ2 0.500
+#define SIDE_TO_SIDE_FREQ1 1.975
+#define SIDE_TO_SIDE_FREQ2 0.793
 #define UP_AND_DOWN_FREQ1 0.375
 #define UP_AND_DOWN_FREQ2 0.193
 
@@ -115,8 +116,14 @@ void ApplyDetailBending(
 }
 
 void main() {
-	mat3 inv_trans_model = transpose(inverse(mat3(model)));
-	vec3 vPos=vec3(model * vec4(inPosition, 1.0f));
+	mat4 scale = mat4(1.0);
+	scale[0][0] = 0.015;
+	scale[1][1] = 0.015;
+	scale[2][2] = 0.015;
+	mat4 modelMatrix = model * scale;
+
+	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
+	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
 	vec3 normalDir=normalize(inv_trans_model * inNormal);
 	worldN = normalDir;
 	worldB = normalize(inv_trans_model * inBitangent);
@@ -139,13 +146,13 @@ void main() {
 
 	vec3 objectPosition = vec3(0,0,0);
 	vPos -= objectPosition;	// Reset the vertex to base-zero
-	float BendScale=0.001;
+	float BendScale=0.024;
 	ApplyMainBending(vPos, Wind, BendScale);
 	vPos += objectPosition;
 
 
-	float BranchAmp=1.3;
-	float DetailAmp=0.7;
+	float BranchAmp=0.2;
+	float DetailAmp=0.1;
 	vec2 WindDetail = vec2(w.x * 0.5,w.z*0.5);
 	float windStrength = length(WindDetail);
 	ApplyDetailBending(
@@ -162,25 +169,21 @@ void main() {
 				// So we invert the blue value here.
 		BranchAmp * windStrength, // branch amplitude. Play with this until it looks good.
 		1.0f,					// Speed. Play with this until it looks good.
-		1.3f,					// Detail frequency. Keep this at 1 unless you want to have different per-leaf frequency
+		0.13f,					// Detail frequency. Keep this at 1 unless you want to have different per-leaf frequency
 		DetailAmp * windStrength	// Detail amplitude. Play with this until it looks good.
 		);
 
-	mat4 scale = mat4(1.0);
-	scale[0][0] = 0.015;
-	scale[1][1] = 0.015;
-	scale[2][2] = 0.015;
 	worldPosition = vPos;
 
-    //gl_Position = camera.proj * camera.view * model * scale * vec4(inPosition, 1.0);
-	gl_Position = camera.proj * camera.view  * scale * vec4(vPos, 1.0);
+    //gl_Position = camera.proj * camera.view * model * vec4(inPosition, 1.0);
+	gl_Position = camera.proj * camera.view  * vec4(vPos, 1.0);
 	
     vertColor = vec3(inColor);
     fragTexCoord = inTexCoord;
 
 	//LOD Effect
-	noiseTexCoord.x = (vPos.x - 0.0) / 9.7f;
-	noiseTexCoord.y = (vPos.y - 0.0) / 9.4f;
+	noiseTexCoord.x = (vPos.x - 0.0) / 10.5f + 0.5f;
+	noiseTexCoord.y = (vPos.y - 0.0) / 10.1f + 0.5f;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
 	
 }

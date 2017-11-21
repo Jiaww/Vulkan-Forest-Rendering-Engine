@@ -5,6 +5,7 @@ layout(set = 0, binding = 0) uniform CameraBufferObject {
     mat4 view;
 	mat4 proj;
 	vec3 camPos;
+	vec3 camDir;
 } camera;
 
 layout(set = 1, binding = 0) uniform ModelBufferObject {
@@ -29,76 +30,53 @@ layout(location = 2) out vec3 worldPosition;
 layout(location = 3) out vec3 worldN;
 layout(location = 4) out vec3 worldB;
 layout(location = 5) out vec3 worldT;
-layout(location = 7) out float vertAmbient;
-
+layout(location = 6) out float vertAmbient;
+layout(location = 7) out float distanceLevel;
+layout(location = 8) out vec2 noiseTexCoord;
+layout(location = 9) out vec3 test;
 
 out gl_PerVertex {
     vec4 gl_Position;
 };
-void ApplyMainBending(inout vec3 vPos, vec2 vWind, float fBendScale){
-	// Calculate the length from the ground, since we'll need it.
-	float fLength = length(vPos);
-	// Bend factor - Wind variation is done on the CPU.
-	float fBF = vPos.y * fBendScale;
-	// Smooth bending factor and increase its nearby height limit.
-	fBF += 1.0;
-	fBF *= fBF;
-	fBF = fBF * fBF - fBF;
-	fBF = fBF * fBF;
-	// Displace position
-	vec3 vNewPos = vPos;
-	vNewPos.xz += vWind.xy * fBF;
-	vPos.xyz = normalize(vNewPos.xyz)* fLength;
+
+mat4 rotateMatrix(vec3 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
 }
 
-
 void main() {
-	mat3 inv_trans_model = transpose(inverse(mat3(model)));
-	vec3 vPos=vec3(model * vec4(inPosition, 1.0f));
+	mat4 rotation;
+	float theta = acos(dot(vec3(0,0,-1), vec3(camera.camDir[0], 0, camera.camDir[2])));
+	rotation = rotateMatrix(vec3(0,1,0), theta);
+	test = vec3(camera.camDir[0], 0.0f, camera.camDir[2]);
+
+	mat4 modelMatrix = model*rotation;
+	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
+	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
 	worldN = normalize(inv_trans_model * inNormal);
 	worldB = normalize(inv_trans_model * inBitangent);
 	worldT = normalize(inv_trans_model * inTangent);
 	vertAmbient = inColor.a;
 
-
-	//Wind
-	vec3 wind_dir = normalize(vec3(0.5, 0, 1));
-    float wind_speed = 8.0;
-    float wave_division_width = 5.0;
-    float wave_info = (cos((dot(vec3(0, 0, 0), wind_dir) - wind_speed * totalTime) / wave_division_width) + 0.7);
-
-	//5.1 Wind
-    //directional alignment 
-    //float fd = 1 - abs(dot(wind_dir, normalize(this_v2 - this_v0)));
-
-    //height ratio
-    //float fr = dot((this_v2 - this_v0), this_up) / this_h;
-
-    //
-	float wind_power = 15.0f;
-    //vec3 w = wind_dir * wind_power * wave_info * fd * fr;
-	vec3 w=wind_dir * wind_power * wave_info*0.05;
-	vec2 Wind=vec2(w.x,w.z);
-
-
-
-	vec3 objectPosition = vec3(0,0,0);
-	vPos -= objectPosition;	// Reset the vertex to base-zero
-	float BendScale=0.0009;
-	ApplyMainBending(vPos, Wind, BendScale);
-	vPos += objectPosition;
-
-	mat4 scale = mat4(1.0);
-	scale[0][0] = 0.01;
-	scale[1][1] = 0.01;
-	scale[2][2] = 0.01;
 	worldPosition = vPos;
 
-    //gl_Position = camera.proj * camera.view * model * scale * vec4(inPosition, 1.0);
-	gl_Position = camera.proj * camera.view  * scale * vec4(vPos, 1.0);
+	gl_Position = camera.proj * camera.view * vec4(vPos, 1.0);
 	
     vertColor = vec3(inColor);
 	//vertColor=vec3(w);
     fragTexCoord = inTexCoord;
 
+//LOD Effect
+	noiseTexCoord.x = (inPosition.x - 0.0) / 22.0f + 0.5f;
+	noiseTexCoord.y = (inPosition.y - 0.0) / 22.0f + 0.5f;
+	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
+	
 }

@@ -35,6 +35,7 @@ public:
     void CreateComputePipeline();
 	void CreateBarkPipeline();
 	void CreateLeafPipeline();
+	void CreateBillboardPipeline();
 
     void CreateFrameResources();
     void DestroyFrameResources();
@@ -76,12 +77,14 @@ private:
 	VkPipelineLayout graphicsPipelineLayout;
 	VkPipelineLayout barkPipelineLayout;
 	VkPipelineLayout leafPipelineLayout;
-    VkPipelineLayout grassPipelineLayout;
+	VkPipelineLayout billboardPipelineLayout;
+	VkPipelineLayout grassPipelineLayout;
     VkPipelineLayout computePipelineLayout;
 
 	VkPipeline graphicsPipeline;
 	VkPipeline barkPipeline;
 	VkPipeline leafPipeline;
+	VkPipeline billboardPipeline;
 	VkPipeline grassPipeline;
     VkPipeline computePipeline;
 

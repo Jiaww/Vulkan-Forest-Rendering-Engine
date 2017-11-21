@@ -5,6 +5,7 @@ layout(set = 0, binding = 0) uniform CameraBufferObject {
     mat4 view;
 	mat4 proj;
 	vec3 camPos;
+	vec3 camDir;
 } camera;
 
 layout(set = 1, binding = 0) uniform ModelBufferObject {
@@ -54,8 +55,13 @@ void ApplyMainBending(inout vec3 vPos, vec2 vWind, float fBendScale){
 
 
 void main() {
-	mat3 inv_trans_model = transpose(inverse(mat3(model)));
-	vec3 vPos=vec3(model * vec4(inPosition, 1.0f));
+	mat4 scale = mat4(1.0);
+	scale[0][0] = 0.015;
+	scale[1][1] = 0.015;
+	scale[2][2] = 0.015;
+	mat4 modelMatrix = model * scale;
+	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
+	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
 	worldN = normalize(inv_trans_model * inNormal);
 	worldB = normalize(inv_trans_model * inBitangent);
 	worldT = normalize(inv_trans_model * inTangent);
@@ -85,26 +91,23 @@ void main() {
 
 	vec3 objectPosition = vec3(0,0,0);
 	vPos -= objectPosition;	// Reset the vertex to base-zero
-	float BendScale=0.0009;
+	float BendScale=0.024;
 	ApplyMainBending(vPos, Wind, BendScale);
 	vPos += objectPosition;
 
-	mat4 scale = mat4(1.0);
-	scale[0][0] = 0.015;
-	scale[1][1] = 0.015;
-	scale[2][2] = 0.015;
+
 	worldPosition = vPos;
 
     //gl_Position = camera.proj * camera.view * model * scale * vec4(inPosition, 1.0);
-	gl_Position = camera.proj * camera.view  * scale * vec4(vPos, 1.0);
+	gl_Position = camera.proj * camera.view  * vec4(vPos, 1.0);
 	
     vertColor = vec3(inColor);
 	//vertColor=vec3(w);
     fragTexCoord = inTexCoord;
 
 //LOD Effect
-	noiseTexCoord.x = (vPos.x - 0.0) / 9.7f;
-	noiseTexCoord.y = (vPos.y - 0.0) / 9.4f;
+	noiseTexCoord.x = (vPos.x - 0.0) / 10.5f + 0.5f;
+	noiseTexCoord.y = (vPos.y - 0.0) / 10.1f + 0.5f;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
 	
 }

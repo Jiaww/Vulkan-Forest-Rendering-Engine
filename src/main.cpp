@@ -185,6 +185,34 @@ int main() {
 		leafNormalImage,
 		leafNormalImageMemory
 	);
+	// Leaf
+	VkImage billboardImage;
+	VkDeviceMemory billboardImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Billboard_png/Billboards_Tex_Tree0.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		billboardImage,
+		billboardImageMemory
+	);
+	VkImage billboardNormalImage;
+	VkDeviceMemory billboardNormalImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Billboard_png/Billboards_Normal_Tex_Tree0.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		billboardNormalImage,
+		billboardNormalImageMemory
+	);
+
 	//Noise
 	VkImage noiseImage;
 	VkDeviceMemory noiseImageMemory;
@@ -236,7 +264,21 @@ int main() {
 	leaf->SetDiffuseMap(leafImage);
 	leaf->SetNormalMap(leafNormalImage);
 	leaf->SetNoiseMap(noiseImage);
-
+	// Billboard
+	float billWidth = 22.0f;
+	float billheigth = 22.0f;
+	Model* billboard = new Model(device, transferCommandPool,
+	{
+		{ { -billWidth / 2.0, billheigth, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.333f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } },
+		{ { -billWidth / 2.0, 0.0f, 0.0f },	{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.333f, 0.333f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } },
+		{ { billWidth / 2.0, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.650f, 0.333f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } },
+		{ { billWidth / 2.0, billheigth, 0.0f },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.650f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } }
+	},
+	{ 1, 2, 0, 0, 2, 3 }
+	);
+	billboard->SetDiffuseMap(billboardImage);
+	billboard->SetNormalMap(billboardNormalImage);
+	billboard->SetNoiseMap(noiseImage);
 	// Blades
 	Blades* blades = new Blades(device, transferCommandPool, planeDim);
 
@@ -246,6 +288,7 @@ int main() {
 	scene->AddModel(plane);
 	scene->AddModel(bark);
 	scene->AddModel(leaf);
+	scene->AddModel(billboard);
 	scene->AddBlades(blades);
 
 	renderer = new Renderer(device, swapChain, scene, camera);
