@@ -7,6 +7,7 @@
 #include "Vertex.h"
 #include "Device.h"
 
+
 struct ModelBufferObject {
     glm::mat4 modelMatrix;
 };
@@ -22,6 +23,7 @@ protected:
     std::vector<uint32_t> indices;
     VkBuffer indexBuffer;
     VkDeviceMemory indexBufferMemory;
+
 
     VkBuffer modelBuffer;
     VkDeviceMemory modelBufferMemory;
@@ -68,3 +70,6 @@ public:
 	VkImageView GetNoiseMapView() const;
 	VkSampler GetNoiseMapSampler() const;
 };
+
+
+

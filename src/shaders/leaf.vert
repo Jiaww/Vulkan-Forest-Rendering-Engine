@@ -23,6 +23,9 @@ layout(location = 3) in vec3 inNormal;
 layout(location = 4) in vec3 inTangent;
 layout(location = 5) in vec3 inBitangent;
 
+//instancing buffer
+layout(location = 6) in vec3 inTransformPos;
+
 layout(location = 0) out vec3 vertColor;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 worldPosition;
@@ -117,13 +120,21 @@ void ApplyDetailBending(
 
 void main() {
 	mat4 scale = mat4(1.0);
+	mat4 translate=mat4(1.0);
+	vec3 objectPosition =vec3(0,0,0);
+	translate[3][0]=inTransformPos.x;
+	translate[3][1]=inTransformPos.y;
+	translate[3][2]=inTransformPos.z;
+
 	scale[0][0] = 0.015;
 	scale[1][1] = 0.015;
 	scale[2][2] = 0.015;
-	mat4 modelMatrix = model * scale;
+	mat4 modelMatrix = model * translate* scale;
 
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
 	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
+	objectPosition=vec3(modelMatrix * vec4(objectPosition, 1.0f));
+
 	vec3 normalDir=normalize(inv_trans_model * inNormal);
 	worldN = normalDir;
 	worldB = normalize(inv_trans_model * inBitangent);
@@ -144,7 +155,7 @@ void main() {
 
 
 
-	vec3 objectPosition = vec3(0,0,0);
+
 	vPos -= objectPosition;	// Reset the vertex to base-zero
 	float BendScale=0.024;
 	ApplyMainBending(vPos, Wind, BendScale);

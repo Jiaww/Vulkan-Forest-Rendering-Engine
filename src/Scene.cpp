@@ -15,12 +15,22 @@ const std::vector<Blades*>& Scene::GetBlades() const {
   return blades;
 }
 
+const std::vector<InstanceBuffer*>& Scene::GetInstanceBuffer() const
+{
+	return instanceData;
+}
+
 void Scene::AddModel(Model* model) {
     models.push_back(model);
 }
 
 void Scene::AddBlades(Blades* blades) {
   this->blades.push_back(blades);
+}
+
+void Scene::AddInstanceBuffer(InstanceBuffer * Data)
+{
+	instanceData.push_back(Data);
 }
 
 void Scene::UpdateTime() {

@@ -221,3 +221,4 @@ VkImageView Model::GetNoiseMapView() const {
 VkSampler Model::GetNoiseMapSampler() const {
 	return noiseMapSampler;
 }
+

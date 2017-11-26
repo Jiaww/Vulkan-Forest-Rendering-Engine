@@ -59,7 +59,7 @@ void Camera::UpdateViewMatrix() {
 	cameraBufferObject.viewMatrix = glm::lookAt(eye, ref, up);
 	cameraBufferObject.camPos = eye;
 	cameraBufferObject.camDir = look;
-	std::cout << look.x << " "<< look.y << " " << look.z << std::endl;
+	//std::cout << look.x << " "<< look.y << " " << look.z << std::endl;
 	memcpy(mappedData, &cameraBufferObject, sizeof(CameraBufferObject));
 }
 void Camera::RecomputeAttributes()

@@ -24,8 +24,8 @@ struct Vertex {
 	}
 
 	// Get the attribute descriptions, which describe how to handle vertex input
-	static std::array<VkVertexInputAttributeDescription, 6> getAttributeDescriptions() {
-		std::array<VkVertexInputAttributeDescription, 6> attributeDescriptions = {};
+	static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions() {
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions(6);
 
 		// Position
 		attributeDescriptions[0].binding = 0;

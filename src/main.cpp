@@ -55,9 +55,9 @@ namespace {
 		if (leftMouseDown) {
 
 			camera->CameraRotate(deltaX, deltaY);
-			/*camera->UpdateOrbit(deltaX, deltaY, 0.0f);
-			previousX = xPosition;
-			previousY = yPosition;*/
+			//camera->UpdateOrbit(deltaX, deltaY, 0.0f);
+			//previousX = xPosition;
+			//previousY = yPosition;
 		}
 		else if (rightMouseDown) {
 
@@ -279,6 +279,14 @@ int main() {
 	billboard->SetDiffuseMap(billboardImage);
 	billboard->SetNormalMap(billboardNormalImage);
 	billboard->SetNoiseMap(noiseImage);
+
+	//Instance Data
+	std::vector<InstanceData> instanceData;
+	instanceData.push_back(InstanceData(glm::vec3(10, 0, 0)));
+	instanceData.push_back(InstanceData(glm::vec3(-10, 0, 0)));
+	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData);
+
+
 	// Blades
 	Blades* blades = new Blades(device, transferCommandPool, planeDim);
 
@@ -289,6 +297,7 @@ int main() {
 	scene->AddModel(bark);
 	scene->AddModel(leaf);
 	scene->AddModel(billboard);
+	scene->AddInstanceBuffer(instanceBuffer);
 	scene->AddBlades(blades);
 
 	renderer = new Renderer(device, swapChain, scene, camera);
@@ -321,6 +330,10 @@ int main() {
 
 	delete scene;
 	delete plane;
+	delete bark;
+	delete leaf;
+	delete billboard;
+	delete instanceBuffer;
 	delete blades;
 	delete camera;
 	delete renderer;
