@@ -19,14 +19,17 @@ const std::vector<Blades*>& Scene::GetBlades() const {
   return blades;
 }
 
+<<<<<<< HEAD
 const std::vector<InstanceBuffer*>& Scene::GetInstanceBuffer() const
 {
 	return instanceData;
 }
 
+=======
 void Scene::SetTerrain(Terrain* terrain) {
 	this->terrain = terrain;
 }
+>>>>>>> master
 void Scene::AddModel(Model* model) {
     models.push_back(model);
 }
