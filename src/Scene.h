@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "Blades.h"
 #include "InstanceData.h"
+#include "Terrain.h"
 
 using namespace std::chrono;
 
@@ -24,6 +25,7 @@ private:
     
     void* mappedData;
 
+	Terrain* terrain;
     std::vector<Model*> models;
     std::vector<Blades*> blades;
 	std::vector<InstanceBuffer*> instanceData;
@@ -36,10 +38,12 @@ public:
     Scene(Device* device);
     ~Scene();
 
+	const Terrain* GetTerrain() const;
     const std::vector<Model*>& GetModels() const;
     const std::vector<Blades*>& GetBlades() const;
 	const std::vector<InstanceBuffer*>& GetInstanceBuffer() const;
     
+	void SetTerrain(Terrain* terrain);
     void AddModel(Model* model);
     void AddBlades(Blades* blades);
 	void AddInstanceBuffer(InstanceBuffer* Data);

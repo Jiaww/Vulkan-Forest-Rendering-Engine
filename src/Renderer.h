@@ -15,27 +15,32 @@ public:
 
     void CreateRenderPass();
 
+// Funcs: Descriptor Set Layout
     void CreateCameraDescriptorSetLayout();
     void CreateModelDescriptorSetLayout();
     void CreateGrassDescriptorSetLayout();
 	void CreateTimeDescriptorSetLayout();
-    
 	void CreateComputeDescriptorSetLayout();
+	void CreateTerrainDescriptorSetLayout();
 
     void CreateDescriptorPool();
 
+// Funcs: Descriptor Set
     void CreateCameraDescriptorSet();
     void CreateModelDescriptorSets();
     void CreateGrassDescriptorSets();
     void CreateTimeDescriptorSet();
     void CreateComputeDescriptorSets();
+	void CreateTerrainDescriptorSet();
 
+// Funcs: Pipeline(Correspond to how many different shaders)
     void CreateGraphicsPipeline();
     void CreateGrassPipeline();
     void CreateComputePipeline();
 	void CreateBarkPipeline();
 	void CreateLeafPipeline();
 	void CreateBillboardPipeline();
+	void CreateTerrainPipeline();
 
     void CreateFrameResources();
     void DestroyFrameResources();
@@ -57,29 +62,32 @@ private:
     VkCommandPool computeCommandPool;
 
     VkRenderPass renderPass;
-
+// Vars: Descriptor Set Layout
 	VkDescriptorSetLayout cameraDescriptorSetLayout;
 	VkDescriptorSetLayout modelDescriptorSetLayout;
 	VkDescriptorSetLayout grassDescriptorSetLayout;
 	VkDescriptorSetLayout timeDescriptorSetLayout;
-
 	VkDescriptorSetLayout computeDescriptorSetLayout;
+	VkDescriptorSetLayout terrainDescriptorSetLayout;
 
 	VkDescriptorPool descriptorPool;
 
+// Vars: Descriptor Set
 	VkDescriptorSet cameraDescriptorSet;
 	std::vector<VkDescriptorSet> modelDescriptorSets;
 	VkDescriptorSet timeDescriptorSet;
-
 	std::vector<VkDescriptorSet> grassDescriptorSets;
 	std::vector<VkDescriptorSet> computeDescriptorSets;
+	VkDescriptorSet terrainDescriptorSet;
 
+// Vars: Pipeline Layout and pipeline
 	VkPipelineLayout graphicsPipelineLayout;
 	VkPipelineLayout barkPipelineLayout;
 	VkPipelineLayout leafPipelineLayout;
 	VkPipelineLayout billboardPipelineLayout;
 	VkPipelineLayout grassPipelineLayout;
-    VkPipelineLayout computePipelineLayout;
+	VkPipelineLayout computePipelineLayout;
+	VkPipelineLayout terrainPipelineLayout;
 
 	VkPipeline graphicsPipeline;
 	VkPipeline barkPipeline;
@@ -87,6 +95,7 @@ private:
 	VkPipeline billboardPipeline;
 	VkPipeline grassPipeline;
     VkPipeline computePipeline;
+	VkPipeline terrainPipeline;
 
     std::vector<VkImageView> imageViews;
     VkImage depthImage;

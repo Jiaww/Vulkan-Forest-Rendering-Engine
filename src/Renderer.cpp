@@ -17,24 +17,35 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 
 	CreateCommandPools();
 	CreateRenderPass();
+// Funcs: Descriptor Set Layout
 	CreateCameraDescriptorSetLayout();
 	CreateModelDescriptorSetLayout();
 	CreateGrassDescriptorSetLayout();
 	CreateTimeDescriptorSetLayout();
 	CreateComputeDescriptorSetLayout();
+	CreateTerrainDescriptorSetLayout();
+
 	CreateDescriptorPool();
+
+// Funcs: Descriptor Set
 	CreateCameraDescriptorSet();
 	CreateModelDescriptorSets();
 	CreateGrassDescriptorSets();
 	CreateTimeDescriptorSet();
 	CreateComputeDescriptorSets();
+	CreateTerrainDescriptorSet();
+
 	CreateFrameResources();
+	
+// Funcs: Pipeline(Correspond to how many different shaders)
 	CreateGraphicsPipeline();
 	CreateBarkPipeline();
 	CreateLeafPipeline();
 	CreateBillboardPipeline();
 	CreateGrassPipeline();
 	CreateComputePipeline();
+	CreateTerrainPipeline();
+
 	RecordCommandBuffers();
 	RecordComputeCommandBuffer();
 }
@@ -274,6 +285,41 @@ void Renderer::CreateComputeDescriptorSetLayout() {
 	}
 }
 
+void Renderer::CreateTerrainDescriptorSetLayout() {
+	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
+	uboLayoutBinding.binding = 0;
+	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	uboLayoutBinding.descriptorCount = 1;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	uboLayoutBinding.pImmutableSamplers = nullptr;
+
+	VkDescriptorSetLayoutBinding diffuseSamplerLayoutBinding = {};
+	diffuseSamplerLayoutBinding.binding = 1;
+	diffuseSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	diffuseSamplerLayoutBinding.descriptorCount = 1;
+	diffuseSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	diffuseSamplerLayoutBinding.pImmutableSamplers = nullptr;
+
+	VkDescriptorSetLayoutBinding normalSamplerLayoutBinding = {};
+	normalSamplerLayoutBinding.binding = 2;
+	normalSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	normalSamplerLayoutBinding.descriptorCount = 1;
+	normalSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	normalSamplerLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding, diffuseSamplerLayoutBinding, normalSamplerLayoutBinding };
+
+	// Create the descriptor set layout
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(logicalDevice, &layoutInfo, nullptr, &terrainDescriptorSetLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create descriptor set layout");
+	}
+}
+
 void Renderer::CreateDescriptorPool() {
 	// Describe which descriptor types that the descriptor sets will contain
 	std::vector<VkDescriptorPoolSize> poolSizes = {
@@ -289,15 +335,19 @@ void Renderer::CreateDescriptorPool() {
 		// Time (compute)
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
 
-		// TODO: Add any additional types and counts of descriptors you will need to allocate
+		// Compute
 		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER , 3 * (uint32_t)scene->GetBlades().size() },
+
+		// Terrain
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 2 },
 	};
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 8;
+	poolInfo.maxSets = 9;
 
 	if (vkCreateDescriptorPool(logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool");
@@ -564,6 +614,67 @@ void Renderer::CreateComputeDescriptorSets() {
 		// Update descriptor sets
 		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
+}
+
+void Renderer::CreateTerrainDescriptorSet() {
+	// Describe the desciptor set
+	VkDescriptorSetLayout layouts[] = { terrainDescriptorSetLayout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(1);
+	allocInfo.pSetLayouts = layouts;
+
+	// Allocate descriptor set
+	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, &terrainDescriptorSet) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate descriptor set");
+	}
+
+	std::vector<VkWriteDescriptorSet> descriptorWrites(3);
+
+	VkDescriptorBufferInfo modelBufferInfo = {};
+	modelBufferInfo.buffer = scene->GetTerrain()->GetModelBuffer();
+	modelBufferInfo.offset = 0;
+	modelBufferInfo.range = sizeof(ModelBufferObject);
+
+	// Bind image and sampler resources to the descriptor
+	VkDescriptorImageInfo diffuseMapInfo = {};
+	diffuseMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	diffuseMapInfo.imageView = scene->GetTerrain()->GetDiffuseMapView();
+	diffuseMapInfo.sampler = scene->GetTerrain()->GetDiffuseMapSampler();
+	VkDescriptorImageInfo normalMapInfo = {};
+	normalMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	normalMapInfo.imageView = scene->GetTerrain()->GetNormalMapView();
+	normalMapInfo.sampler = scene->GetTerrain()->GetNormalMapSampler();
+
+	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[0].dstSet = terrainDescriptorSet;
+	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstArrayElement = 0;
+	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrites[0].descriptorCount = 1;
+	descriptorWrites[0].pBufferInfo = &modelBufferInfo;
+	descriptorWrites[0].pImageInfo = nullptr;
+	descriptorWrites[0].pTexelBufferView = nullptr;
+
+	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[1].dstSet = terrainDescriptorSet;
+	descriptorWrites[1].dstBinding = 1;
+	descriptorWrites[1].dstArrayElement = 0;
+	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[1].descriptorCount = 1;
+	descriptorWrites[1].pImageInfo = &diffuseMapInfo;
+
+	descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[2].dstSet = terrainDescriptorSet;
+	descriptorWrites[2].dstBinding = 2;
+	descriptorWrites[2].dstArrayElement = 0;
+	descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[2].descriptorCount = 1;
+	descriptorWrites[2].pImageInfo = &normalMapInfo;
+
+	// Update descriptor sets
+	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 void Renderer::CreateGraphicsPipeline() {
@@ -962,7 +1073,7 @@ void Renderer::CreateLeafPipeline() {
 	rasterizer.rasterizerDiscardEnable = VK_FALSE;
 	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 	rasterizer.lineWidth = 1.0f;
-	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+	rasterizer.cullMode = VK_CULL_MODE_NONE;
 	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.depthBiasEnable = VK_FALSE;
 	rasterizer.depthBiasConstantFactor = 0.0f;
@@ -1447,6 +1558,165 @@ void Renderer::CreateComputePipeline() {
 	vkDestroyShaderModule(logicalDevice, computeShaderModule, nullptr);
 }
 
+void Renderer::CreateTerrainPipeline() {
+	VkShaderModule vertShaderModule = ShaderModule::Create("shaders/terrain.vert.spv", logicalDevice);
+	VkShaderModule fragShaderModule = ShaderModule::Create("shaders/terrain.frag.spv", logicalDevice);
+
+	// Assign each shader module to the appropriate stage in the pipeline
+	VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
+	vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+	vertShaderStageInfo.module = vertShaderModule;
+	vertShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo fragShaderStageInfo = {};
+	fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	fragShaderStageInfo.module = fragShaderModule;
+	fragShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+	// --- Set up fixed-function stages ---
+
+	// Vertex input
+	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
+	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+	auto bindingDescription = Vertex::getBindingDescription();
+	auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
+	vertexInputInfo.vertexBindingDescriptionCount = 1;
+	vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+	// Input assembly
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
+	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	inputAssembly.primitiveRestartEnable = VK_FALSE;
+
+	// Viewports and Scissors (rectangles that define in which regions pixels are stored)
+	VkViewport viewport = {};
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = static_cast<float>(swapChain->GetVkExtent().width);
+	viewport.height = static_cast<float>(swapChain->GetVkExtent().height);
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+
+	VkRect2D scissor = {};
+	scissor.offset = { 0, 0 };
+	scissor.extent = swapChain->GetVkExtent();
+
+	VkPipelineViewportStateCreateInfo viewportState = {};
+	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	viewportState.viewportCount = 1;
+	viewportState.pViewports = &viewport;
+	viewportState.scissorCount = 1;
+	viewportState.pScissors = &scissor;
+
+	// Rasterizer
+	VkPipelineRasterizationStateCreateInfo rasterizer = {};
+	rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterizer.depthClampEnable = VK_FALSE;
+	rasterizer.rasterizerDiscardEnable = VK_FALSE;
+	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+	rasterizer.lineWidth = 1.0f;
+	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	rasterizer.depthBiasEnable = VK_FALSE;
+	rasterizer.depthBiasConstantFactor = 0.0f;
+	rasterizer.depthBiasClamp = 0.0f;
+	rasterizer.depthBiasSlopeFactor = 0.0f;
+
+	// Multisampling (turned off here)
+	VkPipelineMultisampleStateCreateInfo multisampling = {};
+	multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	multisampling.sampleShadingEnable = VK_FALSE;
+	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+	multisampling.minSampleShading = 1.0f;
+	multisampling.pSampleMask = nullptr;
+	multisampling.alphaToCoverageEnable = VK_FALSE;
+	multisampling.alphaToOneEnable = VK_FALSE;
+
+	// Depth testing
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	depthStencil.depthTestEnable = VK_TRUE;
+	depthStencil.depthWriteEnable = VK_TRUE;
+	depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+	depthStencil.depthBoundsTestEnable = VK_FALSE;
+	depthStencil.minDepthBounds = 0.0f;
+	depthStencil.maxDepthBounds = 1.0f;
+	depthStencil.stencilTestEnable = VK_FALSE;
+
+	// Color blending (turned off here, but showing options for learning)
+	// --> Configuration per attached framebuffer
+	VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.blendEnable = VK_FALSE;
+	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+	colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+	// --> Global color blending settings
+	VkPipelineColorBlendStateCreateInfo colorBlending = {};
+	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlending.logicOpEnable = VK_FALSE;
+	colorBlending.logicOp = VK_LOGIC_OP_COPY;
+	colorBlending.attachmentCount = 1;
+	colorBlending.pAttachments = &colorBlendAttachment;
+	colorBlending.blendConstants[0] = 0.0f;
+	colorBlending.blendConstants[1] = 0.0f;
+	colorBlending.blendConstants[2] = 0.0f;
+	colorBlending.blendConstants[3] = 0.0f;
+
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, terrainDescriptorSetLayout };
+
+	// Pipeline layout: used to specify uniform values
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+	pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+	pipelineLayoutInfo.pushConstantRangeCount = 0;
+	pipelineLayoutInfo.pPushConstantRanges = 0;
+
+	if (vkCreatePipelineLayout(logicalDevice, &pipelineLayoutInfo, nullptr, &terrainPipelineLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create pipeline layout");
+	}
+
+	// --- Create graphics pipeline ---
+	VkGraphicsPipelineCreateInfo pipelineInfo = {};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount = 2;
+	pipelineInfo.pStages = shaderStages;
+	pipelineInfo.pVertexInputState = &vertexInputInfo;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pViewportState = &viewportState;
+	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pMultisampleState = &multisampling;
+	pipelineInfo.pDepthStencilState = &depthStencil;
+	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.pDynamicState = nullptr;
+	pipelineInfo.layout = terrainPipelineLayout;
+	pipelineInfo.renderPass = renderPass;
+	pipelineInfo.subpass = 0;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+	pipelineInfo.basePipelineIndex = -1;
+
+	if (vkCreateGraphicsPipelines(logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &terrainPipeline) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create graphics pipeline");
+	}
+
+	vkDestroyShaderModule(logicalDevice, vertShaderModule, nullptr);
+	vkDestroyShaderModule(logicalDevice, fragShaderModule, nullptr);
+}
+
 void Renderer::CreateFrameResources() {
 	imageViews.resize(swapChain->GetCount());
 
@@ -1549,6 +1819,9 @@ void Renderer::RecreateFrameResources() {
 	CreateBarkPipeline();
 	CreateLeafPipeline();
 	CreateGrassPipeline();
+	CreateComputePipeline();
+	CreateBillboardPipeline();
+	CreateTerrainPipeline();
 	RecordCommandBuffers();
 }
 
@@ -1650,6 +1923,28 @@ void Renderer::RecordCommandBuffers() {
 		vkCmdPipelineBarrier(commandBuffers[i], VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
 
 		vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+		//Terrain: terrain
+		{
+			// Bind the terrain pipeline
+			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipeline);
+
+			// Bind the vertex and index buffers
+			VkBuffer vertexBuffers[] = { scene->GetTerrain()->getVertexBuffer() };
+			VkDeviceSize offsets[] = { 0 };
+			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
+			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetTerrain()->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+			// Bind the descriptor set for terrain
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipelineLayout, 1, 1, &terrainDescriptorSet, 0, nullptr);
+
+			// Draw
+			std::vector<uint32_t> indices = scene->GetTerrain()->getIndices();
+			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+		}
 
 		//Planes: graphics
 		{

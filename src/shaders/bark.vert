@@ -4,8 +4,8 @@
 layout(set = 0, binding = 0) uniform CameraBufferObject {
     mat4 view;
 	mat4 proj;
-	vec3 camPos;
-	vec3 camDir;
+	vec4 camPos;
+	vec4 camDir;
 } camera;
 
 layout(set = 1, binding = 0) uniform ModelBufferObject {
@@ -84,15 +84,7 @@ void main() {
     float wind_speed = 8.0;
     float wave_division_width = 5.0;
     float wave_info = (cos((dot(vec3(0, 0, 0), wind_dir) - wind_speed * totalTime) / wave_division_width) + 0.7);
-
-	//5.1 Wind
-    //directional alignment 
-    //float fd = 1 - abs(dot(wind_dir, normalize(this_v2 - this_v0)));
-
-    //height ratio
-    //float fr = dot((this_v2 - this_v0), this_up) / this_h;
-
-    //
+	
 	float wind_power = 15.0f;
     //vec3 w = wind_dir * wind_power * wave_info * fd * fr;
 	vec3 w=wind_dir * wind_power * wave_info*0.05;
@@ -118,7 +110,7 @@ void main() {
 
 //LOD Effect
 	noiseTexCoord.x = (vPos.x - 0.0) / 10.5f + 0.5f;
-	noiseTexCoord.y = (vPos.y - 0.0) / 10.1f + 0.5f;
+	noiseTexCoord.y = (vPos.y - 0.0) / 20.2f;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
 	
 }

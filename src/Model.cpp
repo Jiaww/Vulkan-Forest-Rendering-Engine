@@ -46,6 +46,14 @@ Model::~Model() {
 	if (normalMapSampler != VK_NULL_HANDLE) {
 		vkDestroySampler(device->GetVkDevice(), normalMapSampler, nullptr);
 	}
+
+	if (noiseMapView != VK_NULL_HANDLE) {
+		vkDestroyImageView(device->GetVkDevice(), noiseMapView, nullptr);
+	}
+
+	if (noiseMapSampler != VK_NULL_HANDLE) {
+		vkDestroySampler(device->GetVkDevice(), noiseMapSampler, nullptr);
+	}
 }
 
 void Model::SetDiffuseMap(VkImage texture) {
