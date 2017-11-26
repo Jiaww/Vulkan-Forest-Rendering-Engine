@@ -11,7 +11,7 @@ layout(location = 0) out vec4 outColor;
 void main() {
 	// Local normal, in tangent space
 	vec3 TextureNormal_tangentspace;
-	TextureNormal_tangentspace = (texture( normalSampler, fragTexCoord ).rgb*2.0f - 1.0f);
+	TextureNormal_tangentspace = normalize(texture( normalSampler, fragTexCoord ).rgb*2.0f - 1.0f);
 	vec3 TextureNormal_worldspace;
 	TextureNormal_worldspace.y = TextureNormal_tangentspace.z;
 	TextureNormal_worldspace.z = -TextureNormal_tangentspace.y;

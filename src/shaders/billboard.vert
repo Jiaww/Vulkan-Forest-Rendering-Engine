@@ -51,9 +51,16 @@ mat4 rotateMatrix(vec3 axis, float angle)
                 0.0,                                0.0,                                0.0,                                1.0);
 }
 
+float atan2(in float y, in float x)
+{
+    bool s = (abs(x) > abs(y));
+    return mix(3.1415926/2.0 - atan(x,y), atan(y,x), s);
+}
+
 void main() {
 	mat4 rotation;
-	float theta = acos(dot(vec3(0,0,-1), vec3(camera.camDir[0], 0, camera.camDir[2])));
+	//camDir is the right direction of the camera
+	float theta = atan2(camera.camDir.z, camera.camDir.x);
 	rotation = rotateMatrix(vec3(0,1,0), theta);
 
 	mat4 modelMatrix = model*rotation;
@@ -73,8 +80,8 @@ void main() {
     fragTexCoord = inTexCoord;
 
 //LOD Effect
-	noiseTexCoord.x = (inPosition.x - 0.0) / 20.0f + 0.5f;
-	noiseTexCoord.y = (inPosition.y - 0.0) / 20.0f + 0.5f;
+	noiseTexCoord.x = (inPosition.x - 0.0) / 12.0f + 0.5f;
+	noiseTexCoord.y = (inPosition.y - 0.0) / 21.0f;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
 	
 }

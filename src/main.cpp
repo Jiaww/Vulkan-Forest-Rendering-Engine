@@ -300,7 +300,7 @@ int main() {
 	leaf->SetNormalMap(leafNormalImage);
 	leaf->SetNoiseMap(noiseImage);
 	// Billboard
-	float billWidth = 20.0f;
+	float billWidth = 24.0f;
 	float billheigth = 20.0f;
 	Model* billboard = new Model(device, transferCommandPool,
 	{

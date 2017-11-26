@@ -99,7 +99,7 @@ void main() {
 
 //LOD Effect
 	noiseTexCoord.x = (vPos.x - 0.0) / 10.5f + 0.5f;
-	noiseTexCoord.y = (vPos.y - 0.0) / 10.1f + 0.5f;
+	noiseTexCoord.y = (vPos.y - 0.0) / 20.2f;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
 	
 }
