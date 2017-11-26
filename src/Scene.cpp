@@ -7,6 +7,10 @@ Scene::Scene(Device* device) : device(device) {
     memcpy(mappedData, &time, sizeof(Time));
 }
 
+const Terrain* Scene::GetTerrain() const {
+	return terrain;
+}
+
 const std::vector<Model*>& Scene::GetModels() const {
     return models;
 }
@@ -15,6 +19,9 @@ const std::vector<Blades*>& Scene::GetBlades() const {
   return blades;
 }
 
+void Scene::SetTerrain(Terrain* terrain) {
+	this->terrain = terrain;
+}
 void Scene::AddModel(Model* model) {
     models.push_back(model);
 }

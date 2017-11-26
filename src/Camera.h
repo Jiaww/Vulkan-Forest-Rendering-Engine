@@ -7,8 +7,8 @@
 struct CameraBufferObject {
   glm::mat4 viewMatrix;
   glm::mat4 projectionMatrix;
-  glm::vec3 camPos;
-  glm::vec3 camDir;
+  glm::vec4 camPos;
+  glm::vec4 camDir;
 };
 
 class Camera {

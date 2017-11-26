@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "Image.h"
 #include "FbxLoader.h"
+#include "Terrain.h"
 
 Device* device;
 SwapChain* swapChain;
@@ -118,6 +119,34 @@ int main() {
 	}
 
 // Texture Loading
+	// Terrain
+	VkImage terrainImage;
+	VkDeviceMemory terrainImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/terrain/diffuseMap03.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		terrainImage,
+		terrainImageMemory
+	);
+	VkImage terrainNormalImage;
+	VkDeviceMemory terrainNormalImageMemory;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/terrain/normalMap03.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		terrainNormalImage,
+		terrainNormalImageMemory
+	);
+	// G
 	VkImage grassImage;
 	VkDeviceMemory grassImageMemory;
 	Image::FromFile(device,
@@ -228,6 +257,12 @@ int main() {
 		noiseImageMemory
 	);
 
+// Terrain Initializations
+	char* terrainPath = "../../media/terrain/heightMap03.png";
+	char* rawPath = "../../media/terrain/heightMap03.r16";
+	Terrain *terrain = Terrain::LoadTerrain(device, transferCommandPool, terrainPath, rawPath, 512.0f);
+	terrain->SetDiffuseMap(terrainImage);
+	terrain->SetNormalMap(terrainNormalImage);
 // Model Initializations
 	// Plane
 	float planeDim = 50.f;
@@ -265,8 +300,8 @@ int main() {
 	leaf->SetNormalMap(leafNormalImage);
 	leaf->SetNoiseMap(noiseImage);
 	// Billboard
-	float billWidth = 22.0f;
-	float billheigth = 22.0f;
+	float billWidth = 20.0f;
+	float billheigth = 20.0f;
 	Model* billboard = new Model(device, transferCommandPool,
 	{
 		{ { -billWidth / 2.0, billheigth, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.333f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } },
@@ -284,12 +319,16 @@ int main() {
 
 	vkDestroyCommandPool(device->GetVkDevice(), transferCommandPool, nullptr);
 
+// Scene Initialization
 	Scene* scene = new Scene(device);
+	scene->SetTerrain(terrain);
 	scene->AddModel(plane);
 	scene->AddModel(bark);
 	scene->AddModel(leaf);
 	scene->AddModel(billboard);
 	scene->AddBlades(blades);
+
+	float yy = scene->GetTerrain()->GetHeight(0.25,0.25);
 
 	renderer = new Renderer(device, swapChain, scene, camera);
 

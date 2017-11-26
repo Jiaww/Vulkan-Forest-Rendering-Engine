@@ -4,8 +4,8 @@
 layout(set = 0, binding = 0) uniform CameraBufferObject {
     mat4 view;
 	mat4 proj;
-	vec3 camPos;
-	vec3 camDir;
+	vec4 camPos;
+	vec4 camDir;
 } camera;
 
 layout(set = 1, binding = 0) uniform ModelBufferObject {
@@ -33,7 +33,6 @@ layout(location = 5) out vec3 worldT;
 layout(location = 6) out float vertAmbient;
 layout(location = 7) out float distanceLevel;
 layout(location = 8) out vec2 noiseTexCoord;
-layout(location = 9) out vec3 test;
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -56,7 +55,6 @@ void main() {
 	mat4 rotation;
 	float theta = acos(dot(vec3(0,0,-1), vec3(camera.camDir[0], 0, camera.camDir[2])));
 	rotation = rotateMatrix(vec3(0,1,0), theta);
-	test = vec3(camera.camDir[0], 0.0f, camera.camDir[2]);
 
 	mat4 modelMatrix = model*rotation;
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
@@ -75,8 +73,8 @@ void main() {
     fragTexCoord = inTexCoord;
 
 //LOD Effect
-	noiseTexCoord.x = (inPosition.x - 0.0) / 22.0f + 0.5f;
-	noiseTexCoord.y = (inPosition.y - 0.0) / 22.0f + 0.5f;
+	noiseTexCoord.x = (inPosition.x - 0.0) / 20.0f + 0.5f;
+	noiseTexCoord.y = (inPosition.y - 0.0) / 20.0f + 0.5f;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
 	
 }

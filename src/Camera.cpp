@@ -26,8 +26,8 @@ Camera::Camera(Device* device, float aspectRatio,int w,int h) : device(device),
     cameraBufferObject.viewMatrix = glm::lookAt(eye,ref,up);
     cameraBufferObject.projectionMatrix = glm::perspective(glm::radians(fovy), aspect, near_clip, far_clip);
     cameraBufferObject.projectionMatrix[1][1] *= -1; // y-coordinate is flipped
-	cameraBufferObject.camPos = eye;
-	cameraBufferObject.camDir = look;
+	cameraBufferObject.camPos = glm::vec4(eye,1.0f);
+	cameraBufferObject.camDir = glm::vec4(look,1.0f);
 
     BufferUtils::CreateBuffer(device, sizeof(CameraBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, bufferMemory);
     vkMapMemory(device->GetVkDevice(), bufferMemory, 0, sizeof(CameraBufferObject), 0, &mappedData);
@@ -50,16 +50,16 @@ void Camera::UpdateOrbit(float deltaX, float deltaY, float deltaZ) {
 	glm::mat4 finalTransform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f)) * rotation * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, r));
 
     cameraBufferObject.viewMatrix = glm::inverse(finalTransform);
-	cameraBufferObject.camPos = eye;
-	cameraBufferObject.camDir = look;
+	cameraBufferObject.camPos = glm::vec4(eye, 1.0f);
+	cameraBufferObject.camDir = glm::vec4(look, 1.0f);
     memcpy(mappedData, &cameraBufferObject, sizeof(CameraBufferObject));
 }
 
 void Camera::UpdateViewMatrix() {
 	cameraBufferObject.viewMatrix = glm::lookAt(eye, ref, up);
-	cameraBufferObject.camPos = eye;
-	cameraBufferObject.camDir = look;
-	std::cout << look.x << " "<< look.y << " " << look.z << std::endl;
+	cameraBufferObject.camPos = glm::vec4(eye,1.0f);
+	cameraBufferObject.camDir = glm::vec4(look,1.0f);
+	//std::cout << look.x << " "<< look.y << " " << look.z << std::endl;
 	memcpy(mappedData, &cameraBufferObject, sizeof(CameraBufferObject));
 }
 void Camera::RecomputeAttributes()

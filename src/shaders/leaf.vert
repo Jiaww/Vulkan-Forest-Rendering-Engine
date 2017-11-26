@@ -4,8 +4,8 @@
 layout(set = 0, binding = 0) uniform CameraBufferObject {
     mat4 view;
 	mat4 proj;
-	vec3 camPos;
-	vec3 camDir;
+	vec4 camPos;
+	vec4 camDir;
 } camera;
 
 layout(set = 1, binding = 0) uniform ModelBufferObject {
