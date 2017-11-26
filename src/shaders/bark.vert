@@ -60,7 +60,7 @@ void ApplyMainBending(inout vec3 vPos, vec2 vWind, float fBendScale){
 void main() {
 	mat4 scale = mat4(1.0);
 	mat4 translate=mat4(1.0);
-	vec3 objectPosition =vec3(0,0,0);
+	vec3 objectPosition =vec3(inTransformPos.x, inTransformPos.y, inTransformPos.z);
 	translate[3][0]=inTransformPos.x;
 	translate[3][1]=inTransformPos.y;
 	translate[3][2]=inTransformPos.z;
@@ -71,7 +71,6 @@ void main() {
 	mat4 modelMatrix = model * translate* scale;
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
 	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
-	objectPosition=vec3(modelMatrix * vec4(objectPosition, 1.0f));
 
 	worldN = normalize(inv_trans_model * inNormal);
 	worldB = normalize(inv_trans_model * inBitangent);

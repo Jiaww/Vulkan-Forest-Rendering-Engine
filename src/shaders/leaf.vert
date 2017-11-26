@@ -42,10 +42,10 @@ out gl_PerVertex {
 
 // The suggested frequencies from the Crytek paper
 // The side-to-side motion has a much higher frequency than the up-and-down.
-#define SIDE_TO_SIDE_FREQ1 1.975
-#define SIDE_TO_SIDE_FREQ2 0.793
-#define UP_AND_DOWN_FREQ1 0.375
-#define UP_AND_DOWN_FREQ2 0.193
+#define SIDE_TO_SIDE_FREQ1 1.475
+#define SIDE_TO_SIDE_FREQ2 0.593
+#define UP_AND_DOWN_FREQ1 0.275
+#define UP_AND_DOWN_FREQ2 0.123
 
 vec4 SmoothCurve( vec4 x ) {
   return x * x * ( vec4(3.0f,3.0f,3.0f,3.0f) - 2.0 * x ) ;
@@ -121,7 +121,7 @@ void ApplyDetailBending(
 void main() {
 	mat4 scale = mat4(1.0);
 	mat4 translate=mat4(1.0);
-	vec3 objectPosition =vec3(0,0,0);
+	vec3 objectPosition =vec3(inTransformPos.x, inTransformPos.y, inTransformPos.z);
 	translate[3][0]=inTransformPos.x;
 	translate[3][1]=inTransformPos.y;
 	translate[3][2]=inTransformPos.z;
@@ -129,11 +129,10 @@ void main() {
 	scale[0][0] = 0.015;
 	scale[1][1] = 0.015;
 	scale[2][2] = 0.015;
-	mat4 modelMatrix = model * translate* scale;
+	mat4 modelMatrix = model * translate * scale;
 
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
 	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
-	objectPosition=vec3(modelMatrix * vec4(objectPosition, 1.0f));
 
 	vec3 normalDir=normalize(inv_trans_model * inNormal);
 	worldN = normalDir;
@@ -153,14 +152,10 @@ void main() {
 	vec3 w=wind_dir * wind_power * wave_info;
 	vec2 Wind=vec2(w.x*0.05,w.z*0.05);
 
-
-
-
 	vPos -= objectPosition;	// Reset the vertex to base-zero
 	float BendScale=0.024;
 	ApplyMainBending(vPos, Wind, BendScale);
 	vPos += objectPosition;
-
 
 	float BranchAmp=0.2;
 	float DetailAmp=0.1;

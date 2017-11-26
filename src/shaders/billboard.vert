@@ -63,8 +63,12 @@ void main() {
 	//camDir is the right direction of the camera
 	float theta = atan2(camera.camDir.z, camera.camDir.x);
 	rotation = rotateMatrix(vec3(0,1,0), theta);
+	mat4 translate=mat4(1.0);
+	translate[3][0]=inTransformPos.x;
+	translate[3][1]=inTransformPos.y;
+	translate[3][2]=inTransformPos.z;
 
-	mat4 modelMatrix = model*rotation;
+	mat4 modelMatrix = model*translate*rotation;
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
 	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
 	worldN = normalize(inv_trans_model * inNormal);

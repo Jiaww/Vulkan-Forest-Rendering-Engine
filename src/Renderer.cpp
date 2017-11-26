@@ -1032,8 +1032,13 @@ void Renderer::CreateLeafPipeline() {
 
 	std::vector<VkVertexInputBindingDescription> bindingDescriptions;
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+	std::vector<VkVertexInputAttributeDescription> instanceDescriptions;
+
 	bindingDescriptions = { Vertex::getBindingDescription() };
 	attributeDescriptions = Vertex::getAttributeDescriptions();
+	instanceDescriptions = InstanceData::getAttributeDescriptions();
+	for (int i = 0; i < instanceDescriptions.size(); i++)
+		attributeDescriptions.push_back(instanceDescriptions[i]);
 
 	vertexInputInfo.vertexBindingDescriptionCount = bindingDescriptions.size();
 	vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
@@ -1074,6 +1079,7 @@ void Renderer::CreateLeafPipeline() {
 	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 	rasterizer.lineWidth = 1.0f;
 	rasterizer.cullMode = VK_CULL_MODE_NONE;
+	//rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
 	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.depthBiasEnable = VK_FALSE;
 	rasterizer.depthBiasConstantFactor = 0.0f;
@@ -1193,8 +1199,13 @@ void Renderer::CreateBillboardPipeline() {
 
 	std::vector<VkVertexInputBindingDescription> bindingDescriptions;
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+	std::vector<VkVertexInputAttributeDescription> instanceDescriptions;
+
 	bindingDescriptions = { Vertex::getBindingDescription() };
 	attributeDescriptions = Vertex::getAttributeDescriptions();
+	instanceDescriptions = InstanceData::getAttributeDescriptions();
+	for (int i = 0; i < instanceDescriptions.size(); i++)
+		attributeDescriptions.push_back(instanceDescriptions[i]);
 
 	vertexInputInfo.vertexBindingDescriptionCount = bindingDescriptions.size();
 	vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
@@ -1978,7 +1989,7 @@ void Renderer::RecordCommandBuffers() {
 			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-
+			// Bind Instance Buffer
 			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
 			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[1]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 

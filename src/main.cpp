@@ -124,7 +124,7 @@ int main() {
 	VkDeviceMemory terrainImageMemory;
 	Image::FromFile(device,
 		transferCommandPool,
-		"../../media/terrain/diffuseMap03.png",
+		"../../media/terrain/diffuseMap04.png",
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -137,7 +137,7 @@ int main() {
 	VkDeviceMemory terrainNormalImageMemory;
 	Image::FromFile(device,
 		transferCommandPool,
-		"../../media/terrain/normalMap03.png",
+		"../../media/terrain/normalMap04.png",
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -258,8 +258,8 @@ int main() {
 	);
 
 // Terrain Initializations
-	char* terrainPath = "../../media/terrain/heightMap03.png";
-	char* rawPath = "../../media/terrain/heightMap03.r16";
+	char* terrainPath = "../../media/terrain/heightMap04.png";
+	char* rawPath = "../../media/terrain/heightMap04.r16";
 	Terrain *terrain = Terrain::LoadTerrain(device, transferCommandPool, terrainPath, rawPath, 512.0f);
 	terrain->SetDiffuseMap(terrainImage);
 	terrain->SetNormalMap(terrainNormalImage);
@@ -320,7 +320,6 @@ int main() {
 	instanceData.push_back(InstanceData(glm::vec3(10, 0, 0)));
 	instanceData.push_back(InstanceData(glm::vec3(-10, 0, 0)));
 	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData);
-
 
 	// Blades
 	Blades* blades = new Blades(device, transferCommandPool, planeDim);
