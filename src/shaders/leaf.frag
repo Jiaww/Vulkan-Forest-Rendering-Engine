@@ -14,6 +14,7 @@ layout(location = 5) in vec3 worldT;
 layout(location = 6) in float vertAmbient;
 layout(location = 7) in float distanceLevel;
 layout(location = 8) in vec2 noiseTexCoord;
+layout(location = 9) in vec3 tintColor;
 
 layout(location = 0) out vec4 outColor;
 
@@ -40,6 +41,6 @@ void main() {
 
 	if(diffuseColor.a < 1.0f)
 		discard;
-	outColor = vec4(diffuseColor.rgb * diffuseTerm + diffuseColor.rgb * ambientTerm, diffuseColor.a);
+	outColor = vec4(diffuseColor.rgb * tintColor * (diffuseTerm + ambientTerm), diffuseColor.a);
 	//outColor = vec4(diffuseColor.a);
 }

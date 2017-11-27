@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <array>
 #include "Model.h"
+#include "Terrain.h"
 
 constexpr static unsigned int NUM_BLADES = 1 << 17;
 constexpr static float MIN_HEIGHT = 1.3f;
@@ -80,7 +81,7 @@ private:
     VkDeviceMemory numBladesBufferMemory;
 
 public:
-    Blades(Device* device, VkCommandPool commandPool, float planeDim);
+    Blades(Device* device, VkCommandPool commandPool, float terrainDim, Terrain* terrain);
     VkBuffer GetBladesBuffer() const;
     VkBuffer GetCulledBladesBuffer() const;
     VkBuffer GetNumBladesBuffer() const;

@@ -55,8 +55,25 @@ VkBuffer Scene::GetTimeBuffer() const {
     return timeBuffer;
 }
 
+bool Scene::InsertRandomTrees(int numTrees, Device* device, VkCommandPool commandPool) {
+	std::vector<InstanceData> instanceData;
+	srand(33974);
+	int randRange = terrain->GetTerrainDim();
+	for (int i = 0; i < numTrees; i++) {
+		float posX = (rand() % (randRange * 100)) / 100.0f;
+		float posZ = (rand() % (randRange * 100)) / 100.0f;
+		float posY = terrain->GetHeight(posX, posZ);
+		printf("|| Tree No.%f: <position: %f %f %f> ||\n", i, posX, posY, posZ);
+		glm::vec3 position(posX, posY, posZ);
+//		instanceData.push_back(InstanceData(position));
+	}
+	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, commandPool, instanceData);
+	AddInstanceBuffer(instanceBuffer);
+	return true;
+}
+
 Scene::~Scene() {
-    vkUnmapMemory(device->GetVkDevice(), timeBufferMemory);
-    vkDestroyBuffer(device->GetVkDevice(), timeBuffer, nullptr);
-    vkFreeMemory(device->GetVkDevice(), timeBufferMemory, nullptr);
+	vkUnmapMemory(device->GetVkDevice(), timeBufferMemory);
+	vkDestroyBuffer(device->GetVkDevice(), timeBuffer, nullptr);
+	vkFreeMemory(device->GetVkDevice(), timeBufferMemory, nullptr);
 }

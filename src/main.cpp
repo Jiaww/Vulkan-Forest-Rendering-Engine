@@ -124,7 +124,7 @@ int main() {
 	VkDeviceMemory terrainImageMemory;
 	Image::FromFile(device,
 		transferCommandPool,
-		"../../media/terrain/diffuseMap04.png",
+		"../../media/terrain/diffuseMap03.png",
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -137,7 +137,7 @@ int main() {
 	VkDeviceMemory terrainNormalImageMemory;
 	Image::FromFile(device,
 		transferCommandPool,
-		"../../media/terrain/normalMap04.png",
+		"../../media/terrain/normalMap03.png",
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -258,9 +258,9 @@ int main() {
 	);
 
 // Terrain Initializations
-	char* terrainPath = "../../media/terrain/heightMap04.png";
-	char* rawPath = "../../media/terrain/heightMap04.r16";
-	Terrain *terrain = Terrain::LoadTerrain(device, transferCommandPool, terrainPath, rawPath, 512.0f);
+	char* terrainPath = "../../media/terrain/heightMap03.png";
+	char* rawPath = "../../media/terrain/heightMap03.r16";
+	Terrain *terrain = Terrain::LoadTerrain(device, transferCommandPool, terrainPath, rawPath, 256.0f);
 	terrain->SetDiffuseMap(terrainImage);
 	terrain->SetNormalMap(terrainNormalImage);
 // Model Initializations
@@ -315,14 +315,33 @@ int main() {
 	billboard->SetNormalMap(billboardNormalImage);
 	billboard->SetNoiseMap(noiseImage);
 
+	// Insert Trees
 	//Instance Data
+	printf("Starting Insert Trees Randomly\n");
 	std::vector<InstanceData> instanceData;
-	instanceData.push_back(InstanceData(glm::vec3(10, 0, 0)));
-	instanceData.push_back(InstanceData(glm::vec3(-10, 0, 0)));
+	srand(33974);
+	int numTrees = 200;
+	int randRange = terrain->GetTerrainDim();
+	for (int i = 0; i < numTrees; i++) {
+		float posX = (rand() % (randRange * 100)) / 100.0f;
+		float posZ = (rand() % (randRange * 100)) / 100.0f;
+		float posY = terrain->GetHeight(posX, posZ);
+		glm::vec3 position(posX, posY, posZ);
+		float scale = 0.9f + float(rand() % 200) / 1000.0f;
+		float r = (220 + float(rand() % 35)) / 255.0f;
+		float g = (220 + float(rand() % 35)) / 255.0f;
+		float b = (220 + float(rand() % 35)) / 255.0f;
+		float theta = float(rand() % 3145) / 1000.0f;
+		printf("|| Tree No.%d: <position: %f %f %f> <scale: %f> <theta: %f> <tintColor: %f %f %f>||\n", i, posX, posY, posZ, scale, theta, r, g, b);
+		instanceData.push_back(InstanceData(position, scale, theta, glm::vec3(r, g, b)));
+	}
 	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData);
+	printf("Finish Insert Trees Randomly\n");
 
 	// Blades
-	Blades* blades = new Blades(device, transferCommandPool, planeDim);
+	printf("Building Blades\n");
+	Blades* blades = new Blades(device, transferCommandPool, planeDim, terrain);
+	printf("Finish Building Blades\n");
 
 	vkDestroyCommandPool(device->GetVkDevice(), transferCommandPool, nullptr);
 
@@ -333,10 +352,13 @@ int main() {
 	scene->AddModel(bark);
 	scene->AddModel(leaf);
 	scene->AddModel(billboard);
-	scene->AddInstanceBuffer(instanceBuffer);
 	scene->AddBlades(blades);
+	scene->AddInstanceBuffer(instanceBuffer);
 
-	float yy = scene->GetTerrain()->GetHeight(0.25,0.25);
+	
+
+	//float yy = scene->GetTerrain()->GetHeight(0.25,0.25);
+	//scene->InsertRandomTrees(20, device, transferCommandPool);
 
 	renderer = new Renderer(device, swapChain, scene, camera);
 
@@ -371,7 +393,7 @@ int main() {
 	delete bark;
 	delete leaf;
 	delete billboard;
-	delete instanceBuffer;
+	//delete instanceBuffer;
 	delete blades;
 	delete camera;
 	delete renderer;

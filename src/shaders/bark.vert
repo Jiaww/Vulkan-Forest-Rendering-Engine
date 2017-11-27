@@ -26,6 +26,9 @@ layout(location = 5) in vec3 inBitangent;
 
 //Instance buffer
 layout(location = 6) in vec3 inTransformPos;
+layout(location = 7) in float inScale;
+layout(location = 8) in float inTheta;
+layout(location = 9) in vec3 inTintColor;
 
 layout(location = 0) out vec3 vertColor;
 layout(location = 1) out vec2 fragTexCoord;
@@ -36,6 +39,7 @@ layout(location = 5) out vec3 worldT;
 layout(location = 6) out float vertAmbient;
 layout(location = 7) out float distanceLevel;
 layout(location = 8) out vec2 noiseTexCoord;
+layout(location = 9) out vec3 tintColor;
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -56,19 +60,32 @@ void ApplyMainBending(inout vec3 vPos, vec2 vWind, float fBendScale){
 	vPos.xyz = normalize(vNewPos.xyz)* fLength;
 }
 
+mat4 rotateMatrix(vec3 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
+}
 
 void main() {
 	mat4 scale = mat4(1.0);
+	mat4 rotate = rotateMatrix(vec3(0,1,0), inTheta);
 	mat4 translate=mat4(1.0);
 	vec3 objectPosition =vec3(inTransformPos.x, inTransformPos.y, inTransformPos.z);
 	translate[3][0]=inTransformPos.x;
 	translate[3][1]=inTransformPos.y;
 	translate[3][2]=inTransformPos.z;
 
-	scale[0][0] = 0.015;
-	scale[1][1] = 0.015;
-	scale[2][2] = 0.015;
-	mat4 modelMatrix = model * translate* scale;
+	scale[0][0] = 0.015 * inScale;
+	scale[1][1] = 0.015 * inScale;
+	scale[2][2] = 0.015 * inScale;
+	mat4 modelMatrix = model * translate * rotate * scale;
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
 	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
 
@@ -77,23 +94,20 @@ void main() {
 	worldT = normalize(inv_trans_model * inTangent);
 	vertAmbient = inColor.a;
 
-
+	vPos -= objectPosition;	// Reset the vertex to base-zero
+	float BendScale=0.03;
+	
 	//Wind
 	vec3 wind_dir = normalize(vec3(0.5, 0, 1));
     float wind_speed = 8.0;
-    float wave_division_width = 5.0;
-    float wave_info = (cos((dot(vec3(0, 0, 0), wind_dir) - wind_speed * totalTime) / wave_division_width) + 0.7);
+    float wave_division_width = 15.0;
+    float wave_info = (cos((dot(objectPosition, wind_dir) - wind_speed * totalTime) / wave_division_width) + 0.7);
 	
 	float wind_power = 15.0f;
     //vec3 w = wind_dir * wind_power * wave_info * fd * fr;
 	vec3 w=wind_dir * wind_power * wave_info*0.05;
 	vec2 Wind=vec2(w.x,w.z);
 
-
-
-	
-	vPos -= objectPosition;	// Reset the vertex to base-zero
-	float BendScale=0.024;
 	ApplyMainBending(vPos, Wind, BendScale);
 	vPos += objectPosition;
 
@@ -110,6 +124,8 @@ void main() {
 //LOD Effect
 	noiseTexCoord.x = (vPos.x - 0.0) / 10.5f + 0.5f;
 	noiseTexCoord.y = (vPos.y - 0.0) / 20.2f;
-	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
+	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (1000.0f);
 	
+// Tint Color
+	tintColor = inTintColor;
 }

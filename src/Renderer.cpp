@@ -1079,8 +1079,8 @@ void Renderer::CreateLeafPipeline() {
 	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 	rasterizer.lineWidth = 1.0f;
 	rasterizer.cullMode = VK_CULL_MODE_NONE;
-	//rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+	//rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.depthBiasEnable = VK_FALSE;
 	rasterizer.depthBiasConstantFactor = 0.0f;
 	rasterizer.depthBiasClamp = 0.0f;
@@ -1976,7 +1976,7 @@ void Renderer::RecordCommandBuffers() {
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[0]->getIndices();
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		}
 
 		//Bark: bark pipeline
@@ -2074,7 +2074,7 @@ void Renderer::RecordCommandBuffers() {
 
 			// Draw
 			// TODO: Uncomment this when the buffers are populated
-			vkCmdDrawIndirect(commandBuffers[i], scene->GetBlades()[j]->GetNumBladesBuffer(), 0, 1, sizeof(BladeDrawIndirect));
+			//vkCmdDrawIndirect(commandBuffers[i], scene->GetBlades()[j]->GetNumBladesBuffer(), 0, 1, sizeof(BladeDrawIndirect));
 		}
 
 		// End render pass

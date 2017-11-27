@@ -65,4 +65,5 @@ public:
 	VkSampler GetNormalMapSampler() const;
 
 	float GetHeight(float x, float z) const;
+	int GetTerrainDim() const { return terrainDim; }
 };

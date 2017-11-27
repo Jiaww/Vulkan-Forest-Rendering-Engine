@@ -182,7 +182,7 @@ Terrain* Terrain::LoadTerrain(Device* device, VkCommandPool commandPool, char *f
 	uint16_t *heightsBuffer = new uint16_t[size];
 	fread(heightsBuffer, sizeof(uint16_t), size, fp);
 	for (int i = 0; i<size; i++) {
-		mapHeights[i] = heightsBuffer[i] / 65536.0f * 256.0f * 0.5f - 40.0f;
+		mapHeights[i] = heightsBuffer[i] / 65536.0f * 256.0f * 0.25f - 40.0f;
 	}
 	delete heightsBuffer;
 	printf("Building terrain...\n");

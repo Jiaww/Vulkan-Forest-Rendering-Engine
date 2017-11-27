@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <chrono>
+#include <cstdlib> 
 
 #include "Model.h"
 #include "Blades.h"
@@ -47,7 +48,7 @@ public:
     void AddModel(Model* model);
     void AddBlades(Blades* blades);
 	void AddInstanceBuffer(InstanceBuffer* Data);
-
+	bool InsertRandomTrees(int numTrees, Device* device, VkCommandPool commandPool);
     VkBuffer GetTimeBuffer() const;
 
     void UpdateTime();

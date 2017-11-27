@@ -23,7 +23,11 @@ layout(location = 2) in vec2 inTexCoord;
 layout(location = 3) in vec3 inNormal;
 layout(location = 4) in vec3 inTangent;
 layout(location = 5) in vec3 inBitangent;
+// Instance Buffer
 layout(location = 6) in vec3 inTransformPos;
+layout(location = 7) in float inScale;
+layout(location = 8) in float inTheta;
+layout(location = 9) in vec3 inTintColor;
 
 layout(location = 0) out vec3 vertColor;
 layout(location = 1) out vec2 fragTexCoord;
@@ -34,6 +38,7 @@ layout(location = 5) out vec3 worldT;
 layout(location = 6) out float vertAmbient;
 layout(location = 7) out float distanceLevel;
 layout(location = 8) out vec2 noiseTexCoord;
+layout(location = 9) out vec3 tintColor;
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -86,7 +91,9 @@ void main() {
 
 //LOD Effect
 	noiseTexCoord.x = (inPosition.x - 0.0) / 12.0f + 0.5f;
-	noiseTexCoord.y = (inPosition.y - 0.0) / 21.0f;
-	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (150.0f);
+	noiseTexCoord.y = (inPosition.y - 0.0) / 20.0f;
+	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (1000.0f);
 	
+// Tint Color
+	tintColor = inTintColor;
 }
