@@ -161,7 +161,7 @@ void main() {
 
 	//Wind
 	vec3 wind_dir = normalize(vec3(0.5, 0, 1));
-    float wind_speed = 8.0;
+    float wind_speed = 12.0;
     float wave_division_width = 15.0;
     float wave_info = (cos((dot(objectPosition, wind_dir) - wind_speed * totalTime) / wave_division_width) + 0.7);
 	
@@ -171,7 +171,7 @@ void main() {
 	vec2 Wind=vec2(w.x*0.05,w.z*0.05);
 
 	vPos -= objectPosition;	// Reset the vertex to base-zero
-	float BendScale=0.03;
+	float BendScale=0.024;
 	ApplyMainBending(vPos, Wind, BendScale);
 	vPos += objectPosition;
 

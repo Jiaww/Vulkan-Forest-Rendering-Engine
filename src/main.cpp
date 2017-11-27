@@ -1,4 +1,5 @@
 #include <vulkan/vulkan.h>
+#include <ctime>
 #include "Instance.h"
 #include "Window.h"
 #include "Renderer.h"
@@ -319,18 +320,18 @@ int main() {
 	//Instance Data
 	printf("Starting Insert Trees Randomly\n");
 	std::vector<InstanceData> instanceData;
-	srand(33974);
+	srand((unsigned int)time(0));
 	int numTrees = 200;
-	int randRange = terrain->GetTerrainDim();
+	int randRange = terrain->GetTerrainDim()-2;
 	for (int i = 0; i < numTrees; i++) {
-		float posX = (rand() % (randRange * 100)) / 100.0f;
-		float posZ = (rand() % (randRange * 100)) / 100.0f;
+		float posX = (rand() % (randRange * 5)) / 5.0f;
+		float posZ = (rand() % (randRange * 5)) / 5.0f;
 		float posY = terrain->GetHeight(posX, posZ);
 		glm::vec3 position(posX, posY, posZ);
 		float scale = 0.9f + float(rand() % 200) / 1000.0f;
-		float r = (220 + float(rand() % 35)) / 255.0f;
-		float g = (220 + float(rand() % 35)) / 255.0f;
-		float b = (220 + float(rand() % 35)) / 255.0f;
+		float r = (210 + float(rand() % 45)) / 255.0f;
+		float g = (210 + float(rand() % 45)) / 255.0f;
+		float b = (210 + float(rand() % 45)) / 255.0f;
 		float theta = float(rand() % 3145) / 1000.0f;
 		printf("|| Tree No.%d: <position: %f %f %f> <scale: %f> <theta: %f> <tintColor: %f %f %f>||\n", i, posX, posY, posZ, scale, theta, r, g, b);
 		instanceData.push_back(InstanceData(position, scale, theta, glm::vec3(r, g, b)));
