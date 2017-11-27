@@ -3,7 +3,7 @@
 * University of Pennsylvania, CGGT
 
 ___
-## Milestone 1 11/20/2017
+## Milestone 1 (11/20/2017)
 * **Better Camera Control**
 * **Implement the FBX importer**
 * **Implement rendering pipeline and shaders for trees (trunk and leaves, billboard)**
@@ -13,7 +13,7 @@ ___
 * **Basic LOD(Still Debugging)**
 
 ___
-## Milestone 2 11/27/2017
+## Milestone 2 (11/27/2017)
 * **Terrain Building**
 * **Terrain Loading**
 * **Hardware Instancing**
