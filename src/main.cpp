@@ -283,7 +283,7 @@ int main() {
 
 	FbxLoader *fbxloader;
 	// Bark
-	fbxloader = new FbxLoader("../../media/models/tree1_bark_rgba.FBX");
+	fbxloader = new FbxLoader("../../media/models/tree1_bark_LOD0.fbx");
 	Model* bark = new Model(device, transferCommandPool,
 		fbxloader->vertices,
 		fbxloader->indices
@@ -292,7 +292,7 @@ int main() {
 	bark->SetNormalMap(barkNormalImage);
 	bark->SetNoiseMap(noiseImage);
 	// Leaf
-	fbxloader = new FbxLoader("../../media/models/tree1_leaf_rgba.FBX");
+	fbxloader = new FbxLoader("../../media/models/tree1_leaf_LOD0.fbx");
 	Model* leaf = new Model(device, transferCommandPool,
 		fbxloader->vertices,
 		fbxloader->indices
