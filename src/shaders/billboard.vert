@@ -90,9 +90,9 @@ void main() {
     fragTexCoord = inTexCoord;
 
 //LOD Effect
-	noiseTexCoord.x = (inPosition.x - 0.0) / 12.0f + 0.5f;
-	noiseTexCoord.y = (inPosition.y - 0.0) / 20.0f;
-	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z)) / (1000.0f);
+	noiseTexCoord.x = (inPosition.x - inTransformPos.x) / 12.0f + 0.5f;
+	noiseTexCoord.y = (inPosition.y - inTransformPos.y) / 20.0f;
+	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / (512.0f);
 	
 // Tint Color
 	tintColor = inTintColor;
