@@ -2010,7 +2010,7 @@ void Renderer::RecordCommandBuffers() {
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
-			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 		}
 
 		//Leaf: leaf pipeline
@@ -2035,7 +2035,7 @@ void Renderer::RecordCommandBuffers() {
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
-			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 		}
 
 		//Billboard: billboard pipeline
@@ -2045,7 +2045,7 @@ void Renderer::RecordCommandBuffers() {
 
 			// Bind the vertex and index buffers
 			VkBuffer vertexBuffers[] = { scene->GetModels()[3]->getVertexBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[1]->GetInstanceDataBuffer() };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
@@ -2060,7 +2060,7 @@ void Renderer::RecordCommandBuffers() {
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[1]->GetInstanceCount(), 0, 0, 0);
 		}
 
 		// Grass

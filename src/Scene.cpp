@@ -24,6 +24,11 @@ const std::vector<InstanceBuffer*>& Scene::GetInstanceBuffer() const
 	return instanceData;
 }
 
+const std::vector<InstanceBuffer*>& Scene::GetCulledInstanceBuffer() const
+{
+	return culledInstanceData;
+}
+
 void Scene::SetTerrain(Terrain* terrain) {
 	this->terrain = terrain;
 }
@@ -38,6 +43,11 @@ void Scene::AddBlades(Blades* blades) {
 void Scene::AddInstanceBuffer(InstanceBuffer * Data)
 {
 	instanceData.push_back(Data);
+}
+
+void Scene::AddCulledInstanceBuffer(InstanceBuffer * Data)
+{
+	culledInstanceData.push_back(Data);
 }
 
 void Scene::UpdateTime() {
