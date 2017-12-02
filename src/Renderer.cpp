@@ -201,8 +201,6 @@ void Renderer::CreateModelDescriptorSetLayout() {
 	}
 }
 
-
-
 void Renderer::CreateTimeDescriptorSetLayout() {
 	// Describe the binding of the descriptor set layout
 	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
