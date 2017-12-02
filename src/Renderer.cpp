@@ -1818,8 +1818,18 @@ void Renderer::DestroyFrameResources() {
 void Renderer::RecreateFrameResources() {
 	vkDestroyPipeline(logicalDevice, graphicsPipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, grassPipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, barkPipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, leafPipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, billboardPipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, terrainPipeline, nullptr);
+
 	vkDestroyPipelineLayout(logicalDevice, graphicsPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, grassPipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, barkPipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, leafPipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, billboardPipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, terrainPipelineLayout, nullptr);
+
 	vkFreeCommandBuffers(logicalDevice, graphicsCommandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
 	DestroyFrameResources();
@@ -2000,7 +2010,7 @@ void Renderer::RecordCommandBuffers() {
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 		}
 
 		//Leaf: leaf pipeline
@@ -2025,7 +2035,7 @@ void Renderer::RecordCommandBuffers() {
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 		}
 
 		//Billboard: billboard pipeline
@@ -2141,18 +2151,24 @@ Renderer::~Renderer() {
 	vkDestroyPipeline(logicalDevice, barkPipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, leafPipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, grassPipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, billboardPipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, terrainPipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, computePipeline, nullptr);
+
 
 	vkDestroyPipelineLayout(logicalDevice, graphicsPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, barkPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, leafPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, grassPipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, billboardPipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, terrainPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, computePipelineLayout, nullptr);
 
 	vkDestroyDescriptorSetLayout(logicalDevice, cameraDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, modelDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, timeDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, grassDescriptorSetLayout, nullptr);
+	vkDestroyDescriptorSetLayout(logicalDevice, terrainDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, computeDescriptorSetLayout, nullptr);
 
 
