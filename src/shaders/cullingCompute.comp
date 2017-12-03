@@ -1,0 +1,134 @@
+#version 450
+#extension GL_ARB_separate_shader_objects : enable
+
+#define WORKGROUP_SIZE 32
+layout(local_size_x = WORKGROUP_SIZE, local_size_y = 1, local_size_z = 1) in;
+
+layout(set = 0, binding = 0) uniform CameraBufferObject {
+    mat4 view;
+    mat4 proj;
+	vec4 camPos;
+	vec4 camDir;
+} camera;
+
+layout(set = 1, binding = 0) uniform Time {
+    float deltaTime;
+    float totalTime;
+};
+
+struct InstanceData {
+	vec3 pos;
+	float scale;
+	float theta;
+	vec3 tintColor;
+};
+
+// TODO: Add bindings to:
+// 1. Store the input instance data Buffer
+// 2. Write out the culled blades
+// 3. Write the total number of blades remaining
+
+layout(set = 2, binding = 0) buffer InstanceDataBuffer{
+    InstanceData instances[];
+};
+
+layout(set = 2, binding = 1) buffer CulledDataBufferLOD0LEAF{
+    InstanceData culledDataLOD0[];
+};
+
+layout(set = 2, binding = 2) buffer CulledDataBufferLOD1{
+    InstanceData culledDataLOD1[];
+};
+
+// The project is using vkCmdDrawIndirect to use a buffer as the arguments for a draw call
+// This is sort of an advanced feature so we've showed you what this buffer should look like
+//
+layout(set = 2, binding = 3) buffer NumDataBufferLOD0 {
+   uint indexCount;
+   uint instanceCount;
+   uint firstIndex;
+   uint vertexOffset;
+   uint firstInstance;
+} numDataLOD0Bark;
+
+layout(set = 2, binding = 4) buffer NumDataBufferLOD0 {
+   uint indexCount;
+   uint instanceCount;
+   uint firstIndex;
+   uint vertexOffset;
+   uint firstInstance;
+} numDataLOD0Leaf;
+
+layout(set = 2, binding = 5) buffer NumDataBufferLOD1 {
+   uint indexCount;
+   uint instanceCount;
+   uint firstIndex;
+   uint vertexOffset;
+   uint firstInstance;
+} numDataLOD1;
+
+bool inBounds(float value, float bounds) {
+    return (value >= -bounds) && (value <= bounds);
+}
+
+void main() {
+    // Reset the number of blades to 0
+    if (gl_GlobalInvocationID.x == 0) {
+        numDataLOD0Bark.instanceCount = 0;
+        numDataLOD0Leaf.instanceCount = 0;
+        numDataLOD1.instanceCount = 0;
+    }
+    barrier(); // Wait till all threads reach this point
+
+    // TODO: Apply forces on every blade and update the vertices in the buffer
+    uint index = gl_GlobalInvocationID.x;
+    
+	InstanceData this_instance = instances[index];
+	vec3 this_pos = this_instance.pos;
+	// basic computation of distance(doesn't care about the camera direction)
+	float distance = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(this_pos.x, this_pos.z));
+
+    // TODO: Cull instances that are too far away or not in the camera frustum and write them
+    // to the culled instances buffer
+    // Note: to do this, you will need to use an atomic operation to read and update numData.instanceCount
+    // You want to write the visible instances to the buffer without write conflicts between threads
+
+	//View-Frustum Culling
+	bool view_frustum_culled = true;
+	mat4 vp = camera.proj * camera.view;
+	NDC_pos = vp * vec4(this_pos, 1.0f);
+	NDC_pos /= NDC_pos.w;
+
+	float tolerance = 0.2;
+	
+	if(NDC_pos.x < 1+tolerance && NDC_pos.x > -1-tolerance 
+	&& NDC_pos.y < 1+tolerance && NDC_pos.y > -1-tolerance 
+	&& NDC_pos.z < 1+tolerance && NDC_pos.z > -tolerance ){
+			view_frustum_culled = false;
+	}
+	
+	//LOD Culling
+	bool LOD0_culled = false;
+	bool LOD1_culled = false;
+
+	float distanceLevel = distance / (512.0f);
+
+	if(distanceLevel > 0.5f){
+		LOD0_culled = true;
+	}
+	if(distanceLevel < 0.3f){
+		LOD1_culled = true;
+	}
+
+	//LOD 0
+	if(!view_frustum_culled && !LOD0_culled){
+		//Add to the culledDataLOD0
+		culledDataLOD0[atomicAdd(numDataLOD0Bark.instanceCount , 1)] = this_instance;
+		atomicAdd(numDataLOD0Leaf.instanceCount , 1)
+	}
+	//LOD 1
+	if(!view_frustum_culled && !LOD1_culled){
+		//Add to the culledDataLOD1
+		culledDataLOD1[atomicAdd(numDataLOD1.instanceCount , 1)] = this_instance;
+	}
+}

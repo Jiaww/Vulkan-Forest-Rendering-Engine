@@ -51,20 +51,36 @@ struct InstanceData {
 		return attributeDescriptions;
 	}
 };
+
+struct InstanceDrawIndirect {
+	uint32_t instanceCount;
+	uint32_t indexCount;
+	uint32_t firstInstance;
+	uint32_t firstIndex;
+};
+
 class InstanceBuffer {
 protected:
 	Device* device;
 	std::vector<InstanceData> Data;
 	VkBuffer DataBuffer;
+	//LOD 0 & LOD 1
+	VkBuffer culledDataBuffer[2];
+	VkBuffer numDataBuffer[3];
+
 	VkDeviceMemory DataMemory;
+	VkDeviceMemory culledDataMemory[2];
+	VkDeviceMemory numDataMemory[3];
 	//No indices. Indices should corespond with Model.
 	int InstanceCount = 0;
 
 public:
 	InstanceBuffer() = delete;
-	InstanceBuffer(Device* device, VkCommandPool commandPool, const std::vector<InstanceData> &Data);
+	InstanceBuffer(Device* device, VkCommandPool commandPool, const std::vector<InstanceData> &Data, int numBarkVertices, int numLeafVertices, int numBillboardsVertices);
 	virtual ~InstanceBuffer();
 	VkBuffer GetInstanceDataBuffer() const;
+	VkBuffer GetCulledInstanceDataBuffer(int LOD_num) const;
+	VkBuffer GetNumInstanceDataBuffer(int LOD_num) const;
 	int GetInstanceCount() const;
 	
 

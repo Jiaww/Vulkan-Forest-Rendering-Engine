@@ -21,6 +21,7 @@ public:
     void CreateGrassDescriptorSetLayout();
 	void CreateTimeDescriptorSetLayout();
 	void CreateComputeDescriptorSetLayout();
+	void CreateCullingComputeDescriptorSetLayout();
 	void CreateTerrainDescriptorSetLayout();
 
     void CreateDescriptorPool();
@@ -31,12 +32,14 @@ public:
     void CreateGrassDescriptorSets();
     void CreateTimeDescriptorSet();
     void CreateComputeDescriptorSets();
+	void CreateCullingComputeDescriptorSets();
 	void CreateTerrainDescriptorSet();
 
 // Funcs: Pipeline(Correspond to how many different shaders)
     void CreateGraphicsPipeline();
     void CreateGrassPipeline();
     void CreateComputePipeline();
+	void CreateCullingComputePipeline();
 	void CreateBarkPipeline();
 	void CreateLeafPipeline();
 	void CreateBillboardPipeline();
@@ -68,6 +71,7 @@ private:
 	VkDescriptorSetLayout grassDescriptorSetLayout;
 	VkDescriptorSetLayout timeDescriptorSetLayout;
 	VkDescriptorSetLayout computeDescriptorSetLayout;
+	VkDescriptorSetLayout cullingComputeDescriptorSetLayout;
 	VkDescriptorSetLayout terrainDescriptorSetLayout;
 
 	VkDescriptorPool descriptorPool;
@@ -78,6 +82,7 @@ private:
 	VkDescriptorSet timeDescriptorSet;
 	std::vector<VkDescriptorSet> grassDescriptorSets;
 	std::vector<VkDescriptorSet> computeDescriptorSets;
+	std::vector<VkDescriptorSet> cullingComputeDescriptorSets;
 	VkDescriptorSet terrainDescriptorSet;
 
 // Vars: Pipeline Layout and pipeline
@@ -87,6 +92,7 @@ private:
 	VkPipelineLayout billboardPipelineLayout;
 	VkPipelineLayout grassPipelineLayout;
 	VkPipelineLayout computePipelineLayout;
+	VkPipelineLayout cullingComputePipelineLayout;
 	VkPipelineLayout terrainPipelineLayout;
 
 	VkPipeline graphicsPipeline;
@@ -94,7 +100,8 @@ private:
 	VkPipeline leafPipeline;
 	VkPipeline billboardPipeline;
 	VkPipeline grassPipeline;
-    VkPipeline computePipeline;
+	VkPipeline computePipeline;
+	VkPipeline cullingComputePipeline;
 	VkPipeline terrainPipeline;
 
     std::vector<VkImageView> imageViews;

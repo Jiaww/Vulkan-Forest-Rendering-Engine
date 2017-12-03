@@ -24,11 +24,6 @@ const std::vector<InstanceBuffer*>& Scene::GetInstanceBuffer() const
 	return instanceData;
 }
 
-const std::vector<InstanceBuffer*>& Scene::GetCulledInstanceBuffer() const
-{
-	return culledInstanceData;
-}
-
 void Scene::SetTerrain(Terrain* terrain) {
 	this->terrain = terrain;
 }
@@ -43,11 +38,6 @@ void Scene::AddBlades(Blades* blades) {
 void Scene::AddInstanceBuffer(InstanceBuffer * Data)
 {
 	instanceData.push_back(Data);
-}
-
-void Scene::AddCulledInstanceBuffer(InstanceBuffer * Data)
-{
-	culledInstanceData.push_back(Data);
 }
 
 void Scene::UpdateTime() {
@@ -66,19 +56,19 @@ VkBuffer Scene::GetTimeBuffer() const {
 }
 
 bool Scene::InsertRandomTrees(int numTrees, Device* device, VkCommandPool commandPool) {
-	std::vector<InstanceData> instanceData;
-	srand(33974);
-	int randRange = terrain->GetTerrainDim();
-	for (int i = 0; i < numTrees; i++) {
-		float posX = (rand() % (randRange * 100)) / 100.0f;
-		float posZ = (rand() % (randRange * 100)) / 100.0f;
-		float posY = terrain->GetHeight(posX, posZ);
-		printf("|| Tree No.%f: <position: %f %f %f> ||\n", i, posX, posY, posZ);
-		glm::vec3 position(posX, posY, posZ);
-//		instanceData.push_back(InstanceData(position));
-	}
-	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, commandPool, instanceData);
-	AddInstanceBuffer(instanceBuffer);
+//	std::vector<InstanceData> instanceData;
+//	srand(33974);
+//	int randRange = terrain->GetTerrainDim();
+//	for (int i = 0; i < numTrees; i++) {
+//		float posX = (rand() % (randRange * 100)) / 100.0f;
+//		float posZ = (rand() % (randRange * 100)) / 100.0f;
+//		float posY = terrain->GetHeight(posX, posZ);
+//		printf("|| Tree No.%f: <position: %f %f %f> ||\n", i, posX, posY, posZ);
+//		glm::vec3 position(posX, posY, posZ);
+////		instanceData.push_back(InstanceData(position));
+//	}
+//	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, commandPool, instanceData);
+//	AddInstanceBuffer(instanceBuffer);
 	return true;
 }
 

@@ -44,13 +44,11 @@ public:
     const std::vector<Model*>& GetModels() const;
     const std::vector<Blades*>& GetBlades() const;
 	const std::vector<InstanceBuffer*>& GetInstanceBuffer() const;
-	const std::vector<InstanceBuffer*>& GetCulledInstanceBuffer() const;
     
 	void SetTerrain(Terrain* terrain);
     void AddModel(Model* model);
     void AddBlades(Blades* blades);
 	void AddInstanceBuffer(InstanceBuffer* Data);
-	void AddCulledInstanceBuffer(InstanceBuffer* Data);
 	bool InsertRandomTrees(int numTrees, Device* device, VkCommandPool commandPool);
     VkBuffer GetTimeBuffer() const;
 

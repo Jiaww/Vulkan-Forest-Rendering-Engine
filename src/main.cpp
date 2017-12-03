@@ -336,10 +336,7 @@ int main() {
 		printf("|| Tree No.%d: <position: %f %f %f> <scale: %f> <theta: %f> <tintColor: %f %f %f>||\n", i, posX, posY, posZ, scale, theta, r, g, b);
 		instanceData.push_back(InstanceData(position, scale, theta, glm::vec3(r, g, b)));
 	}
-	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData);
-	InstanceBuffer* billboardInstanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData);
-	InstanceBuffer* culledInstanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData);
-	InstanceBuffer* culledBillboardInstanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData);
+	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData, bark->getIndices().size(), leaf->getIndices().size(), billboard->getIndices().size());
 	printf("Finish Insert Trees Randomly\n");
 
 	// Blades
@@ -357,15 +354,7 @@ int main() {
 	scene->AddModel(leaf);
 	scene->AddModel(billboard);
 	scene->AddBlades(blades);
-	// 0: model instanceBuffer
 	scene->AddInstanceBuffer(instanceBuffer);
-	// 1: billboard instanceBuffer
-	scene->AddInstanceBuffer(billboardInstanceBuffer);
-	//Initialize culled instanceBuffer
-	// 0: model instanceBuffer
-	scene->AddCulledInstanceBuffer(instanceBuffer);
-	// 1: billboard instanceBuffer
-	scene->AddCulledInstanceBuffer(billboardInstanceBuffer);
 
 	//float yy = scene->GetTerrain()->GetHeight(0.25,0.25);
 	//scene->InsertRandomTrees(20, device, transferCommandPool);
