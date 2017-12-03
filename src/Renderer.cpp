@@ -679,7 +679,7 @@ void Renderer::CreateComputeDescriptorSets() {
 void Renderer::CreateCullingComputeDescriptorSets() {
 	// TODO: Create Descriptor sets for the compute pipeline
 	// The descriptors should point to Storage buffers which will hold the grass blades, the culled grass blades, and the output number of grass blades 
-	cullingComputeDescriptorSets.resize(scene->GetBlades().size());
+	cullingComputeDescriptorSets.resize(scene->GetInstanceBuffer().size());
 
 	// Describe the desciptor set
 	VkDescriptorSetLayout layouts[] = { cullingComputeDescriptorSetLayout };
@@ -719,15 +719,15 @@ void Renderer::CreateCullingComputeDescriptorSets() {
 		// LOD 0 Leaf
 		numDataBufferInfo[0].buffer = scene->GetInstanceBuffer()[i]->GetNumInstanceDataBuffer(0);
 		numDataBufferInfo[0].offset = 0;
-		numDataBufferInfo[0].range = sizeof(InstanceDrawIndirect);
+		numDataBufferInfo[0].range = sizeof(VkDrawIndexedIndirectCommand);
 		// LOD 0 Bark
 		numDataBufferInfo[1].buffer = scene->GetInstanceBuffer()[i]->GetNumInstanceDataBuffer(1);
 		numDataBufferInfo[1].offset = 0;
-		numDataBufferInfo[1].range = sizeof(InstanceDrawIndirect);
+		numDataBufferInfo[1].range = sizeof(VkDrawIndexedIndirectCommand);
 		// LOD 1 Billboard
 		numDataBufferInfo[2].buffer = scene->GetInstanceBuffer()[i]->GetNumInstanceDataBuffer(2);
 		numDataBufferInfo[2].offset = 0;
-		numDataBufferInfo[2].range = sizeof(InstanceDrawIndirect);
+		numDataBufferInfo[2].range = sizeof(VkDrawIndexedIndirectCommand);
 
 
 		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -1749,7 +1749,7 @@ void Renderer::CreateComputePipeline() {
 
 void Renderer::CreateCullingComputePipeline() {
 	// Set up programmable shaders
-	VkShaderModule computeShaderModule = ShaderModule::Create("shaders/compute.comp.spv", logicalDevice);
+	VkShaderModule computeShaderModule = ShaderModule::Create("shaders/cullingCompute.comp.spv", logicalDevice);
 
 	VkPipelineShaderStageCreateInfo computeShaderStageInfo = {};
 	computeShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -2094,20 +2094,124 @@ void Renderer::RecordComputeCommandBuffer() {
 		throw std::runtime_error("Failed to begin recording compute command buffer");
 	}
 
+
+	std::vector<VkBufferMemoryBarrier> barriers(scene->GetInstanceBuffer().size() * 3);
+	for (uint32_t j = 0; j < scene->GetInstanceBuffer().size(); ++j) {
+		barriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[j].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(0);
+		barriers[j].offset = 0;
+		barriers[j].size = sizeof(VkDrawIndexedIndirectCommand);
+
+		barriers[j + 1].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[j + 1].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[j + 1].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[j + 1].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[j + 1].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[j + 1].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(1);
+		barriers[j + 1].offset = 0;
+		barriers[j + 1].size = sizeof(VkDrawIndexedIndirectCommand);
+
+		barriers[j + 2].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[j + 2].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[j + 2].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[j + 2].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[j + 2].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
+		barriers[j + 2].offset = 0;
+		barriers[j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
+
+		//barriers[j + 3].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		//barriers[j + 3].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		//barriers[j + 3].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		//barriers[j + 3].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		//barriers[j + 3].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		//barriers[j + 3].buffer = scene->GetInstanceBuffer()[j]->GetCulledInstanceDataBuffer(0);
+		//barriers[j + 3].offset = 0;
+		//barriers[j + 3].size = scene->GetInstanceBuffer()[j]->GetInstanceCount() * sizeof(InstanceData);
+
+		//barriers[j + 4].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		//barriers[j + 4].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		//barriers[j + 4].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		//barriers[j + 4].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		//barriers[j + 4].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		//barriers[j + 4].buffer = scene->GetInstanceBuffer()[j]->GetCulledInstanceDataBuffer(1);
+		//barriers[j + 4].offset = 0;
+		//barriers[j + 4].size = scene->GetInstanceBuffer()[j]->GetInstanceCount() * sizeof(InstanceData);
+	}
+
+	vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
+
 	// Bind to the compute pipeline
-	vkCmdBindPipeline(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, computePipeline);
+	vkCmdBindPipeline(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cullingComputePipeline);
 
 	// Bind camera descriptor set
-	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, computePipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cullingComputePipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 
 	// Bind descriptor set for time uniforms
-	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, computePipelineLayout, 1, 1, &timeDescriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cullingComputePipelineLayout, 1, 1, &timeDescriptorSet, 0, nullptr);
 
+	for (int i = 0; i < scene->GetInstanceBuffer().size(); ++i) {
+		vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cullingComputePipelineLayout, 2, 1, &cullingComputeDescriptorSets[i], 0, nullptr);
+		vkCmdDispatch(computeCommandBuffer, (int)(scene->GetInstanceBuffer()[i]->GetInstanceCount() / WORKGROUP_SIZE + 1), 1, 1);
+	}
 	// TODO: For each group of blades bind its descriptor set and dispatch
-	for (int i = 0; i < scene->GetBlades().size(); ++i) {
+	/*for (int i = 0; i < scene->GetBlades().size(); ++i) {
 		vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, computePipelineLayout, 2, 1, &computeDescriptorSets[i], 0, nullptr);
 		vkCmdDispatch(computeCommandBuffer, (int)(NUM_BLADES / WORKGROUP_SIZE + 1), 1, 1);
+	}*/
+
+	for (uint32_t j = 0; j < scene->GetInstanceBuffer().size(); ++j) {
+		barriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[j].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(0);
+		barriers[j].offset = 0;
+		barriers[j].size = sizeof(VkDrawIndexedIndirectCommand);
+
+		barriers[j + 1].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[j + 1].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[j + 1].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[j + 1].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[j + 1].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[j + 1].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(1);
+		barriers[j + 1].offset = 0;
+		barriers[j + 1].size = sizeof(VkDrawIndexedIndirectCommand);
+
+		barriers[j + 2].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[j + 2].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[j + 2].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[j + 2].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[j + 2].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
+		barriers[j + 2].offset = 0;
+		barriers[j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
+
+		//barriers[j + 3].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		//barriers[j + 3].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		//barriers[j + 3].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		//barriers[j + 3].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		//barriers[j + 3].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		//barriers[j + 3].buffer = scene->GetInstanceBuffer()[j]->GetCulledInstanceDataBuffer(0);
+		//barriers[j + 3].offset = 0;
+		//barriers[j + 3].size = scene->GetInstanceBuffer()[j]->GetInstanceCount() * sizeof(InstanceData);
+
+		//barriers[j + 4].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		//barriers[j + 4].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		//barriers[j + 4].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		//barriers[j + 4].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		//barriers[j + 4].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		//barriers[j + 4].buffer = scene->GetInstanceBuffer()[j]->GetCulledInstanceDataBuffer(1);
+		//barriers[j + 4].offset = 0;
+		//barriers[j + 4].size = scene->GetInstanceBuffer()[j]->GetInstanceCount() * sizeof(InstanceData);
 	}
+
+	vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
 
 	// ~ End recording ~
 	if (vkEndCommandBuffer(computeCommandBuffer) != VK_SUCCESS) {
@@ -2154,20 +2258,6 @@ void Renderer::RecordCommandBuffers() {
 		clearValues[1].depthStencil = { 1.0f, 0 };
 		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 		renderPassInfo.pClearValues = clearValues.data();
-
-		std::vector<VkBufferMemoryBarrier> barriers(scene->GetBlades().size());
-		for (uint32_t j = 0; j < barriers.size(); ++j) {
-			barriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-			barriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-			barriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-			barriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-			barriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-			barriers[j].buffer = scene->GetBlades()[j]->GetNumBladesBuffer();
-			barriers[j].offset = 0;
-			barriers[j].size = sizeof(BladeDrawIndirect);
-		}
-
-		vkCmdPipelineBarrier(commandBuffers[i], VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
 
 		vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -2219,14 +2309,35 @@ void Renderer::RecordCommandBuffers() {
 		{
 			// Bind the bark pipeline
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipeline);
-
 			// Bind the vertex and index buffers
 			VkBuffer vertexBuffers[] = { scene->GetModels()[1]->getVertexBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(0) };
+			//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+
+			/*void *indraw;
+			vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetNumInstanceDataMemory(0), 0, sizeof(VkDrawIndexedIndirectCommand), 0, &indraw);
+			VkDrawIndexedIndirectCommand *yy = static_cast<VkDrawIndexedIndirectCommand*>(indraw);*/
+			void *data;
+			vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetCulledInstanceDataMemory(0), 0, scene->GetInstanceBuffer()[0]->GetInstanceCount() * sizeof(InstanceData), 0, &data);
+			std::vector<InstanceData> xxx;
+			InstanceData *xx = static_cast<InstanceData*>(data);
+			for (int p = 0; p < 21; p++) {
+				xxx.push_back(xx[p]);
+			}
+			vkUnmapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetCulledInstanceDataMemory(0));
+
+			/*void *data1;
+			vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetInstanceDataMemory(), 0, scene->GetInstanceBuffer()[0]->GetInstanceCount() * sizeof(InstanceData), 0, &data1);
+			std::vector<InstanceData> xxx1;
+			InstanceData *xx1 = static_cast<InstanceData*>(data1);
+			for (int p = 0; p < 21; p++) {
+				xxx1.push_back(xx1[p]);
+			}*/
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			// Bind Instance Buffer
 			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
+
 			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[1]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
 			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
@@ -2249,7 +2360,8 @@ void Renderer::RecordCommandBuffers() {
 
 			// Bind the vertex and index buffers
 			VkBuffer vertexBuffers[] = { scene->GetModels()[2]->getVertexBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(0) };
+			//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
@@ -2261,10 +2373,12 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 1, 1, &modelDescriptorSets[2], 0, nullptr);
 			// Bind the time descriptor.
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
+			// Indirect Draw
+			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[0]->GetNumInstanceDataBuffer(1), 0, 1, 0);
 
-			// Draw
-			std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			//// Draw
+			//std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
+			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 		}
 
 		//Billboard: billboard pipeline
@@ -2289,29 +2403,29 @@ void Renderer::RecordCommandBuffers() {
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 		}
 
-		// Grass
-		vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipeline);
+		//// Grass
+		//vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipeline);
 
-		for (uint32_t j = 0; j < scene->GetBlades().size(); ++j) {
-			VkBuffer vertexBuffers[] = { scene->GetBlades()[j]->GetCulledBladesBuffer() };
-			//VkBuffer vertexBuffers[] = { scene->GetBlades()[j]->GetBladesBuffer() };
+		//for (uint32_t j = 0; j < scene->GetBlades().size(); ++j) {
+		//	VkBuffer vertexBuffers[] = { scene->GetBlades()[j]->GetCulledBladesBuffer() };
+		//	//VkBuffer vertexBuffers[] = { scene->GetBlades()[j]->GetBladesBuffer() };
 
-			VkDeviceSize offsets[] = { 0 };
-			// TODO: Uncomment this when the buffers are populated
-			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+		//	VkDeviceSize offsets[] = { 0 };
+		//	// TODO: Uncomment this when the buffers are populated
+		//	vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
-			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
-			// TODO: Bind the descriptor set for each grass blades model
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipelineLayout, 1, 1, &grassDescriptorSets[j], 0, nullptr);
+		//	// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+		//	vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+		//	// TODO: Bind the descriptor set for each grass blades model
+		//	vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipelineLayout, 1, 1, &grassDescriptorSets[j], 0, nullptr);
 
-			// Draw
-			// TODO: Uncomment this when the buffers are populated
-			//vkCmdDrawIndirect(commandBuffers[i], scene->GetBlades()[j]->GetNumBladesBuffer(), 0, 1, sizeof(BladeDrawIndirect));
-		}
+		//	// Draw
+		//	// TODO: Uncomment this when the buffers are populated
+		//	//vkCmdDrawIndirect(commandBuffers[i], scene->GetBlades()[j]->GetNumBladesBuffer(), 0, 1, sizeof(BladeDrawIndirect));
+		//}
 
 		// End render pass
 		vkCmdEndRenderPass(commandBuffers[i]);

@@ -321,7 +321,7 @@ int main() {
 	printf("Starting Insert Trees Randomly\n");
 	std::vector<InstanceData> instanceData;
 	srand((unsigned int)time(0));
-	int numTrees = 200;
+	int numTrees = 20;
 	int randRange = terrain->GetTerrainDim()-2;
 	for (int i = 0; i < numTrees; i++) {
 		float posX = (rand() % (randRange * 5)) / 5.0f;
@@ -392,7 +392,7 @@ int main() {
 	delete bark;
 	delete leaf;
 	delete billboard;
-	//delete instanceBuffer;
+	delete instanceBuffer;
 	delete blades;
 	delete camera;
 	delete renderer;

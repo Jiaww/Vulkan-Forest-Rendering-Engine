@@ -15,7 +15,7 @@ Camera::Camera(Device* device, float aspectRatio,int w,int h) : device(device),
 	fovy(45.0f),
 	near_clip(0.1f),
 	far_clip(1000),
-	eye(glm::vec3(0.0f, 20.0f, 0.0f)),
+	eye(glm::vec3(-10.0f, 20.0f, -10.0f)),
 	ref(glm::vec3(128.0f, 1.0f, 128.0f)),
 	world_up(glm::vec3(0.0f, 1.0f, 0.0f))
 {

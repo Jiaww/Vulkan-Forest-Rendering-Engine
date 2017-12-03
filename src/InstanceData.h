@@ -52,13 +52,6 @@ struct InstanceData {
 	}
 };
 
-struct InstanceDrawIndirect {
-	uint32_t instanceCount;
-	uint32_t indexCount;
-	uint32_t firstInstance;
-	uint32_t firstIndex;
-};
-
 class InstanceBuffer {
 protected:
 	Device* device;
@@ -83,5 +76,8 @@ public:
 	VkBuffer GetNumInstanceDataBuffer(int LOD_num) const;
 	int GetInstanceCount() const;
 	
+	VkDeviceMemory GetInstanceDataMemory() const;
+	VkDeviceMemory GetCulledInstanceDataMemory(int LOD_num) const;
+	VkDeviceMemory GetNumInstanceDataMemory(int LOD_num) const;
 
 };

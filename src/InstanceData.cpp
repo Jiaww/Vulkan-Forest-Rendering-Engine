@@ -9,22 +9,27 @@ InstanceBuffer::InstanceBuffer(Device* device, VkCommandPool commandPool, const 
 	VkDrawIndexedIndirectCommand indirectCmd[3] = {};
 	indirectCmd[0].instanceCount = Data.size();
 	indirectCmd[0].firstInstance = 0;
+	indirectCmd[0].vertexOffset = 0;
 	indirectCmd[0].indexCount = numBarkVertices;
 	indirectCmd[0].firstIndex = 0;
 	// Leaf
 	indirectCmd[1].instanceCount = Data.size();
 	indirectCmd[1].firstInstance = 0;
+	indirectCmd[1].vertexOffset = 0;
 	indirectCmd[1].indexCount = numLeafVertices;
 	indirectCmd[1].firstIndex = 0;
 	// billboard
 	indirectCmd[2].instanceCount = Data.size();
 	indirectCmd[2].firstInstance = 0;
+	indirectCmd[2].vertexOffset = 0;
 	indirectCmd[2].indexCount = numBillboardsVertices;
 	indirectCmd[2].firstIndex = 0;
 	//leaf LOD0
 	//billboard LOD1
 	if (Data.size() > 0) {
 		BufferUtils::CreateBufferFromData(device, commandPool, this->Data.data(), Data.size() * sizeof(InstanceData), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, DataBuffer, DataMemory);
+		/*BufferUtils::CreateBufferFromData(device, commandPool, this->Data.data(), Data.size() * sizeof(InstanceData), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, culledDataBuffer[0], culledDataMemory[0]);
+		BufferUtils::CreateBufferFromData(device, commandPool, this->Data.data(), Data.size() * sizeof(InstanceData), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, culledDataBuffer[1], culledDataMemory[1]);*/
 		BufferUtils::CreateBuffer(device, Data.size() * sizeof(InstanceData), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, culledDataBuffer[0], culledDataMemory[0]);
 		BufferUtils::CreateBuffer(device, Data.size() * sizeof(InstanceData), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, culledDataBuffer[1], culledDataMemory[1]);
 		BufferUtils::CreateBufferFromData(device, commandPool, &indirectCmd[0], sizeof(VkDrawIndexedIndirectCommand), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT, numDataBuffer[0], numDataMemory[0]);
@@ -40,6 +45,15 @@ VkBuffer InstanceBuffer::GetCulledInstanceDataBuffer(int num) const {
 }
 VkBuffer InstanceBuffer::GetNumInstanceDataBuffer(int num) const {
 	return numDataBuffer[num];
+}
+VkDeviceMemory InstanceBuffer::GetInstanceDataMemory() const {
+	return DataMemory;
+}
+VkDeviceMemory InstanceBuffer::GetCulledInstanceDataMemory(int num) const {
+	return culledDataMemory[num];
+}
+VkDeviceMemory InstanceBuffer::GetNumInstanceDataMemory(int num) const {
+	return numDataMemory[num];
 }
 InstanceBuffer::~InstanceBuffer() {
 	if (Data.size() > 0) {

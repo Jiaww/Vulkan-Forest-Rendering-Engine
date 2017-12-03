@@ -28,7 +28,7 @@ struct InstanceData {
 // 2. Write out the culled blades
 // 3. Write the total number of blades remaining
 
-layout(set = 2, binding = 0) buffer InstanceDataBuffer{
+layout(set = 2, binding = 0) buffer Instances{
     InstanceData instances[];
 };
 
@@ -43,7 +43,7 @@ layout(set = 2, binding = 2) buffer CulledDataBufferLOD1{
 // The project is using vkCmdDrawIndirect to use a buffer as the arguments for a draw call
 // This is sort of an advanced feature so we've showed you what this buffer should look like
 //
-layout(set = 2, binding = 3) buffer NumDataBufferLOD0 {
+layout(set = 2, binding = 3) buffer NumDataBufferLOD0Bark {
    uint indexCount;
    uint instanceCount;
    uint firstIndex;
@@ -51,7 +51,7 @@ layout(set = 2, binding = 3) buffer NumDataBufferLOD0 {
    uint firstInstance;
 } numDataLOD0Bark;
 
-layout(set = 2, binding = 4) buffer NumDataBufferLOD0 {
+layout(set = 2, binding = 4) buffer NumDataBufferLOD0Leaf {
    uint indexCount;
    uint instanceCount;
    uint firstIndex;
@@ -72,16 +72,17 @@ bool inBounds(float value, float bounds) {
 }
 
 void main() {
-    // Reset the number of blades to 0
-    if (gl_GlobalInvocationID.x == 0) {
-        numDataLOD0Bark.instanceCount = 0;
-        numDataLOD0Leaf.instanceCount = 0;
-        numDataLOD1.instanceCount = 0;
+    uint index = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * gl_NumWorkGroups.x * gl_WorkGroupSize.x;
+
+	// Reset the number of blades to 0
+    if (index == 0) {
+        atomicExchange(numDataLOD0Bark.instanceCount,0);
+        atomicExchange(numDataLOD0Leaf.instanceCount,0);;
+        atomicExchange(numDataLOD1.instanceCount,0);
     }
     barrier(); // Wait till all threads reach this point
 
     // TODO: Apply forces on every blade and update the vertices in the buffer
-    uint index = gl_GlobalInvocationID.x;
     
 	InstanceData this_instance = instances[index];
 	vec3 this_pos = this_instance.pos;
@@ -96,7 +97,7 @@ void main() {
 	//View-Frustum Culling
 	bool view_frustum_culled = true;
 	mat4 vp = camera.proj * camera.view;
-	NDC_pos = vp * vec4(this_pos, 1.0f);
+	vec4 NDC_pos = vp * vec4(this_pos, 1.0f);
 	NDC_pos /= NDC_pos.w;
 
 	float tolerance = 0.2;
@@ -121,13 +122,13 @@ void main() {
 	}
 
 	//LOD 0
-	if(!view_frustum_culled && !LOD0_culled){
+	if(!LOD0_culled){
 		//Add to the culledDataLOD0
 		culledDataLOD0[atomicAdd(numDataLOD0Bark.instanceCount , 1)] = this_instance;
-		atomicAdd(numDataLOD0Leaf.instanceCount , 1)
+		atomicAdd(numDataLOD0Leaf.instanceCount , 1);
 	}
 	//LOD 1
-	if(!view_frustum_culled && !LOD1_culled){
+	if(true){
 		//Add to the culledDataLOD1
 		culledDataLOD1[atomicAdd(numDataLOD1.instanceCount , 1)] = this_instance;
 	}
