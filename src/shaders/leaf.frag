@@ -22,8 +22,8 @@ void main() {
 	// LOD Morphing
 	vec4 noiseColor = texture(noiseSampler, noiseTexCoord);
 	float dis = (distanceLevel - 0.35f)/(0.5f - 0.35f);
-	//if(dis >= noiseColor.x)
-	//	discard;
+	if(dis >= noiseColor.x)
+		discard;
 
 	// Local normal, in tangent space
 	vec3 TextureNormal_tangentspace;

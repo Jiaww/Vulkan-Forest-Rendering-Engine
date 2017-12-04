@@ -23,11 +23,9 @@ layout(location = 3) in vec3 inNormal;
 layout(location = 4) in vec3 inTangent;
 layout(location = 5) in vec3 inBitangent;
 
-//instancing buffer
-layout(location = 6) in vec3 inTransformPos;
-layout(location = 7) in float inScale;
-layout(location = 8) in float inTheta;
-layout(location = 9) in vec3 inTintColor;
+// Instance Buffer
+layout(location = 6) in vec4 inTransformPos_Scale;
+layout(location = 7) in vec4 inTintColor_Theta;
 
 layout(location = 0) out vec3 vertColor;
 layout(location = 1) out vec2 fragTexCoord;
@@ -137,16 +135,16 @@ mat4 rotateMatrix(vec3 axis, float angle)
 
 void main() {
 	mat4 scale = mat4(1.0);
-	mat4 rotate = rotateMatrix(vec3(0,1,0), inTheta);
+	mat4 rotate = rotateMatrix(vec3(0,1,0), inTintColor_Theta.w);
 	mat4 translate=mat4(1.0);
-	vec3 objectPosition =vec3(inTransformPos.x, inTransformPos.y, inTransformPos.z);
-	translate[3][0]=inTransformPos.x;
-	translate[3][1]=inTransformPos.y;
-	translate[3][2]=inTransformPos.z;
+	vec3 objectPosition =vec3(inTransformPos_Scale.x, inTransformPos_Scale.y, inTransformPos_Scale.z);
+	translate[3][0]=inTransformPos_Scale.x;
+	translate[3][1]=inTransformPos_Scale.y;
+	translate[3][2]=inTransformPos_Scale.z;
 
-	scale[0][0] = 0.015 * inScale;
-	scale[1][1] = 0.015 * inScale;
-	scale[2][2] = 0.015 * inScale;
+	scale[0][0] = 0.015 * inTransformPos_Scale.w;
+	scale[1][1] = 0.015 * inTransformPos_Scale.w;
+	scale[2][2] = 0.015 * inTransformPos_Scale.w;
 	mat4 modelMatrix = model * translate * rotate * scale;
 
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
@@ -207,10 +205,10 @@ void main() {
     fragTexCoord = inTexCoord;
 
 //LOD Effect
-	noiseTexCoord.x = (vPos.x - inTransformPos.x) / 10.5f + 0.5f;
-	noiseTexCoord.y = (vPos.y - inTransformPos.y) / 20.2f;
+	noiseTexCoord.x = (vPos.x - inTransformPos_Scale.x) / 10.5f + 0.5f;
+	noiseTexCoord.y = (vPos.y - inTransformPos_Scale.y) / 20.2f;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / (512.0f);
 	
 // Tint Color
-	tintColor = inTintColor;
+	tintColor = inTintColor_Theta.xyz;
 }

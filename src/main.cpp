@@ -320,8 +320,9 @@ int main() {
 	//Instance Data
 	printf("Starting Insert Trees Randomly\n");
 	std::vector<InstanceData> instanceData;
-	srand((unsigned int)time(0));
-	int numTrees = 20;
+	//srand((unsigned int)time(0));
+	srand(246586);
+	int numTrees = 200;
 	int randRange = terrain->GetTerrainDim()-2;
 	for (int i = 0; i < numTrees; i++) {
 		float posX = (rand() % (randRange * 5)) / 5.0f;
@@ -334,7 +335,7 @@ int main() {
 		float b = (210 + float(rand() % 45)) / 255.0f;
 		float theta = float(rand() % 3145) / 1000.0f;
 		printf("|| Tree No.%d: <position: %f %f %f> <scale: %f> <theta: %f> <tintColor: %f %f %f>||\n", i, posX, posY, posZ, scale, theta, r, g, b);
-		instanceData.push_back(InstanceData(position, scale, theta, glm::vec3(r, g, b)));
+		instanceData.push_back(InstanceData(glm::vec4(position, scale), glm::vec4(r, g, b, theta)));
 	}
 	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData, bark->getIndices().size(), leaf->getIndices().size(), billboard->getIndices().size());
 	printf("Finish Insert Trees Randomly\n");

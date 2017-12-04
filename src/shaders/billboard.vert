@@ -24,10 +24,8 @@ layout(location = 3) in vec3 inNormal;
 layout(location = 4) in vec3 inTangent;
 layout(location = 5) in vec3 inBitangent;
 // Instance Buffer
-layout(location = 6) in vec3 inTransformPos;
-layout(location = 7) in float inScale;
-layout(location = 8) in float inTheta;
-layout(location = 9) in vec3 inTintColor;
+layout(location = 6) in vec4 inTransformPos_Scale;
+layout(location = 7) in vec4 inTintColor_Theta;
 
 layout(location = 0) out vec3 vertColor;
 layout(location = 1) out vec2 fragTexCoord;
@@ -69,9 +67,9 @@ void main() {
 	float theta = atan2(camera.camDir.z, camera.camDir.x);
 	rotation = rotateMatrix(vec3(0,1,0), theta);
 	mat4 translate=mat4(1.0);
-	translate[3][0]=inTransformPos.x;
-	translate[3][1]=inTransformPos.y;
-	translate[3][2]=inTransformPos.z;
+	translate[3][0]=inTransformPos_Scale.x;
+	translate[3][1]=inTransformPos_Scale.y;
+	translate[3][2]=inTransformPos_Scale.z;
 
 	mat4 modelMatrix = model*translate*rotation;
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
@@ -90,10 +88,10 @@ void main() {
     fragTexCoord = inTexCoord;
 
 //LOD Effect
-	noiseTexCoord.x = (inPosition.x - inTransformPos.x) / 12.0f + 0.5f;
-	noiseTexCoord.y = (inPosition.y - inTransformPos.y) / 20.0f;
+	noiseTexCoord.x = (inPosition.x - inTransformPos_Scale.x) / 12.0f + 0.5f;
+	noiseTexCoord.y = (inPosition.y - inTransformPos_Scale.y) / 20.0f;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / (512.0f);
 	
 // Tint Color
-	tintColor = inTintColor;
+	tintColor = inTintColor_Theta.xyz;
 }

@@ -17,10 +17,8 @@ layout(set = 1, binding = 0) uniform Time {
 };
 
 struct InstanceData {
-	vec3 pos;
-	float scale;
-	float theta;
-	vec3 tintColor;
+	vec4 pos_scale;
+	vec4 tintColor_theta;
 };
 
 // TODO: Add bindings to:
@@ -67,8 +65,10 @@ layout(set = 2, binding = 5) buffer NumDataBufferLOD1 {
    uint firstInstance;
 } numDataLOD1;
 
-bool inBounds(float value, float bounds) {
-    return (value >= -bounds) && (value <= bounds);
+bool inBounds(vec3 pos, float tolerance) {
+    return (pos.x < 1+tolerance && pos.x > -1-tolerance 
+		&& pos.y < 1+tolerance && pos.y > -1-tolerance 
+		&& pos.z < 1+tolerance && pos.z > -tolerance);
 }
 
 void main() {
@@ -84,8 +84,10 @@ void main() {
 
     // TODO: Apply forces on every blade and update the vertices in the buffer
     
+	if(index >= 200)
+		return;
 	InstanceData this_instance = instances[index];
-	vec3 this_pos = this_instance.pos;
+	vec3 this_pos = this_instance.pos_scale.xyz;
 	// basic computation of distance(doesn't care about the camera direction)
 	float distance = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(this_pos.x, this_pos.z));
 
@@ -97,14 +99,27 @@ void main() {
 	//View-Frustum Culling
 	bool view_frustum_culled = true;
 	mat4 vp = camera.proj * camera.view;
-	vec4 NDC_pos = vp * vec4(this_pos, 1.0f);
-	NDC_pos /= NDC_pos.w;
+	vec4 NDC_pos_bottom = vp * vec4(this_pos.x, this_pos.y, this_pos.z, 1.0f);
+	vec4 NDC_pos_up		= vp * vec4(this_pos.x, this_pos.y + 20.0f, this_pos.z, 1.0f);
+	vec4 NDC_pos_left	= vp * vec4(this_pos.x - 10.0f, this_pos.y + 10.0f, this_pos.z, 1.0f);
+	vec4 NDC_pos_right	= vp * vec4(this_pos.x + 10.0f, this_pos.y + 10.0f, this_pos.z, 1.0f);
+	vec4 NDC_pos_forward= vp * vec4(this_pos.x, this_pos.y + 10.0f, this_pos.z + 10.0f, 1.0f);
+	vec4 NDC_pos_back	= vp * vec4(this_pos.x, this_pos.y + 10.0f, this_pos.z - 10.0f, 1.0f);
+	NDC_pos_bottom /= NDC_pos_bottom.w;
+	NDC_pos_up /= NDC_pos_up.w;
+	NDC_pos_left /= NDC_pos_left.w;
+	NDC_pos_right /= NDC_pos_right.w;
+	NDC_pos_forward /= NDC_pos_forward.w;
+	NDC_pos_back /= NDC_pos_back.w;
 
-	float tolerance = 0.2;
+	float tolerance = 0.1;
 	
-	if(NDC_pos.x < 1+tolerance && NDC_pos.x > -1-tolerance 
-	&& NDC_pos.y < 1+tolerance && NDC_pos.y > -1-tolerance 
-	&& NDC_pos.z < 1+tolerance && NDC_pos.z > -tolerance ){
+	if(inBounds(NDC_pos_bottom.xyz, tolerance) 
+	|| inBounds(NDC_pos_up.xyz, tolerance)
+	|| inBounds(NDC_pos_left.xyz, tolerance)
+	|| inBounds(NDC_pos_right.xyz, tolerance)
+	|| inBounds(NDC_pos_forward.xyz, tolerance)
+	|| inBounds(NDC_pos_back.xyz, tolerance)){
 			view_frustum_culled = false;
 	}
 	
@@ -122,13 +137,13 @@ void main() {
 	}
 
 	//LOD 0
-	if(!LOD0_culled){
+	if(!LOD0_culled && !view_frustum_culled){
 		//Add to the culledDataLOD0
 		culledDataLOD0[atomicAdd(numDataLOD0Bark.instanceCount , 1)] = this_instance;
 		atomicAdd(numDataLOD0Leaf.instanceCount , 1);
 	}
 	//LOD 1
-	if(true){
+	if(!LOD1_culled && !view_frustum_culled){
 		//Add to the culledDataLOD1
 		culledDataLOD1[atomicAdd(numDataLOD1.instanceCount , 1)] = this_instance;
 	}

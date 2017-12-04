@@ -2311,8 +2311,8 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipeline);
 			// Bind the vertex and index buffers
 			VkBuffer vertexBuffers[] = { scene->GetModels()[1]->getVertexBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(0) };
 			//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(0) };
 
 			/*void *indraw;
 			vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetNumInstanceDataMemory(0), 0, sizeof(VkDrawIndexedIndirectCommand), 0, &indraw);
@@ -2348,7 +2348,7 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 			// Indirect Draw
 			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[0]->GetNumInstanceDataBuffer(0), 0, 1, 0);
-			// Draw
+			//// Draw
 			//std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
 			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 		}
@@ -2360,8 +2360,8 @@ void Renderer::RecordCommandBuffers() {
 
 			// Bind the vertex and index buffers
 			VkBuffer vertexBuffers[] = { scene->GetModels()[2]->getVertexBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(0) };
 			//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(0) };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
@@ -2388,7 +2388,8 @@ void Renderer::RecordCommandBuffers() {
 
 			// Bind the vertex and index buffers
 			VkBuffer vertexBuffers[] = { scene->GetModels()[3]->getVertexBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+			//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(1) };
 			VkDeviceSize offsets[] = { 0 };
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
@@ -2400,9 +2401,11 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 1, 1, &modelDescriptorSets[3], 0, nullptr);
 			// Bind the time descriptor.
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
+			// Indirect Draw
+			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[0]->GetNumInstanceDataBuffer(2), 0, 1, 0);
 
-			// Draw
-			std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
+			//// Draw
+			//std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
 			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 		}
 
