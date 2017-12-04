@@ -8,6 +8,8 @@
 
 static constexpr unsigned int WORKGROUP_SIZE = 32;
 
+#define LOD_FRUSTUM_CULLING 1
+
 Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* camera)
 	: device(device),
 	logicalDevice(device->GetVkDevice()),
@@ -2165,6 +2167,7 @@ void Renderer::RecordComputeCommandBuffer() {
 		throw std::runtime_error("Failed to begin recording compute command buffer");
 	}
 
+#if LOD_FRUSTUM_CULLING
 
 	std::vector<VkBufferMemoryBarrier> barriers(scene->GetInstanceBuffer().size() * 3);
 	for (uint32_t j = 0; j < scene->GetInstanceBuffer().size(); ++j) {
@@ -2284,7 +2287,7 @@ void Renderer::RecordComputeCommandBuffer() {
 	}
 
 	vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
-
+#endif
 	// ~ End recording ~
 	if (vkEndCommandBuffer(computeCommandBuffer) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to record compute command buffer");
@@ -2386,28 +2389,12 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipeline);
 				// Bind the vertex and index buffers
 				VkBuffer vertexBuffers[] = { scene->GetModels()[3 * k +1]->getVertexBuffer() };
-				//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+				
+#if LOD_FRUSTUM_CULLING
 				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(0) };
-
-				/*void *indraw;
-				vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetNumInstanceDataMemory(0), 0, sizeof(VkDrawIndexedIndirectCommand), 0, &indraw);
-				VkDrawIndexedIndirectCommand *yy = static_cast<VkDrawIndexedIndirectCommand*>(indraw);*/
-				/*void *data;
-				vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetCulledInstanceDataMemory(0), 0, scene->GetInstanceBuffer()[0]->GetInstanceCount() * sizeof(InstanceData), 0, &data);
-				std::vector<InstanceData> xxx;
-				InstanceData *xx = static_cast<InstanceData*>(data);
-				for (int p = 0; p < 21; p++) {
-					xxx.push_back(xx[p]);
-				}
-				vkUnmapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetCulledInstanceDataMemory(0));
-	*/
-	/*void *data1;
-	vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetInstanceDataMemory(), 0, scene->GetInstanceBuffer()[0]->GetInstanceCount() * sizeof(InstanceData), 0, &data1);
-	std::vector<InstanceData> xxx1;
-	InstanceData *xx1 = static_cast<InstanceData*>(data1);
-	for (int p = 0; p < 21; p++) {
-		xxx1.push_back(xx1[p]);
-	}*/
+#else
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+#endif
 				VkDeviceSize offsets[] = { 0 };
 				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 				// Bind Instance Buffer
@@ -2423,11 +2410,14 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 				// Bind the LOD descriptor
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+#if LOD_FRUSTUM_CULLING
 				// Indirect Draw
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(0), 0, 1, 0);
-				//// Draw
-				//std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
-				//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+#else
+				// Draw
+				std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
+				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+#endif
 			}
 
 			//Leaf: leaf pipeline
@@ -2437,8 +2427,11 @@ void Renderer::RecordCommandBuffers() {
 
 				// Bind the vertex and index buffers
 				VkBuffer vertexBuffers[] = { scene->GetModels()[3 * k +2]->getVertexBuffer() };
-				//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+#if LOD_FRUSTUM_CULLING
 				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(0) };
+#else
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+#endif
 				VkDeviceSize offsets[] = { 0 };
 				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 				vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
@@ -2452,12 +2445,14 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 				// Bind the LOD descriptor
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+#if LOD_FRUSTUM_CULLING
 				// Indirect Draw
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(1), 0, 1, 0);
-
-				//// Draw
-				//std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
-				//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+#else
+				// Draw
+				std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
+				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+#endif
 			}
 
 			//Billboard: billboard pipeline
@@ -2467,8 +2462,11 @@ void Renderer::RecordCommandBuffers() {
 
 				// Bind the vertex and index buffers
 				VkBuffer vertexBuffers[] = { scene->GetModels()[3 * k +3]->getVertexBuffer() };
-				//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+#if LOD_FRUSTUM_CULLING
 				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(1) };
+#else
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+#endif
 				VkDeviceSize offsets[] = { 0 };
 				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 				vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
@@ -2482,12 +2480,14 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 				// Bind the LOD descriptor
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+#if LOD_FRUSTUM_CULLING
 				// Indirect Draw
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(2), 0, 1, 0);
-
-				//// Draw
-				//std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
-				//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+#else
+				// Draw
+				std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
+				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+#endif
 			}
 		}
 		//// Grass

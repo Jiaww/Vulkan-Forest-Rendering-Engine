@@ -407,7 +407,7 @@ int main() {
 	printf("Starting Insert Trees Randomly\n");
 	std::vector<InstanceData> instanceData;
 	//srand((unsigned int)time(0));
-	srand(301026);
+	srand(213910);
 	printf("Tree 1\n");
 	int numTrees1 = 200;
 	int randRange = terrain->GetTerrainDim()-2;
@@ -488,11 +488,13 @@ int main() {
 		//scene->UpdateLODInfo(LOD0, LOD1);
 		renderer->Frame();
 		count++;
-		if (count == 1000) {
+		if (count == 100) {
 			int total_time = GetTickCount() - time_start;
-			printf("Total Time for 500 frames: %d\n", total_time);
-			printf("Time per frame: %f\n", float(total_time) / 1000.0);
-			printf("fps: %f\n", 1000000.0 / float(total_time));
+			printf("Total Time for 100 frames: %d\n", total_time);
+			printf("Time per frame: %f\n", float(total_time) / 100.0f);
+			printf("fps: %f\n", 100000.0 / float(total_time));
+			count = 0;
+			time_start = GetTickCount();
 		}
 	}
 
