@@ -14,6 +14,9 @@ SwapChain* swapChain;
 Renderer* renderer;
 Camera* camera;
 
+static float LOD0 = 0.5;
+static float LOD1 = 0.3;
+
 namespace {
 	void resizeCallback(GLFWwindow* window, int width, int height) {
 		if (width == 0 || height == 0) return;
@@ -215,7 +218,33 @@ int main() {
 		leafNormalImage,
 		leafNormalImageMemory
 	);
-	// Leaf
+	VkImage leafImage2;
+	VkDeviceMemory leafImageMemory2;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Leaf_png/leaf_Tex_Tree2.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		leafImage2,
+		leafImageMemory2
+	);
+	VkImage leafNormalImage2;
+	VkDeviceMemory leafNormalImageMemory2;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Leaf_png/Normal_Tex_Tree2.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		leafNormalImage2,
+		leafNormalImageMemory2
+	);
+	// Billboard
 	VkImage billboardImage;
 	VkDeviceMemory billboardImageMemory;
 	Image::FromFile(device,
@@ -242,7 +271,32 @@ int main() {
 		billboardNormalImage,
 		billboardNormalImageMemory
 	);
-
+	VkImage billboardImage2;
+	VkDeviceMemory billboardImageMemory2;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Billboard_png/Billboards_Tex_Tree2.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		billboardImage2,
+		billboardImageMemory2
+	);
+	VkImage billboardNormalImage2;
+	VkDeviceMemory billboardNormalImageMemory2;
+	Image::FromFile(device,
+		transferCommandPool,
+		"../../media/textures/Billboard_png/Billboards_Normal_Tex_Tree2.png",
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		billboardNormalImage2,
+		billboardNormalImageMemory2
+	);
 	//Noise
 	VkImage noiseImage;
 	VkDeviceMemory noiseImageMemory;
@@ -316,28 +370,80 @@ int main() {
 	billboard->SetNormalMap(billboardNormalImage);
 	billboard->SetNoiseMap(noiseImage);
 
+	// Bark
+	fbxloader = new FbxLoader("../../media/models/tree2_bark_rgba.FBX");
+	Model* bark2 = new Model(device, transferCommandPool,
+		fbxloader->vertices,
+		fbxloader->indices
+	);
+	bark2->SetDiffuseMap(barkImage);
+	bark2->SetNormalMap(barkNormalImage);
+	bark2->SetNoiseMap(noiseImage);
+	// Leaf
+	fbxloader = new FbxLoader("../../media/models/tree2_leaf_rgba.FBX");
+	Model* leaf2 = new Model(device, transferCommandPool,
+		fbxloader->vertices,
+		fbxloader->indices
+	);
+	leaf2->SetDiffuseMap(leafImage2);
+	leaf2->SetNormalMap(leafNormalImage2);
+	leaf2->SetNoiseMap(noiseImage);
+	// Billboard
+	Model* billboard2 = new Model(device, transferCommandPool,
+	{
+		{ { -billWidth / 2.0, billheigth, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 0.583f, 0.344f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } },
+		{ { -billWidth / 2.0, 0.0f, 0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.583f, 0.547f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } },
+		{ { billWidth / 2.0, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.861f, 0.547f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } },
+		{ { billWidth / 2.0, billheigth, 0.0f },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.861f, 0.344f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -1.0f, 0.0f } }
+	},
+	{ 1, 2, 0, 0, 2, 3 }
+	);
+	billboard2->SetDiffuseMap(billboardImage2);
+	billboard2->SetNormalMap(billboardNormalImage2);
+	billboard2->SetNoiseMap(noiseImage);
+
 	// Insert Trees
 	//Instance Data
 	printf("Starting Insert Trees Randomly\n");
 	std::vector<InstanceData> instanceData;
 	//srand((unsigned int)time(0));
-	srand(246586);
-	int numTrees = 200;
+	srand(301026);
+	printf("Tree 1\n");
+	int numTrees1 = 200;
 	int randRange = terrain->GetTerrainDim()-2;
-	for (int i = 0; i < numTrees; i++) {
+	for (int i = 0; i < numTrees1; i++) {
 		float posX = (rand() % (randRange * 5)) / 5.0f;
 		float posZ = (rand() % (randRange * 5)) / 5.0f;
 		float posY = terrain->GetHeight(posX, posZ);
 		glm::vec3 position(posX, posY, posZ);
 		float scale = 0.9f + float(rand() % 200) / 1000.0f;
-		float r = (210 + float(rand() % 45)) / 255.0f;
-		float g = (210 + float(rand() % 45)) / 255.0f;
-		float b = (210 + float(rand() % 45)) / 255.0f;
+		scale *= 0.015f;
+		float r = (200 + float(rand() % 55)) / 255.0f;
+		float g = (200 + float(rand() % 55)) / 255.0f;
+		float b = (200 + float(rand() % 55)) / 255.0f;
 		float theta = float(rand() % 3145) / 1000.0f;
 		printf("|| Tree No.%d: <position: %f %f %f> <scale: %f> <theta: %f> <tintColor: %f %f %f>||\n", i, posX, posY, posZ, scale, theta, r, g, b);
 		instanceData.push_back(InstanceData(glm::vec4(position, scale), glm::vec4(r, g, b, theta)));
 	}
 	InstanceBuffer* instanceBuffer = new InstanceBuffer(device, transferCommandPool, instanceData, bark->getIndices().size(), leaf->getIndices().size(), billboard->getIndices().size());
+	printf("Tree 2\n");
+	std::vector<InstanceData> instanceData2;
+	int numTrees2 = 70;
+	for (int i = 0; i < numTrees2; i++) {
+		float posX = (rand() % (randRange * 5)) / 5.0f;
+		float posZ = (rand() % (randRange * 5)) / 5.0f;
+		float posY = terrain->GetHeight(posX, posZ);
+		glm::vec3 position(posX, posY, posZ);
+		float scale = 0.9f + float(rand() % 200) / 1000.0f;
+		scale *= 0.021f;
+		float r = (200 + float(rand() % 55)) / 255.0f;
+		float g = (200 + float(rand() % 55)) / 255.0f;
+		float b = (200 + float(rand() % 55)) / 255.0f;
+		float theta = float(rand() % 3145) / 1000.0f;
+		printf("|| Tree No.%d: <position: %f %f %f> <scale: %f> <theta: %f> <tintColor: %f %f %f>||\n", i, posX, posY, posZ, scale, theta, r, g, b);
+		instanceData2.push_back(InstanceData(glm::vec4(position, scale), glm::vec4(r, g, b, theta)));
+	}
+	InstanceBuffer* instanceBuffer2 = new InstanceBuffer(device, transferCommandPool, instanceData2, bark2->getIndices().size(), leaf2->getIndices().size(), billboard2->getIndices().size());
 	printf("Finish Insert Trees Randomly\n");
 
 	// Blades
@@ -354,8 +460,14 @@ int main() {
 	scene->AddModel(bark);
 	scene->AddModel(leaf);
 	scene->AddModel(billboard);
+	scene->AddModel(bark2);
+	scene->AddModel(leaf2);
+	scene->AddModel(billboard2);
 	scene->AddBlades(blades);
 	scene->AddInstanceBuffer(instanceBuffer);
+	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, numTrees1));
+	scene->AddInstanceBuffer(instanceBuffer2);
+	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, numTrees2));
 
 	//float yy = scene->GetTerrain()->GetHeight(0.25,0.25);
 	//scene->InsertRandomTrees(20, device, transferCommandPool);
@@ -373,6 +485,7 @@ int main() {
 	while (!ShouldQuit()) {
 		glfwPollEvents();
 		scene->UpdateTime();
+		//scene->UpdateLODInfo(LOD0, LOD1);
 		renderer->Frame();
 		count++;
 		if (count == 1000) {
@@ -394,6 +507,10 @@ int main() {
 	delete leaf;
 	delete billboard;
 	delete instanceBuffer;
+	delete bark2;
+	delete leaf2;
+	delete billboard2;
+	delete instanceBuffer2;
 	delete blades;
 	delete camera;
 	delete renderer;

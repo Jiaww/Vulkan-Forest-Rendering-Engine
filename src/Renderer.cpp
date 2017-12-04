@@ -25,6 +25,7 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateComputeDescriptorSetLayout();
 	CreateCullingComputeDescriptorSetLayout();
 	CreateTerrainDescriptorSetLayout();
+	CreateLODInfoDescriptorSetLayout();
 
 	CreateDescriptorPool();
 
@@ -36,6 +37,7 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateComputeDescriptorSets();
 	CreateCullingComputeDescriptorSets();
 	CreateTerrainDescriptorSet();
+	CreateLODInfoDescriptorSets();
 
 	CreateFrameResources();
 	
@@ -377,6 +379,27 @@ void Renderer::CreateTerrainDescriptorSetLayout() {
 	}
 }
 
+void Renderer::CreateLODInfoDescriptorSetLayout() {
+	VkDescriptorSetLayoutBinding LODInfoLayoutBinding = {};
+	LODInfoLayoutBinding.binding = 0;
+	LODInfoLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	LODInfoLayoutBinding.descriptorCount = 1;
+	LODInfoLayoutBinding.stageFlags = VK_SHADER_STAGE_ALL;
+	LODInfoLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = { LODInfoLayoutBinding };
+
+	// Create the descriptor set layout
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(logicalDevice, &layoutInfo, nullptr, &LODInfoDescriptorSetLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create descriptor set layout");
+	}
+}
+
 void Renderer::CreateDescriptorPool() {
 	// Describe which descriptor types that the descriptor sets will contain
 	std::vector<VkDescriptorPoolSize> poolSizes = {
@@ -387,7 +410,7 @@ void Renderer::CreateDescriptorPool() {
 		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 3 * (static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size())) },
 
 		// Models + Blades
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size()) },
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , static_cast<uint32_t>(scene->GetModels().size() + scene->GetBlades().size() + scene->GetLODInfoBuffer().size()) },
 
 		// Time (compute)
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
@@ -407,7 +430,7 @@ void Renderer::CreateDescriptorPool() {
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 10;//1*camera + 4*model + 1*grass + 1*time + 1*compute + 1*terrain + 1*cullingCompute
+	poolInfo.maxSets = 16;//1*camera + 7*model + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2 * LODInfo
 
 	if (vkCreateDescriptorPool(logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool");
@@ -453,12 +476,15 @@ void Renderer::CreateModelDescriptorSets() {
 	modelDescriptorSets.resize(scene->GetModels().size());
 
 	// Describe the desciptor set
-	VkDescriptorSetLayout layouts[] = { modelDescriptorSetLayout, modelDescriptorSetLayout, modelDescriptorSetLayout, modelDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> layouts;
+	for (int i = 0; i < scene->GetModels().size(); ++i) {
+		layouts.push_back(modelDescriptorSetLayout);
+	}
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = descriptorPool;
 	allocInfo.descriptorSetCount = static_cast<uint32_t>(modelDescriptorSets.size());
-	allocInfo.pSetLayouts = layouts;
+	allocInfo.pSetLayouts = layouts.data();
 
 	// Allocate descriptor sets
 	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, modelDescriptorSets.data()) != VK_SUCCESS) {
@@ -682,12 +708,15 @@ void Renderer::CreateCullingComputeDescriptorSets() {
 	cullingComputeDescriptorSets.resize(scene->GetInstanceBuffer().size());
 
 	// Describe the desciptor set
-	VkDescriptorSetLayout layouts[] = { cullingComputeDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> layouts;
+	for (int i = 0; i < scene->GetInstanceBuffer().size(); i++) {
+		layouts.push_back(cullingComputeDescriptorSetLayout);
+	}
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = descriptorPool;
 	allocInfo.descriptorSetCount = static_cast<uint32_t>(cullingComputeDescriptorSets.size());
-	allocInfo.pSetLayouts = layouts;
+	allocInfo.pSetLayouts = layouts.data();
 
 	// Allocate descriptor sets
 	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, cullingComputeDescriptorSets.data()) != VK_SUCCESS) {
@@ -853,6 +882,48 @@ void Renderer::CreateTerrainDescriptorSet() {
 
 	// Update descriptor sets
 	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void Renderer::CreateLODInfoDescriptorSets() {
+	LODInfoDescriptorSets.resize(scene->GetLODInfoBuffer().size());
+	
+	// Describe the desciptor set
+	std::vector<VkDescriptorSetLayout> layouts;
+	for (int i = 0; i < scene->GetLODInfoBuffer().size(); ++i) {
+		layouts.push_back(LODInfoDescriptorSetLayout);
+	}
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(LODInfoDescriptorSets.size());
+	allocInfo.pSetLayouts = layouts.data();
+
+	// Allocate descriptor set
+	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, LODInfoDescriptorSets.data()) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate descriptor set");
+	}
+
+	for (uint32_t i = 0; i < scene->GetLODInfoBuffer().size(); ++i) {
+		std::vector<VkWriteDescriptorSet> descriptorWrites(1);
+
+		VkDescriptorBufferInfo LODBufferInfo = {};
+		LODBufferInfo.buffer = scene->GetLODInfoBuffer()[i];
+		LODBufferInfo.offset = 0;
+		LODBufferInfo.range = sizeof(glm::vec4);
+
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = LODInfoDescriptorSets[i];
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &LODBufferInfo;
+		descriptorWrites[0].pImageInfo = nullptr;
+		descriptorWrites[0].pTexelBufferView = nullptr;
+
+		// Update descriptor sets
+		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	}
 }
 
 void Renderer::CreateGraphicsPipeline() {
@@ -1142,7 +1213,7 @@ void Renderer::CreateBarkPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -1309,7 +1380,7 @@ void Renderer::CreateLeafPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -1475,7 +1546,7 @@ void Renderer::CreateBillboardPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -1758,7 +1829,7 @@ void Renderer::CreateCullingComputePipeline() {
 	computeShaderStageInfo.pName = "main";
 
 	// TODO: Add the compute dsecriptor set layout you create to this list
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, timeDescriptorSetLayout, cullingComputeDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, timeDescriptorSetLayout, cullingComputeDescriptorSetLayout, LODInfoDescriptorSetLayout };
 
 	// Create pipeline layout
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -2097,32 +2168,32 @@ void Renderer::RecordComputeCommandBuffer() {
 
 	std::vector<VkBufferMemoryBarrier> barriers(scene->GetInstanceBuffer().size() * 3);
 	for (uint32_t j = 0; j < scene->GetInstanceBuffer().size(); ++j) {
-		barriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		barriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		barriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		barriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		barriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		barriers[j].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(0);
-		barriers[j].offset = 0;
-		barriers[j].size = sizeof(VkDrawIndexedIndirectCommand);
+		barriers[3 * j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[3 * j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[3 * j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[3 * j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[3 * j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[3 * j].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(0);
+		barriers[3 * j].offset = 0;
+		barriers[3 * j].size = sizeof(VkDrawIndexedIndirectCommand);
 
-		barriers[j + 1].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		barriers[j + 1].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		barriers[j + 1].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		barriers[j + 1].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		barriers[j + 1].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		barriers[j + 1].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(1);
-		barriers[j + 1].offset = 0;
-		barriers[j + 1].size = sizeof(VkDrawIndexedIndirectCommand);
+		barriers[3 * j + 1].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[3 * j + 1].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[3 * j + 1].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[3 * j + 1].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[3 * j + 1].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[3 * j + 1].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(1);
+		barriers[3 * j + 1].offset = 0;
+		barriers[3 * j + 1].size = sizeof(VkDrawIndexedIndirectCommand);
 
-		barriers[j + 2].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		barriers[j + 2].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		barriers[j + 2].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		barriers[j + 2].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		barriers[j + 2].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		barriers[j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
-		barriers[j + 2].offset = 0;
-		barriers[j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
+		barriers[3 * j + 2].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[3 * j + 2].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[3 * j + 2].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[3 * j + 2].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[3 * j + 2].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[3 * j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
+		barriers[3 * j + 2].offset = 0;
+		barriers[3 * j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
 
 		//barriers[j + 3].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 		//barriers[j + 3].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
@@ -2156,6 +2227,7 @@ void Renderer::RecordComputeCommandBuffer() {
 
 	for (int i = 0; i < scene->GetInstanceBuffer().size(); ++i) {
 		vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cullingComputePipelineLayout, 2, 1, &cullingComputeDescriptorSets[i], 0, nullptr);
+		vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cullingComputePipelineLayout, 3, 1, &LODInfoDescriptorSets[i], 0, nullptr);
 		vkCmdDispatch(computeCommandBuffer, (int)(scene->GetInstanceBuffer()[i]->GetInstanceCount() / WORKGROUP_SIZE + 1), 1, 1);
 	}
 	// TODO: For each group of blades bind its descriptor set and dispatch
@@ -2165,32 +2237,32 @@ void Renderer::RecordComputeCommandBuffer() {
 	}*/
 
 	for (uint32_t j = 0; j < scene->GetInstanceBuffer().size(); ++j) {
-		barriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		barriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		barriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		barriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		barriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		barriers[j].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(0);
-		barriers[j].offset = 0;
-		barriers[j].size = sizeof(VkDrawIndexedIndirectCommand);
+		barriers[3 * j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[3 * j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[3 * j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[3 * j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[3 * j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[3 * j].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(0);
+		barriers[3 * j].offset = 0;
+		barriers[3 * j].size = sizeof(VkDrawIndexedIndirectCommand);
 
-		barriers[j + 1].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		barriers[j + 1].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		barriers[j + 1].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		barriers[j + 1].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		barriers[j + 1].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		barriers[j + 1].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(1);
-		barriers[j + 1].offset = 0;
-		barriers[j + 1].size = sizeof(VkDrawIndexedIndirectCommand);
+		barriers[3 * j + 1].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[3 * j + 1].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[3 * j + 1].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[3 * j + 1].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[3 * j + 1].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[3 * j + 1].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(1);
+		barriers[3 * j + 1].offset = 0;
+		barriers[3 * j + 1].size = sizeof(VkDrawIndexedIndirectCommand);
 
-		barriers[j + 2].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		barriers[j + 2].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		barriers[j + 2].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		barriers[j + 2].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		barriers[j + 2].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		barriers[j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
-		barriers[j + 2].offset = 0;
-		barriers[j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
+		barriers[3 * j + 2].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[3 * j + 2].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[3 * j + 2].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[3 * j + 2].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[3 * j + 2].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[3 * j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
+		barriers[3 * j + 2].offset = 0;
+		barriers[3 * j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
 
 		//barriers[j + 3].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 		//barriers[j + 3].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
@@ -2305,110 +2377,119 @@ void Renderer::RecordCommandBuffers() {
 			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		}
 
-		//Bark: bark pipeline
-		{
-			// Bind the bark pipeline
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipeline);
-			// Bind the vertex and index buffers
-			VkBuffer vertexBuffers[] = { scene->GetModels()[1]->getVertexBuffer() };
-			//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(0) };
+		// Iterate through different types of tree
+		for (int k = 0; k < scene->GetInstanceBuffer().size(); k++) {
 
-			/*void *indraw;
-			vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetNumInstanceDataMemory(0), 0, sizeof(VkDrawIndexedIndirectCommand), 0, &indraw);
-			VkDrawIndexedIndirectCommand *yy = static_cast<VkDrawIndexedIndirectCommand*>(indraw);*/
-			void *data;
-			vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetCulledInstanceDataMemory(0), 0, scene->GetInstanceBuffer()[0]->GetInstanceCount() * sizeof(InstanceData), 0, &data);
-			std::vector<InstanceData> xxx;
-			InstanceData *xx = static_cast<InstanceData*>(data);
-			for (int p = 0; p < 21; p++) {
-				xxx.push_back(xx[p]);
+			//Bark: bark pipeline
+			{
+				// Bind the bark pipeline
+				vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipeline);
+				// Bind the vertex and index buffers
+				VkBuffer vertexBuffers[] = { scene->GetModels()[3 * k +1]->getVertexBuffer() };
+				//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(0) };
+
+				/*void *indraw;
+				vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetNumInstanceDataMemory(0), 0, sizeof(VkDrawIndexedIndirectCommand), 0, &indraw);
+				VkDrawIndexedIndirectCommand *yy = static_cast<VkDrawIndexedIndirectCommand*>(indraw);*/
+				/*void *data;
+				vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetCulledInstanceDataMemory(0), 0, scene->GetInstanceBuffer()[0]->GetInstanceCount() * sizeof(InstanceData), 0, &data);
+				std::vector<InstanceData> xxx;
+				InstanceData *xx = static_cast<InstanceData*>(data);
+				for (int p = 0; p < 21; p++) {
+					xxx.push_back(xx[p]);
+				}
+				vkUnmapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetCulledInstanceDataMemory(0));
+	*/
+	/*void *data1;
+	vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetInstanceDataMemory(), 0, scene->GetInstanceBuffer()[0]->GetInstanceCount() * sizeof(InstanceData), 0, &data1);
+	std::vector<InstanceData> xxx1;
+	InstanceData *xx1 = static_cast<InstanceData*>(data1);
+	for (int p = 0; p < 21; p++) {
+		xxx1.push_back(xx1[p]);
+	}*/
+				VkDeviceSize offsets[] = { 0 };
+				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+				// Bind Instance Buffer
+				vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
+
+				vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[3 * k +1]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+				// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+				// Bind the descriptor set for each model
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 1, 1, &modelDescriptorSets[3 * k +1], 0, nullptr);
+				// Bind the time descriptor.
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
+				// Bind the LOD descriptor
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+				// Indirect Draw
+				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(0), 0, 1, 0);
+				//// Draw
+				//std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
+				//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
 			}
-			vkUnmapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetCulledInstanceDataMemory(0));
 
-			/*void *data1;
-			vkMapMemory(device->GetVkDevice(), scene->GetInstanceBuffer()[0]->GetInstanceDataMemory(), 0, scene->GetInstanceBuffer()[0]->GetInstanceCount() * sizeof(InstanceData), 0, &data1);
-			std::vector<InstanceData> xxx1;
-			InstanceData *xx1 = static_cast<InstanceData*>(data1);
-			for (int p = 0; p < 21; p++) {
-				xxx1.push_back(xx1[p]);
-			}*/
-			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-			// Bind Instance Buffer
-			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
+			//Leaf: leaf pipeline
+			{
+				// Bind the leaf pipeline
+				vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipeline);
 
-			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[1]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+				// Bind the vertex and index buffers
+				VkBuffer vertexBuffers[] = { scene->GetModels()[3 * k +2]->getVertexBuffer() };
+				//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(0) };
+				VkDeviceSize offsets[] = { 0 };
+				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+				vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
+				vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[3 * k +2]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
-			// Bind the descriptor set for each model
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 1, 1, &modelDescriptorSets[1], 0, nullptr);
-			// Bind the time descriptor.
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
-			// Indirect Draw
-			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[0]->GetNumInstanceDataBuffer(0), 0, 1, 0);
-			//// Draw
-			//std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
-			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+				// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+				// Bind the descriptor set for each model
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 1, 1, &modelDescriptorSets[3 * k +2], 0, nullptr);
+				// Bind the time descriptor.
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
+				// Bind the LOD descriptor
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+				// Indirect Draw
+				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(1), 0, 1, 0);
+
+				//// Draw
+				//std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
+				//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			}
+
+			//Billboard: billboard pipeline
+			{
+				// Bind the leaf pipeline
+				vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipeline);
+
+				// Bind the vertex and index buffers
+				VkBuffer vertexBuffers[] = { scene->GetModels()[3 * k +3]->getVertexBuffer() };
+				//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(1) };
+				VkDeviceSize offsets[] = { 0 };
+				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+				vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
+				vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[3 * k +3]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+				// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+				// Bind the descriptor set for each model
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 1, 1, &modelDescriptorSets[3 * k +3], 0, nullptr);
+				// Bind the time descriptor.
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
+				// Bind the LOD descriptor
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+				// Indirect Draw
+				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(2), 0, 1, 0);
+
+				//// Draw
+				//std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
+				//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+			}
 		}
-
-		//Leaf: leaf pipeline
-		{
-			// Bind the leaf pipeline
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipeline);
-
-			// Bind the vertex and index buffers
-			VkBuffer vertexBuffers[] = { scene->GetModels()[2]->getVertexBuffer() };
-			//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(0) };
-			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
-			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[2]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
-			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
-			// Bind the descriptor set for each model
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 1, 1, &modelDescriptorSets[2], 0, nullptr);
-			// Bind the time descriptor.
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
-			// Indirect Draw
-			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[0]->GetNumInstanceDataBuffer(1), 0, 1, 0);
-
-			//// Draw
-			//std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
-			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
-		}
-
-		//Billboard: billboard pipeline
-		{
-			// Bind the leaf pipeline
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipeline);
-
-			// Bind the vertex and index buffers
-			VkBuffer vertexBuffers[] = { scene->GetModels()[3]->getVertexBuffer() };
-			//VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
-			VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetCulledInstanceDataBuffer(1) };
-			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
-			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[3]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
-			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
-			// Bind the descriptor set for each model
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 1, 1, &modelDescriptorSets[3], 0, nullptr);
-			// Bind the time descriptor.
-			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
-			// Indirect Draw
-			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[0]->GetNumInstanceDataBuffer(2), 0, 1, 0);
-
-			//// Draw
-			//std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
-			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
-		}
-
 		//// Grass
 		//vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipeline);
 

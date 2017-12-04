@@ -13,8 +13,13 @@ layout(set = 1, binding = 0) uniform ModelBufferObject {
 };
 
 layout(set = 2, binding = 0) uniform Time {
-    float deltaTime;
-    float totalTime;
+    vec2 TimeInfo;
+	// 0: deltaTime 1: totalTime
+};
+
+layout(set = 3, binding = 0) uniform LODINFO{
+	// 0: LOD0 1: LOD1 2: TreeHeight 3: NumTrees
+	vec4 LODInfo;
 };
 
 layout(location = 0) in vec3 inPosition;
@@ -88,8 +93,8 @@ void main() {
     fragTexCoord = inTexCoord;
 
 //LOD Effect
-	noiseTexCoord.x = (inPosition.x - inTransformPos_Scale.x) / 12.0f + 0.5f;
-	noiseTexCoord.y = (inPosition.y - inTransformPos_Scale.y) / 20.0f;
+	noiseTexCoord.x = (inPosition.x - inTransformPos_Scale.x) / (LODInfo.z * 1.1f) + 0.5f;
+	noiseTexCoord.y = (inPosition.y - inTransformPos_Scale.y) / LODInfo.z;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / (512.0f);
 	
 // Tint Color

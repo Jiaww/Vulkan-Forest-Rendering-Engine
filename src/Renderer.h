@@ -23,6 +23,7 @@ public:
 	void CreateComputeDescriptorSetLayout();
 	void CreateCullingComputeDescriptorSetLayout();
 	void CreateTerrainDescriptorSetLayout();
+	void CreateLODInfoDescriptorSetLayout();
 
     void CreateDescriptorPool();
 
@@ -34,6 +35,7 @@ public:
     void CreateComputeDescriptorSets();
 	void CreateCullingComputeDescriptorSets();
 	void CreateTerrainDescriptorSet();
+	void CreateLODInfoDescriptorSets();
 
 // Funcs: Pipeline(Correspond to how many different shaders)
     void CreateGraphicsPipeline();
@@ -65,6 +67,8 @@ private:
     VkCommandPool computeCommandPool;
 
     VkRenderPass renderPass;
+
+
 // Vars: Descriptor Set Layout
 	VkDescriptorSetLayout cameraDescriptorSetLayout;
 	VkDescriptorSetLayout modelDescriptorSetLayout;
@@ -73,6 +77,7 @@ private:
 	VkDescriptorSetLayout computeDescriptorSetLayout;
 	VkDescriptorSetLayout cullingComputeDescriptorSetLayout;
 	VkDescriptorSetLayout terrainDescriptorSetLayout;
+	VkDescriptorSetLayout LODInfoDescriptorSetLayout;
 
 	VkDescriptorPool descriptorPool;
 
@@ -84,6 +89,7 @@ private:
 	std::vector<VkDescriptorSet> computeDescriptorSets;
 	std::vector<VkDescriptorSet> cullingComputeDescriptorSets;
 	VkDescriptorSet terrainDescriptorSet;
+	std::vector<VkDescriptorSet> LODInfoDescriptorSets;
 
 // Vars: Pipeline Layout and pipeline
 	VkPipelineLayout graphicsPipelineLayout;

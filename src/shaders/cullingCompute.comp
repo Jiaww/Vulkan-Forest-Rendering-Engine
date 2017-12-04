@@ -12,8 +12,8 @@ layout(set = 0, binding = 0) uniform CameraBufferObject {
 } camera;
 
 layout(set = 1, binding = 0) uniform Time {
-    float deltaTime;
-    float totalTime;
+    vec2 TimeInfo;
+	// 0: deltaTime 1: totalTime
 };
 
 struct InstanceData {
@@ -65,6 +65,11 @@ layout(set = 2, binding = 5) buffer NumDataBufferLOD1 {
    uint firstInstance;
 } numDataLOD1;
 
+layout(set = 3, binding = 0) uniform LODINFO{
+	// 0: LOD0 1: LOD1 2: TreeHeight 3: NumTrees
+	vec4 LODInfo;
+};
+
 bool inBounds(vec3 pos, float tolerance) {
     return (pos.x < 1+tolerance && pos.x > -1-tolerance 
 		&& pos.y < 1+tolerance && pos.y > -1-tolerance 
@@ -84,7 +89,7 @@ void main() {
 
     // TODO: Apply forces on every blade and update the vertices in the buffer
     
-	if(index >= 200)
+	if(index >= LODInfo.w)
 		return;
 	InstanceData this_instance = instances[index];
 	vec3 this_pos = this_instance.pos_scale.xyz;
@@ -99,12 +104,13 @@ void main() {
 	//View-Frustum Culling
 	bool view_frustum_culled = true;
 	mat4 vp = camera.proj * camera.view;
+	float Tree_Height = LODInfo.z;
 	vec4 NDC_pos_bottom = vp * vec4(this_pos.x, this_pos.y, this_pos.z, 1.0f);
-	vec4 NDC_pos_up		= vp * vec4(this_pos.x, this_pos.y + 20.0f, this_pos.z, 1.0f);
-	vec4 NDC_pos_left	= vp * vec4(this_pos.x - 10.0f, this_pos.y + 10.0f, this_pos.z, 1.0f);
-	vec4 NDC_pos_right	= vp * vec4(this_pos.x + 10.0f, this_pos.y + 10.0f, this_pos.z, 1.0f);
-	vec4 NDC_pos_forward= vp * vec4(this_pos.x, this_pos.y + 10.0f, this_pos.z + 10.0f, 1.0f);
-	vec4 NDC_pos_back	= vp * vec4(this_pos.x, this_pos.y + 10.0f, this_pos.z - 10.0f, 1.0f);
+	vec4 NDC_pos_up		= vp * vec4(this_pos.x, this_pos.y + Tree_Height, this_pos.z, 1.0f);
+	vec4 NDC_pos_left	= vp * vec4(this_pos.x - Tree_Height/2.0f, this_pos.y + Tree_Height/2.0f, this_pos.z, 1.0f);
+	vec4 NDC_pos_right	= vp * vec4(this_pos.x + Tree_Height/2.0f, this_pos.y + Tree_Height/2.0f, this_pos.z, 1.0f);
+	vec4 NDC_pos_forward= vp * vec4(this_pos.x, this_pos.y + Tree_Height/2.0f, this_pos.z + Tree_Height/2.0f, 1.0f);
+	vec4 NDC_pos_back	= vp * vec4(this_pos.x, this_pos.y + Tree_Height/2.0f, this_pos.z - Tree_Height/2.0f, 1.0f);
 	NDC_pos_bottom /= NDC_pos_bottom.w;
 	NDC_pos_up /= NDC_pos_up.w;
 	NDC_pos_left /= NDC_pos_left.w;
@@ -129,10 +135,10 @@ void main() {
 
 	float distanceLevel = distance / (512.0f);
 
-	if(distanceLevel > 0.5f){
+	if(distanceLevel > LODInfo.x){
 		LOD0_culled = true;
 	}
-	if(distanceLevel < 0.3f){
+	if(distanceLevel < LODInfo.y){
 		LOD1_culled = true;
 	}
 

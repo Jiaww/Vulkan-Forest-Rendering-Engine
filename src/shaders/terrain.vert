@@ -13,8 +13,8 @@ layout(set = 1, binding = 0) uniform ModelBufferObject {
 };
 
 layout(set = 2, binding = 0) uniform Time {
-    float deltaTime;
-    float totalTime;
+    vec2 TimeInfo;
+	// 0: deltaTime 1: totalTime
 };
 
 layout(location = 0) in vec3 inPosition;

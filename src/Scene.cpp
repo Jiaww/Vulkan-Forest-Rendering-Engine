@@ -45,8 +45,8 @@ void Scene::UpdateTime() {
     duration<float> nextDeltaTime = duration_cast<duration<float>>(currentTime - startTime);
     startTime = currentTime;
 
-    time.deltaTime = nextDeltaTime.count();
-    time.totalTime += time.deltaTime;
+    time.TimeInfo[0] = nextDeltaTime.count();
+    time.TimeInfo[1] += time.TimeInfo[0];
 
     memcpy(mappedData, &time, sizeof(Time));
 }
@@ -55,6 +55,30 @@ VkBuffer Scene::GetTimeBuffer() const {
     return timeBuffer;
 }
 
+void Scene::AddLODInfoBuffer(glm::vec4 LODInfo) {
+	LODInfoVec.push_back(LODInfo);
+	void* p;
+	VkBuffer LODInfoBuf;
+	VkDeviceMemory LODInfoBufMemory;
+	BufferUtils::CreateBuffer(device, sizeof(glm::vec4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, LODInfoBuf, LODInfoBufMemory);
+	vkMapMemory(device->GetVkDevice(), LODInfoBufMemory, 0, sizeof(glm::vec4), 0, &p);
+	memcpy(p, &LODInfoVec[LODInfoVec.size() - 1], sizeof(glm::vec4));
+	LODmappedData.push_back(p);
+	LODInfoBuffer.push_back(LODInfoBuf);
+	LODInfoBufferMemory.push_back(LODInfoBufMemory);
+}
+
+std::vector<VkBuffer> Scene::GetLODInfoBuffer() const {
+	return LODInfoBuffer;
+}
+
+void Scene::UpdateLODInfo(float LOD0, float LOD1) {
+	for (int i = 0; i < LODInfoVec.size(); i++) {
+		LODInfoVec[i][0] = LOD0;
+		LODInfoVec[i][1] = LOD1;
+		memcpy(LODmappedData[i], &LODInfoVec[i], sizeof(glm::vec4));
+	}
+}
 bool Scene::InsertRandomTrees(int numTrees, Device* device, VkCommandPool commandPool) {
 //	std::vector<InstanceData> instanceData;
 //	srand(33974);

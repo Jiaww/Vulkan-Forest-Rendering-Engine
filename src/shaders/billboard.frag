@@ -5,6 +5,11 @@ layout(set = 1, binding = 1) uniform sampler2D texSampler;
 layout(set = 1, binding = 2) uniform sampler2D normalSampler;
 layout(set = 1, binding = 3) uniform sampler2D noiseSampler;
 
+layout(set = 3, binding = 0) uniform LODINFO{
+	// 0: LOD0 1: LOD1 2: TreeHeight 3: NumTrees
+	vec4 LODInfo;
+};
+
 layout(location = 0) in vec3 vertColor;
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 worldPosition;
@@ -21,7 +26,7 @@ layout(location = 0) out vec4 outColor;
 void main() {
 	// LOD Morphing
 	vec4 noiseColor = texture(noiseSampler, noiseTexCoord);
-	float dis = (distanceLevel - 0.3f)/(0.5f - 0.3f);
+	float dis = (distanceLevel - LODInfo.y)/(LODInfo.x - LODInfo.y);
 	if(dis < noiseColor.x)
 		discard;
 
@@ -34,14 +39,16 @@ void main() {
 	vec3 TextureNormal_worldspace = normalize(worldT * TextureNormal_tangentspace.x + worldB * TextureNormal_tangentspace.y + worldN * TextureNormal_tangentspace.z);
 
     vec4 diffuseColor = texture(texSampler, fragTexCoord);
+	
+	if(diffuseColor.a < 0.85f)
+		discard;
+
 	// Calculate the diffuse term for Lambert shading
 	vec3 lightDir = normalize(vec3(-1.0, 5.0, -3.0));
 	float diffuseTerm = clamp(dot(TextureNormal_worldspace, normalize(lightDir)), 0.15f, 1);
 	// Avoid negative lighting values
 	float ambientTerm = vertAmbient * 0.15f;
 
-	if(diffuseColor.a < 0.9f)
-		discard;
 	outColor = vec4(diffuseColor.rgb * tintColor * (diffuseTerm + ambientTerm), diffuseColor.a);
 	//outColor=vec4(0.0f, abs(test[2]), 0.0f,1.0);
 }

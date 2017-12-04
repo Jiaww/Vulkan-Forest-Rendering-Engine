@@ -13,8 +13,13 @@ layout(set = 1, binding = 0) uniform ModelBufferObject {
 };
 
 layout(set = 2, binding = 0) uniform Time {
-    float deltaTime;
-    float totalTime;
+    vec2 TimeInfo;
+	// 0: deltaTime 1: totalTime
+};
+
+layout(set = 3, binding = 0) uniform LODINFO{
+	// 0: LOD0 1: LOD1 2: TreeHeight 3: NumTrees
+	vec4 LODInfo;
 };
 
 layout(location = 0) in vec3 inPosition;
@@ -80,9 +85,9 @@ void main() {
 	translate[3][1]=inTransformPos_Scale.y;
 	translate[3][2]=inTransformPos_Scale.z;
 
-	scale[0][0] = 0.015 * inTransformPos_Scale.w;
-	scale[1][1] = 0.015 * inTransformPos_Scale.w;
-	scale[2][2] = 0.015 * inTransformPos_Scale.w;
+	scale[0][0] = inTransformPos_Scale.w;
+	scale[1][1] = inTransformPos_Scale.w;
+	scale[2][2] = inTransformPos_Scale.w;
 	mat4 modelMatrix = model * translate * rotate * scale;
 	mat3 inv_trans_model = transpose(inverse(mat3(modelMatrix)));
 	vec3 vPos=vec3(modelMatrix * vec4(inPosition, 1.0f));
@@ -99,7 +104,7 @@ void main() {
 	vec3 wind_dir = normalize(vec3(0.5, 0, 1));
     float wind_speed = 12.0;
     float wave_division_width = 15.0;
-    float wave_info = (cos((dot(objectPosition, wind_dir) - wind_speed * totalTime) / wave_division_width) + 0.7);
+    float wave_info = (cos((dot(objectPosition, wind_dir) - wind_speed * TimeInfo[1]) / wave_division_width) + 0.7);
 	
 	float wind_power = 15.0f;
     //vec3 w = wind_dir * wind_power * wave_info * fd * fr;
@@ -120,8 +125,8 @@ void main() {
     fragTexCoord = inTexCoord;
 
 //LOD Effect
-	noiseTexCoord.x = (vPos.x - inTransformPos_Scale.x) / 10.5f + 0.5f;
-	noiseTexCoord.y = (vPos.y - inTransformPos_Scale.y) / 20.2f;
+	noiseTexCoord.x = (vPos.x - inTransformPos_Scale.x) / (LODInfo.z/2.0f) + 0.5f;
+	noiseTexCoord.y = (vPos.y - inTransformPos_Scale.y) / LODInfo.z;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / (512.0f);
 	
 // Tint Color
