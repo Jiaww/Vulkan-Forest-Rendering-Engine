@@ -2393,7 +2393,7 @@ void Renderer::RecordCommandBuffers() {
 #if LOD_FRUSTUM_CULLING
 				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(0) };
 #else
-				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetInstanceDataBuffer() };
 #endif
 				VkDeviceSize offsets[] = { 0 };
 				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
@@ -2416,7 +2416,7 @@ void Renderer::RecordCommandBuffers() {
 #else
 				// Draw
 				std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
-				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[k]->GetInstanceCount(), 0, 0, 0);
 #endif
 			}
 
@@ -2430,7 +2430,7 @@ void Renderer::RecordCommandBuffers() {
 #if LOD_FRUSTUM_CULLING
 				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(0) };
 #else
-				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetInstanceDataBuffer() };
 #endif
 				VkDeviceSize offsets[] = { 0 };
 				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
@@ -2451,7 +2451,7 @@ void Renderer::RecordCommandBuffers() {
 #else
 				// Draw
 				std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
-				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[k]->GetInstanceCount(), 0, 0, 0);
 #endif
 			}
 
@@ -2465,7 +2465,7 @@ void Renderer::RecordCommandBuffers() {
 #if LOD_FRUSTUM_CULLING
 				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(1) };
 #else
-				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[0]->GetInstanceDataBuffer() };
+				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetInstanceDataBuffer() };
 #endif
 				VkDeviceSize offsets[] = { 0 };
 				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
@@ -2486,7 +2486,7 @@ void Renderer::RecordCommandBuffers() {
 #else
 				// Draw
 				std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
-				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[0]->GetInstanceCount(), 0, 0, 0);
+				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[k]->GetInstanceCount(), 0, 0, 0);
 #endif
 			}
 		}
