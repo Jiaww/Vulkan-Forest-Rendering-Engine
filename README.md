@@ -40,8 +40,8 @@ ___
 * **GUI & Cubemap bugs fixed** 
 * **Shadow map( Depends on time)** 
 * **Performance analysis**
-  -Memory occupancy
-  -Fps
+  -   Memory occupancy
+  -   Fps
 
 
 |**Trees Rendering**|
