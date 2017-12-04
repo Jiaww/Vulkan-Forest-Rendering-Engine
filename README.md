@@ -22,10 +22,19 @@ ___
 * **Basic LOD**
 * **Skybox(Still Debugging)**
 
+|**Trees Rendering**|
+|---|
+|<img src="./results/allTrees.gif" width="800" height="600">|
+
+|**Single Tree**|
+|---|
+|<img src="./results/singleTree.gif" width="800" height="600">|
+
 ___
 ## Milestone 3 (12/04/2017)
-* **Compute shader pipeline for culling computing**
-* **Frustum culling and distance culling**
+* **Frustum culling and distance culling using Compute Shader**
+* **Optimize code structure to enable multiple Model Loading**
+* **Replace the hardcode parameters with Uniform descriptors**
 * **Cubemap**
   -   Pipeline built and works well
   -   Still debugging the multi-layers image texture)
@@ -42,14 +51,4 @@ ___
 * **Performance analysis**
   -   Memory occupancy
   -   Fps
-
-
-|**Trees Rendering**|
-|---|
-|<img src="./results/allTrees.gif" width="800" height="600">|
-
-|**Single Tree**|
-|---|
-|<img src="./results/singleTree.gif" width="800" height="600">|
-
 
