@@ -77,3 +77,5 @@ ___
   -   Memory occupancy
   -   Fps
 
+## Funny Bugs
+<img src="./results/milestone3/bugs.gif" width="800" height="600">
