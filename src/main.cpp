@@ -490,6 +490,8 @@ int main() {
 		count++;
 		if (count == 100) {
 			int total_time = GetTickCount() - time_start;
+			float distance = glm::length(glm::vec3(128,0,128)-camera->GetEyePos());
+			printf("Camera Distance %f\n", distance);
 			printf("Total Time for 100 frames: %d\n", total_time);
 			printf("Time per frame: %f\n", float(total_time) / 100.0f);
 			printf("fps: %f\n", 100000.0 / float(total_time));

@@ -2388,7 +2388,7 @@ void Renderer::RecordCommandBuffers() {
 				// Bind the bark pipeline
 				vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipeline);
 				// Bind the vertex and index buffers
-				VkBuffer vertexBuffers[] = { scene->GetModels()[3 * k +1]->getVertexBuffer() };
+				VkBuffer vertexBuffers[] = { scene->GetModels()[3 * k + 1]->getVertexBuffer() };
 				
 #if LOD_FRUSTUM_CULLING
 				VkBuffer instanceBuffer[] = { scene->GetInstanceBuffer()[k]->GetCulledInstanceDataBuffer(0) };
@@ -2415,7 +2415,7 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(0), 0, 1, 0);
 #else
 				// Draw
-				std::vector<uint32_t> indices = scene->GetModels()[1]->getIndices();
+				std::vector<uint32_t> indices = scene->GetModels()[3*k + 1]->getIndices();
 				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[k]->GetInstanceCount(), 0, 0, 0);
 #endif
 			}
@@ -2450,7 +2450,7 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(1), 0, 1, 0);
 #else
 				// Draw
-				std::vector<uint32_t> indices = scene->GetModels()[2]->getIndices();
+				std::vector<uint32_t> indices = scene->GetModels()[3 *k + 2]->getIndices();
 				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[k]->GetInstanceCount(), 0, 0, 0);
 #endif
 			}
@@ -2485,7 +2485,7 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(2), 0, 1, 0);
 #else
 				// Draw
-				std::vector<uint32_t> indices = scene->GetModels()[3]->getIndices();
+				std::vector<uint32_t> indices = scene->GetModels()[3*k + 3]->getIndices();
 				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[k]->GetInstanceCount(), 0, 0, 0);
 #endif
 			}

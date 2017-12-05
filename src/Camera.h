@@ -64,4 +64,5 @@ public:
     void UpdateOrbit(float deltaX, float deltaY, float deltaZ);
 	void UpdateAspectRatio(float aspectRatio,int w,int h);
 	void UpdateViewMatrix();
+	glm::vec3 GetEyePos() { return eye; }
 };
