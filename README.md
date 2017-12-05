@@ -58,7 +58,7 @@ ___
 
 |**Performance Comparision of LOD Culling(270 Trees and 270 Billboards)**|
 |---|
-|<img src="./results/milestone3/performance.png" width="800" height="600">|
+|<img src="./results/milestone3/performance.png" width="750" height="480">|
 
 * **Morphing**:
 
