@@ -20,6 +20,7 @@ layout(location = 6) in float vertAmbient;
 layout(location = 7) in float distanceLevel;
 layout(location = 8) in vec2 noiseTexCoord;
 layout(location = 9) in vec3 tintColor;
+layout(location = 10) in float flag;
 
 layout(location = 0) out vec4 outColor;
 
@@ -40,7 +41,9 @@ void main() {
 
     vec4 diffuseColor = texture(texSampler, fragTexCoord);
 	
-	if(diffuseColor.a < 0.85f)
+	//Because the alpha level fake tree billboard we use here is different with models' billboards
+	float alphaThreshold = (0.85f-0.35f*flag);
+	if(diffuseColor.a < alphaThreshold)
 		discard;
 
 	// Calculate the diffuse term for Lambert shading
@@ -49,6 +52,7 @@ void main() {
 	// Avoid negative lighting values
 	float ambientTerm = vertAmbient * 0.15f;
 
-	outColor = vec4(diffuseColor.rgb * tintColor * (diffuseTerm + ambientTerm), diffuseColor.a);
+	//Because there is no normal map of fake tree billboard here
+	outColor = vec4(diffuseColor.rgb * tintColor * ((diffuseTerm + ambientTerm)*(1 - flag) + 1.2f*flag), diffuseColor.a);
 	//outColor=vec4(0.0f, abs(test[2]), 0.0f,1.0);
 }

@@ -22,6 +22,7 @@ public:
 	void CreateTimeDescriptorSetLayout();
 	void CreateComputeDescriptorSetLayout();
 	void CreateCullingComputeDescriptorSetLayout();
+	void CreateFakeCullingComputeDescriptorSetLayout();
 	void CreateTerrainDescriptorSetLayout();
 	void CreateLODInfoDescriptorSetLayout();
 
@@ -34,6 +35,7 @@ public:
     void CreateTimeDescriptorSet();
     void CreateComputeDescriptorSets();
 	void CreateCullingComputeDescriptorSets();
+	void CreateFakeCullingComputeDescriptorSets();
 	void CreateTerrainDescriptorSet();
 	void CreateLODInfoDescriptorSets();
 
@@ -42,6 +44,7 @@ public:
     void CreateGrassPipeline();
     void CreateComputePipeline();
 	void CreateCullingComputePipeline();
+	void CreateFakeCullingComputePipeline();
 	void CreateBarkPipeline();
 	void CreateLeafPipeline();
 	void CreateBillboardPipeline();
@@ -76,6 +79,7 @@ private:
 	VkDescriptorSetLayout timeDescriptorSetLayout;
 	VkDescriptorSetLayout computeDescriptorSetLayout;
 	VkDescriptorSetLayout cullingComputeDescriptorSetLayout;
+	VkDescriptorSetLayout fakeCullingComputeDescriptorSetLayout;
 	VkDescriptorSetLayout terrainDescriptorSetLayout;
 	VkDescriptorSetLayout LODInfoDescriptorSetLayout;
 
@@ -88,6 +92,7 @@ private:
 	std::vector<VkDescriptorSet> grassDescriptorSets;
 	std::vector<VkDescriptorSet> computeDescriptorSets;
 	std::vector<VkDescriptorSet> cullingComputeDescriptorSets;
+	std::vector<VkDescriptorSet> fakeCullingComputeDescriptorSets;
 	VkDescriptorSet terrainDescriptorSet;
 	std::vector<VkDescriptorSet> LODInfoDescriptorSets;
 
@@ -99,6 +104,7 @@ private:
 	VkPipelineLayout grassPipelineLayout;
 	VkPipelineLayout computePipelineLayout;
 	VkPipelineLayout cullingComputePipelineLayout;
+	VkPipelineLayout fakeCullingComputePipelineLayout;
 	VkPipelineLayout terrainPipelineLayout;
 
 	VkPipeline graphicsPipeline;
@@ -108,6 +114,7 @@ private:
 	VkPipeline grassPipeline;
 	VkPipeline computePipeline;
 	VkPipeline cullingComputePipeline;
+	VkPipeline fakeCullingComputePipeline;
 	VkPipeline terrainPipeline;
 
     std::vector<VkImageView> imageViews;

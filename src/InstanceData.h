@@ -67,3 +67,33 @@ public:
 	VkDeviceMemory GetNumInstanceDataMemory(int LOD_num) const;
 
 };
+
+class FakeInstanceBuffer {
+protected:
+	Device* device;
+	std::vector<InstanceData> Data;
+	VkBuffer FakeDataBuffer;
+	// 3 types of fake tree
+	VkBuffer fakeCulledDataBuffer;
+	VkBuffer fakeNumDataBuffer;
+
+	VkDeviceMemory FakeDataMemory;
+	VkDeviceMemory fakeCulledDataMemory;
+	VkDeviceMemory fakeNumDataMemory;
+	//No indices. Indices should corespond with Model.
+	int InstanceCount = 0;
+
+public:
+	FakeInstanceBuffer() = delete;
+	FakeInstanceBuffer(Device* device, VkCommandPool commandPool, const std::vector<InstanceData> &Data);
+	virtual ~FakeInstanceBuffer();
+	VkBuffer GetInstanceDataBuffer() const;
+	VkBuffer GetCulledInstanceDataBuffer() const;
+	VkBuffer GetNumInstanceDataBuffer() const;
+	int GetInstanceCount() const;
+
+	VkDeviceMemory GetInstanceDataMemory() const;
+	VkDeviceMemory GetCulledInstanceDataMemory() const;
+	VkDeviceMemory GetNumInstanceDataMemory() const;
+
+};

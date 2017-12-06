@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <chrono>
 #include <cstdlib> 
+#include <math.h>
 
 #include "Model.h"
 #include "Blades.h"
@@ -34,10 +35,15 @@ private:
 	Terrain* terrain;
     std::vector<Model*> models;
     std::vector<Blades*> blades;
-	std::vector<InstanceBuffer*> instanceData;
-	std::vector<InstanceBuffer*> culledInstanceData;
+	std::vector<InstanceBuffer*> instanceBuffers;
+	std::vector<FakeInstanceBuffer*> fakeInstanceBuffers;
+	//Density Multiplication
+	//std::vector<std::vector<int>> densityVector;
+	int *densityMesh;
+	int meshDim;
+	int numFakeTree;
 
-high_resolution_clock::time_point startTime = high_resolution_clock::now();
+	high_resolution_clock::time_point startTime = high_resolution_clock::now();
 
 public:
     Scene() = delete;
@@ -50,15 +56,23 @@ public:
     const std::vector<Blades*>& GetBlades() const;
 	const std::vector<InstanceBuffer*>& GetInstanceBuffer() const;
     std::vector<VkBuffer> GetLODInfoBuffer() const;
+	const std::vector<FakeInstanceBuffer*>& GetFakeInstanceBuffer() const;
 
 	void SetTerrain(Terrain* terrain);
     void AddModel(Model* model);
     void AddBlades(Blades* blades);
 	void AddInstanceBuffer(InstanceBuffer* Data);
-	bool InsertRandomTrees(int numTrees, Device* device, VkCommandPool commandPool);
+	bool InsertRandomTrees(int numTrees, float treeBaseScale, int modelId, Device* device, VkCommandPool commandPool);
     VkBuffer GetTimeBuffer() const;
 	void AddLODInfoBuffer(glm::vec4 LODInfo);
 
     void UpdateTime();
 	void UpdateLODInfo(float LOD0, float LOD1);
+
+	int GetDensityMeshValue(int x, int z);
+	void SetDensityMeshValue(int x, int z, int value);
+	void UpdateDensityDistribution(int x, int z);
+	void GatherFakeTrees(Device* device, VkCommandPool commandPool);
+	void AddFakeInstanceBuffer(FakeInstanceBuffer* Data);
+	int GetNumFakeTree() { return numFakeTree; }
 };

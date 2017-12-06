@@ -26,6 +26,7 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateTimeDescriptorSetLayout();
 	CreateComputeDescriptorSetLayout();
 	CreateCullingComputeDescriptorSetLayout();
+	CreateFakeCullingComputeDescriptorSetLayout();
 	CreateTerrainDescriptorSetLayout();
 	CreateLODInfoDescriptorSetLayout();
 
@@ -38,6 +39,7 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateTimeDescriptorSet();
 	CreateComputeDescriptorSets();
 	CreateCullingComputeDescriptorSets();
+	CreateFakeCullingComputeDescriptorSets();
 	CreateTerrainDescriptorSet();
 	CreateLODInfoDescriptorSets();
 
@@ -51,6 +53,7 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateGrassPipeline();
 	CreateComputePipeline();
 	CreateCullingComputePipeline();
+	CreateFakeCullingComputePipeline();
 	CreateTerrainPipeline();
 
 	RecordCommandBuffers();
@@ -346,6 +349,45 @@ void Renderer::CreateCullingComputeDescriptorSetLayout() {
 	}
 }
 
+void Renderer::CreateFakeCullingComputeDescriptorSetLayout() {
+	// TODO: Create the descriptor set layout for the compute pipeline
+	// Remember this is like a class definition stating why types of information
+	// will be stored at each binding
+	VkDescriptorSetLayoutBinding instanceBinding = {};
+	instanceBinding.binding = 0;
+	instanceBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	instanceBinding.descriptorCount = 1;
+	instanceBinding.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	instanceBinding.pImmutableSamplers = nullptr;
+
+	VkDescriptorSetLayoutBinding culledInstanceBinding = {};
+	culledInstanceBinding.binding = 1;
+	culledInstanceBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	culledInstanceBinding.descriptorCount = 1;
+	culledInstanceBinding.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	culledInstanceBinding.pImmutableSamplers = nullptr;
+
+
+	VkDescriptorSetLayoutBinding numInstanceBinding = {};
+	numInstanceBinding.binding = 2;
+	numInstanceBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	numInstanceBinding.descriptorCount = 1;
+	numInstanceBinding.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	numInstanceBinding.pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = { instanceBinding, culledInstanceBinding, numInstanceBinding };
+
+	// Create the descriptor set layout
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(logicalDevice, &layoutInfo, nullptr, &fakeCullingComputeDescriptorSetLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create descriptor set layout");
+	}
+}
+
 void Renderer::CreateTerrainDescriptorSetLayout() {
 	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
 	uboLayoutBinding.binding = 0;
@@ -423,6 +465,9 @@ void Renderer::CreateDescriptorPool() {
 		// Culling Compute
 		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER , 6 * (uint32_t)scene->GetInstanceBuffer().size() },
 
+		// Fake Culling Compute
+		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER , 3 * (uint32_t)scene->GetFakeInstanceBuffer().size() },
+
 		// Terrain
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
 		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 2 },
@@ -432,7 +477,7 @@ void Renderer::CreateDescriptorPool() {
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 16;//1*camera + 7*model + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2 * LODInfo
+	poolInfo.maxSets = 22;//1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo
 
 	if (vkCreateDescriptorPool(logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool");
@@ -820,6 +865,84 @@ void Renderer::CreateCullingComputeDescriptorSets() {
 		descriptorWrites[5].pBufferInfo = &numDataBufferInfo[2];
 		descriptorWrites[5].pImageInfo = nullptr;
 		descriptorWrites[5].pTexelBufferView = nullptr;
+		// Update descriptor sets
+		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	}
+}
+
+void Renderer::CreateFakeCullingComputeDescriptorSets() {
+	// TODO: Create Descriptor sets for the compute pipeline
+	// The descriptors should point to Storage buffers which will hold the grass blades, the culled grass blades, and the output number of grass blades 
+	fakeCullingComputeDescriptorSets.resize(scene->GetFakeInstanceBuffer().size());
+
+	// Describe the desciptor set
+	std::vector<VkDescriptorSetLayout> layouts;
+	for (int i = 0; i < scene->GetFakeInstanceBuffer().size(); i++) {
+		layouts.push_back(fakeCullingComputeDescriptorSetLayout);
+	}
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(fakeCullingComputeDescriptorSets.size());
+	allocInfo.pSetLayouts = layouts.data();
+
+	// Allocate descriptor sets
+	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, fakeCullingComputeDescriptorSets.data()) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate descriptor set");
+	}
+
+
+	for (uint32_t i = 0; i < scene->GetFakeInstanceBuffer().size(); ++i) {
+		std::vector<VkWriteDescriptorSet> descriptorWrites(3);
+		//InstanceBuffer
+		VkDescriptorBufferInfo instanceDataBufferInfo = {};
+		instanceDataBufferInfo.buffer = scene->GetFakeInstanceBuffer()[i]->GetInstanceDataBuffer();
+		instanceDataBufferInfo.offset = 0;
+		instanceDataBufferInfo.range = scene->GetFakeInstanceBuffer()[i]->GetInstanceCount() * sizeof(InstanceData);
+
+		//CulledInstance Buffer
+		VkDescriptorBufferInfo culledDataBufferInfo = {};
+		culledDataBufferInfo.buffer = scene->GetFakeInstanceBuffer()[i]->GetCulledInstanceDataBuffer();
+		culledDataBufferInfo.offset = 0;
+		culledDataBufferInfo.range = scene->GetFakeInstanceBuffer()[i]->GetInstanceCount() * sizeof(InstanceData);
+
+		//Num of culled Instance Buffer
+		VkDescriptorBufferInfo numDataBufferInfo = {};
+		// LOD 0 Leaf
+		numDataBufferInfo.buffer = scene->GetFakeInstanceBuffer()[i]->GetNumInstanceDataBuffer();
+		numDataBufferInfo.offset = 0;
+		numDataBufferInfo.range = sizeof(VkDrawIndexedIndirectCommand);
+		
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = fakeCullingComputeDescriptorSets[i];
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &instanceDataBufferInfo;
+		descriptorWrites[0].pImageInfo = nullptr;
+		descriptorWrites[0].pTexelBufferView = nullptr;
+
+		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[1].dstSet = fakeCullingComputeDescriptorSets[i];
+		descriptorWrites[1].dstBinding = 1;
+		descriptorWrites[1].dstArrayElement = 0;
+		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		descriptorWrites[1].descriptorCount = 1;
+		descriptorWrites[1].pBufferInfo = &culledDataBufferInfo;
+		descriptorWrites[1].pImageInfo = nullptr;
+		descriptorWrites[1].pTexelBufferView = nullptr;
+
+		descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[2].dstSet = fakeCullingComputeDescriptorSets[i];
+		descriptorWrites[2].dstBinding = 2;
+		descriptorWrites[2].dstArrayElement = 0;
+		descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		descriptorWrites[2].descriptorCount = 1;
+		descriptorWrites[2].pBufferInfo = &numDataBufferInfo;
+		descriptorWrites[2].pImageInfo = nullptr;
+		descriptorWrites[2].pTexelBufferView = nullptr;
+
 		// Update descriptor sets
 		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
@@ -1863,6 +1986,49 @@ void Renderer::CreateCullingComputePipeline() {
 	vkDestroyShaderModule(logicalDevice, computeShaderModule, nullptr);
 }
 
+void Renderer::CreateFakeCullingComputePipeline() {
+	// Set up programmable shaders
+	VkShaderModule computeShaderModule = ShaderModule::Create("shaders/cullingCompute.comp.spv", logicalDevice);
+
+	VkPipelineShaderStageCreateInfo computeShaderStageInfo = {};
+	computeShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	computeShaderStageInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+	computeShaderStageInfo.module = computeShaderModule;
+	computeShaderStageInfo.pName = "main";
+
+	// TODO: Add the compute dsecriptor set layout you create to this list
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, timeDescriptorSetLayout, cullingComputeDescriptorSetLayout, LODInfoDescriptorSetLayout };
+
+	// Create pipeline layout
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+	pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+	pipelineLayoutInfo.pushConstantRangeCount = 0;
+	pipelineLayoutInfo.pPushConstantRanges = 0;
+
+	if (vkCreatePipelineLayout(logicalDevice, &pipelineLayoutInfo, nullptr, &cullingComputePipelineLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create pipeline layout");
+	}
+
+	// Create compute pipeline
+	VkComputePipelineCreateInfo pipelineInfo = {};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+	pipelineInfo.stage = computeShaderStageInfo;
+	pipelineInfo.layout = cullingComputePipelineLayout;
+	pipelineInfo.pNext = nullptr;
+	pipelineInfo.flags = 0;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+	pipelineInfo.basePipelineIndex = -1;
+
+	if (vkCreateComputePipelines(logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &cullingComputePipeline) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create compute pipeline");
+	}
+
+	// No need for shader modules anymore
+	vkDestroyShaderModule(logicalDevice, computeShaderModule, nullptr);
+}
+
 void Renderer::CreateTerrainPipeline() {
 	VkShaderModule vertShaderModule = ShaderModule::Create("shaders/terrain.vert.spv", logicalDevice);
 	VkShaderModule fragShaderModule = ShaderModule::Create("shaders/terrain.frag.spv", logicalDevice);
@@ -2120,6 +2286,7 @@ void Renderer::RecreateFrameResources() {
 	vkDestroyPipeline(logicalDevice, terrainPipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, computePipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, cullingComputePipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, fakeCullingComputePipeline, nullptr);
 
 	vkDestroyPipelineLayout(logicalDevice, graphicsPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, grassPipelineLayout, nullptr);
@@ -2129,6 +2296,7 @@ void Renderer::RecreateFrameResources() {
 	vkDestroyPipelineLayout(logicalDevice, terrainPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, computePipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, cullingComputePipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, fakeCullingComputePipelineLayout, nullptr);
 
 	vkFreeCommandBuffers(logicalDevice, graphicsCommandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
@@ -2140,6 +2308,7 @@ void Renderer::RecreateFrameResources() {
 	CreateGrassPipeline();
 	CreateComputePipeline();
 	CreateCullingComputePipeline();
+	CreateFakeCullingComputePipeline();
 	CreateBillboardPipeline();
 	CreateTerrainPipeline();
 	RecordCommandBuffers();
@@ -2197,24 +2366,6 @@ void Renderer::RecordComputeCommandBuffer() {
 		barriers[3 * j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
 		barriers[3 * j + 2].offset = 0;
 		barriers[3 * j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
-
-		//barriers[j + 3].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		//barriers[j + 3].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		//barriers[j + 3].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		//barriers[j + 3].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		//barriers[j + 3].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		//barriers[j + 3].buffer = scene->GetInstanceBuffer()[j]->GetCulledInstanceDataBuffer(0);
-		//barriers[j + 3].offset = 0;
-		//barriers[j + 3].size = scene->GetInstanceBuffer()[j]->GetInstanceCount() * sizeof(InstanceData);
-
-		//barriers[j + 4].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		//barriers[j + 4].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		//barriers[j + 4].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		//barriers[j + 4].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		//barriers[j + 4].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		//barriers[j + 4].buffer = scene->GetInstanceBuffer()[j]->GetCulledInstanceDataBuffer(1);
-		//barriers[j + 4].offset = 0;
-		//barriers[j + 4].size = scene->GetInstanceBuffer()[j]->GetInstanceCount() * sizeof(InstanceData);
 	}
 
 	vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
@@ -2266,28 +2417,58 @@ void Renderer::RecordComputeCommandBuffer() {
 		barriers[3 * j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
 		barriers[3 * j + 2].offset = 0;
 		barriers[3 * j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
-
-		//barriers[j + 3].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		//barriers[j + 3].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		//barriers[j + 3].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		//barriers[j + 3].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		//barriers[j + 3].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		//barriers[j + 3].buffer = scene->GetInstanceBuffer()[j]->GetCulledInstanceDataBuffer(0);
-		//barriers[j + 3].offset = 0;
-		//barriers[j + 3].size = scene->GetInstanceBuffer()[j]->GetInstanceCount() * sizeof(InstanceData);
-
-		//barriers[j + 4].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-		//barriers[j + 4].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-		//barriers[j + 4].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-		//barriers[j + 4].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-		//barriers[j + 4].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-		//barriers[j + 4].buffer = scene->GetInstanceBuffer()[j]->GetCulledInstanceDataBuffer(1);
-		//barriers[j + 4].offset = 0;
-		//barriers[j + 4].size = scene->GetInstanceBuffer()[j]->GetInstanceCount() * sizeof(InstanceData);
 	}
 
 	vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
 #endif
+
+	////Fake Tree Compute Shader
+	//std::vector<VkBufferMemoryBarrier> fakeBarriers(scene->GetFakeInstanceBuffer().size());
+	//for (uint32_t j = 0; j < scene->GetFakeInstanceBuffer().size(); ++j) {
+	//	fakeBarriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+	//	fakeBarriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+	//	fakeBarriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+	//	fakeBarriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+	//	fakeBarriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+	//	fakeBarriers[j].buffer = scene->GetFakeInstanceBuffer()[j]->GetNumInstanceDataBuffer();
+	//	fakeBarriers[j].offset = 0;
+	//	fakeBarriers[j].size = sizeof(VkDrawIndexedIndirectCommand);
+	//}
+
+	//vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, fakeBarriers.size(), fakeBarriers.data(), 0, nullptr);
+
+	//// Bind to the compute pipeline
+	//vkCmdBindPipeline(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipeline);
+
+	//// Bind camera descriptor set
+	//vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+
+	//// Bind descriptor set for time uniforms
+	//vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 1, 1, &timeDescriptorSet, 0, nullptr);
+
+	//for (int i = 0; i < scene->GetFakeInstanceBuffer().size(); ++i) {
+	//	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 2, 1, &fakeCullingComputeDescriptorSets[i], 0, nullptr);
+	//	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 3, 1, &LODInfoDescriptorSets[scene->GetInstanceBuffer().size() + i], 0, nullptr);
+	//	vkCmdDispatch(computeCommandBuffer, (int)(scene->GetFakeInstanceBuffer()[i]->GetInstanceCount() / WORKGROUP_SIZE + 1), 1, 1);
+	//}
+	//// TODO: For each group of blades bind its descriptor set and dispatch
+	///*for (int i = 0; i < scene->GetBlades().size(); ++i) {
+	//vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, computePipelineLayout, 2, 1, &computeDescriptorSets[i], 0, nullptr);
+	//vkCmdDispatch(computeCommandBuffer, (int)(NUM_BLADES / WORKGROUP_SIZE + 1), 1, 1);
+	//}*/
+
+	//for (uint32_t j = 0; j < scene->GetFakeInstanceBuffer().size(); ++j) {
+	//	fakeBarriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+	//	fakeBarriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+	//	fakeBarriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+	//	fakeBarriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+	//	fakeBarriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+	//	fakeBarriers[j].buffer = scene->GetFakeInstanceBuffer()[j]->GetNumInstanceDataBuffer();
+	//	fakeBarriers[j].offset = 0;
+	//	fakeBarriers[j].size = sizeof(VkDrawIndexedIndirectCommand);
+	//}
+
+	//vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, fakeBarriers.size(), fakeBarriers.data(), 0, nullptr);
 	// ~ End recording ~
 	if (vkEndCommandBuffer(computeCommandBuffer) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to record compute command buffer");
@@ -2490,6 +2671,41 @@ void Renderer::RecordCommandBuffers() {
 #endif
 			}
 		}
+
+		// Fake Tree
+		for (int k = 0; k < scene->GetFakeInstanceBuffer().size(); k++) {
+			// Bind the leaf pipeline
+			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipeline);
+
+			// Bind the vertex and index buffers
+			VkBuffer vertexBuffers[] = { scene->GetModels()[7 + k]->getVertexBuffer() };
+#if LOD_FRUSTUM_CULLING
+			VkBuffer instanceBuffer[] = { scene->GetFakeInstanceBuffer()[k]->GetInstanceDataBuffer() };
+#else
+			VkBuffer instanceBuffer[] = { scene->GetFakeInstanceBuffer()[k]->GetInstanceDataBuffer() };
+#endif
+			VkDeviceSize offsets[] = { 0 };
+			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+			vkCmdBindVertexBuffers(commandBuffers[i], 1, 1, instanceBuffer, offsets);
+			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetModels()[7 + k]->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+			// Bind the descriptor set for each model
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 1, 1, &modelDescriptorSets[7 + k], 0, nullptr);
+			// Bind the time descriptor.
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
+			// Bind the LOD descriptor
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 3, 1, &LODInfoDescriptorSets[2 + k], 0, nullptr);
+#if LOD_FRUSTUM_CULLING
+			// Indirect Draw
+			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetFakeInstanceBuffer()[k]->GetNumInstanceDataBuffer(), 0, 1, 0);
+#else
+			// Draw
+			std::vector<uint32_t> indices = scene->GetModels()[3 * k + 3]->getIndices();
+			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), scene->GetInstanceBuffer()[k]->GetInstanceCount(), 0, 0, 0);
+#endif
+		}
 		//// Grass
 		//vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, grassPipeline);
 
@@ -2580,6 +2796,7 @@ Renderer::~Renderer() {
 	vkDestroyPipeline(logicalDevice, terrainPipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, computePipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, cullingComputePipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, fakeCullingComputePipeline, nullptr);
 
 
 	vkDestroyPipelineLayout(logicalDevice, graphicsPipelineLayout, nullptr);
@@ -2590,6 +2807,7 @@ Renderer::~Renderer() {
 	vkDestroyPipelineLayout(logicalDevice, terrainPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, computePipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, cullingComputePipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, fakeCullingComputePipelineLayout, nullptr);
 
 	vkDestroyDescriptorSetLayout(logicalDevice, cameraDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, modelDescriptorSetLayout, nullptr);
@@ -2598,6 +2816,7 @@ Renderer::~Renderer() {
 	vkDestroyDescriptorSetLayout(logicalDevice, terrainDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, computeDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, cullingComputeDescriptorSetLayout, nullptr);
+	vkDestroyDescriptorSetLayout(logicalDevice, fakeCullingComputeDescriptorSetLayout, nullptr);
 
 
 	vkDestroyDescriptorPool(logicalDevice, descriptorPool, nullptr);

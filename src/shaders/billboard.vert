@@ -42,6 +42,7 @@ layout(location = 6) out float vertAmbient;
 layout(location = 7) out float distanceLevel;
 layout(location = 8) out vec2 noiseTexCoord;
 layout(location = 9) out vec3 tintColor;
+layout(location = 10) out float flag;
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -96,7 +97,10 @@ void main() {
 	noiseTexCoord.x = (inPosition.x - inTransformPos_Scale.x) / (LODInfo.z * 1.1f) + 0.5f;
 	noiseTexCoord.y = (inPosition.y - inTransformPos_Scale.y) / LODInfo.z;
 	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / (512.0f);
-	
+// Fake Tree flag	
+	flag = 0;
+	if(inTintColor_Theta.w == -1)
+		flag = 1;
 // Tint Color
 	tintColor = inTintColor_Theta.xyz;
 }
