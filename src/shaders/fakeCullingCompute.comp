@@ -30,40 +30,20 @@ layout(set = 2, binding = 0) buffer Instances{
     InstanceData instances[];
 };
 
-layout(set = 2, binding = 1) buffer CulledDataBufferLOD0LEAF{
-    InstanceData culledDataLOD0[];
-};
-
-layout(set = 2, binding = 2) buffer CulledDataBufferLOD1{
-    InstanceData culledDataLOD1[];
+layout(set = 2, binding = 1) buffer CulledDataBuffer{
+    InstanceData culledData[];
 };
 
 // The project is using vkCmdDrawIndirect to use a buffer as the arguments for a draw call
 // This is sort of an advanced feature so we've showed you what this buffer should look like
 //
-layout(set = 2, binding = 3) buffer NumDataBufferLOD0Bark {
+layout(set = 2, binding = 2) buffer NumDataBuffer {
    uint indexCount;
    uint instanceCount;
    uint firstIndex;
    uint vertexOffset;
    uint firstInstance;
-} numDataLOD0Bark;
-
-layout(set = 2, binding = 4) buffer NumDataBufferLOD0Leaf {
-   uint indexCount;
-   uint instanceCount;
-   uint firstIndex;
-   uint vertexOffset;
-   uint firstInstance;
-} numDataLOD0Leaf;
-
-layout(set = 2, binding = 5) buffer NumDataBufferLOD1 {
-   uint indexCount;
-   uint instanceCount;
-   uint firstIndex;
-   uint vertexOffset;
-   uint firstInstance;
-} numDataLOD1;
+} numData;
 
 layout(set = 3, binding = 0) uniform LODINFO{
 	// 0: LOD0 1: LOD1 2: TreeHeight 3: NumTrees
@@ -81,9 +61,7 @@ void main() {
 
 	// Reset the number of blades to 0
     if (index == 0) {
-        atomicExchange(numDataLOD0Bark.instanceCount,0);
-        atomicExchange(numDataLOD0Leaf.instanceCount,0);;
-        atomicExchange(numDataLOD1.instanceCount,0);
+        atomicExchange(numData.instanceCount,0);
     }
     barrier(); // Wait till all threads reach this point
 
@@ -130,27 +108,17 @@ void main() {
 	}
 	
 	//LOD Culling
-	bool LOD0_culled = false;
-	bool LOD1_culled = false;
+	bool distanceCulled = false;
 
 	float distanceLevel = distance / (512.0f);
 
-	if(distanceLevel > LODInfo.x){
-		LOD0_culled = true;
-	}
 	if(distanceLevel < LODInfo.y){
-		LOD1_culled = true;
+		distanceCulled = true;
 	}
 
-	//LOD 0
-	if(!LOD0_culled && !view_frustum_culled){
-		//Add to the culledDataLOD0
-		culledDataLOD0[atomicAdd(numDataLOD0Bark.instanceCount , 1)] = this_instance;
-		atomicAdd(numDataLOD0Leaf.instanceCount , 1);
-	}
 	//LOD 1
-	if(!LOD1_culled && !view_frustum_culled){
-		//Add to the culledDataLOD1
-		culledDataLOD1[atomicAdd(numDataLOD1.instanceCount , 1)] = this_instance;
+	if(!distanceCulled && !view_frustum_culled){
+		//Add to the culledData
+		culledData[atomicAdd(numData.instanceCount , 1)] = this_instance;
 	}
 }

@@ -1988,7 +1988,7 @@ void Renderer::CreateCullingComputePipeline() {
 
 void Renderer::CreateFakeCullingComputePipeline() {
 	// Set up programmable shaders
-	VkShaderModule computeShaderModule = ShaderModule::Create("shaders/cullingCompute.comp.spv", logicalDevice);
+	VkShaderModule computeShaderModule = ShaderModule::Create("shaders/fakeCullingCompute.comp.spv", logicalDevice);
 
 	VkPipelineShaderStageCreateInfo computeShaderStageInfo = {};
 	computeShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -1997,7 +1997,7 @@ void Renderer::CreateFakeCullingComputePipeline() {
 	computeShaderStageInfo.pName = "main";
 
 	// TODO: Add the compute dsecriptor set layout you create to this list
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, timeDescriptorSetLayout, cullingComputeDescriptorSetLayout, LODInfoDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, timeDescriptorSetLayout, fakeCullingComputeDescriptorSetLayout, LODInfoDescriptorSetLayout };
 
 	// Create pipeline layout
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -2007,7 +2007,7 @@ void Renderer::CreateFakeCullingComputePipeline() {
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
 	pipelineLayoutInfo.pPushConstantRanges = 0;
 
-	if (vkCreatePipelineLayout(logicalDevice, &pipelineLayoutInfo, nullptr, &cullingComputePipelineLayout) != VK_SUCCESS) {
+	if (vkCreatePipelineLayout(logicalDevice, &pipelineLayoutInfo, nullptr, &fakeCullingComputePipelineLayout) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create pipeline layout");
 	}
 
@@ -2015,13 +2015,13 @@ void Renderer::CreateFakeCullingComputePipeline() {
 	VkComputePipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
 	pipelineInfo.stage = computeShaderStageInfo;
-	pipelineInfo.layout = cullingComputePipelineLayout;
+	pipelineInfo.layout = fakeCullingComputePipelineLayout;
 	pipelineInfo.pNext = nullptr;
 	pipelineInfo.flags = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 	pipelineInfo.basePipelineIndex = -1;
 
-	if (vkCreateComputePipelines(logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &cullingComputePipeline) != VK_SUCCESS) {
+	if (vkCreateComputePipelines(logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &fakeCullingComputePipeline) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create compute pipeline");
 	}
 
@@ -2338,7 +2338,7 @@ void Renderer::RecordComputeCommandBuffer() {
 
 #if LOD_FRUSTUM_CULLING
 
-	std::vector<VkBufferMemoryBarrier> barriers(scene->GetInstanceBuffer().size() * 3);
+	std::vector<VkBufferMemoryBarrier> barriers(scene->GetInstanceBuffer().size() * 3 + scene->GetFakeInstanceBuffer().size());
 	for (uint32_t j = 0; j < scene->GetInstanceBuffer().size(); ++j) {
 		barriers[3 * j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 		barriers[3 * j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
@@ -2368,8 +2368,21 @@ void Renderer::RecordComputeCommandBuffer() {
 		barriers[3 * j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
 	}
 
+// Fake Trees Barriers
+	for (uint32_t j = 0; j < scene->GetFakeInstanceBuffer().size(); ++j) {
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].buffer = scene->GetFakeInstanceBuffer()[j]->GetNumInstanceDataBuffer();
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].offset = 0;
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].size = sizeof(VkDrawIndexedIndirectCommand);
+	}
+
 	vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
 
+//Real Trees LOD
 	// Bind to the compute pipeline
 	vkCmdBindPipeline(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, cullingComputePipeline);
 
@@ -2390,6 +2403,21 @@ void Renderer::RecordComputeCommandBuffer() {
 		vkCmdDispatch(computeCommandBuffer, (int)(NUM_BLADES / WORKGROUP_SIZE + 1), 1, 1);
 	}*/
 
+// Fake Trees
+	// Bind to the compute pipeline
+	vkCmdBindPipeline(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipeline);
+
+	// Bind camera descriptor set
+	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+
+	// Bind descriptor set for time uniforms
+	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 1, 1, &timeDescriptorSet, 0, nullptr);
+
+	for (int i = 0; i < scene->GetFakeInstanceBuffer().size(); ++i) {
+		vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 2, 1, &fakeCullingComputeDescriptorSets[i], 0, nullptr);
+		vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 3, 1, &LODInfoDescriptorSets[scene->GetInstanceBuffer().size() + i], 0, nullptr);
+		vkCmdDispatch(computeCommandBuffer, (int)(scene->GetFakeInstanceBuffer()[i]->GetInstanceCount() / WORKGROUP_SIZE + 1), 1, 1);
+	}
 	for (uint32_t j = 0; j < scene->GetInstanceBuffer().size(); ++j) {
 		barriers[3 * j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 		barriers[3 * j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
@@ -2417,6 +2445,17 @@ void Renderer::RecordComputeCommandBuffer() {
 		barriers[3 * j + 2].buffer = scene->GetInstanceBuffer()[j]->GetNumInstanceDataBuffer(2);
 		barriers[3 * j + 2].offset = 0;
 		barriers[3 * j + 2].size = sizeof(VkDrawIndexedIndirectCommand);
+	}
+
+	for (uint32_t j = 0; j < scene->GetFakeInstanceBuffer().size(); ++j) {
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].buffer = scene->GetFakeInstanceBuffer()[j]->GetNumInstanceDataBuffer();
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].offset = 0;
+		barriers[scene->GetInstanceBuffer().size() * 3 + j].size = sizeof(VkDrawIndexedIndirectCommand);
 	}
 
 	vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
@@ -2451,11 +2490,6 @@ void Renderer::RecordComputeCommandBuffer() {
 	//	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 3, 1, &LODInfoDescriptorSets[scene->GetInstanceBuffer().size() + i], 0, nullptr);
 	//	vkCmdDispatch(computeCommandBuffer, (int)(scene->GetFakeInstanceBuffer()[i]->GetInstanceCount() / WORKGROUP_SIZE + 1), 1, 1);
 	//}
-	//// TODO: For each group of blades bind its descriptor set and dispatch
-	///*for (int i = 0; i < scene->GetBlades().size(); ++i) {
-	//vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, computePipelineLayout, 2, 1, &computeDescriptorSets[i], 0, nullptr);
-	//vkCmdDispatch(computeCommandBuffer, (int)(NUM_BLADES / WORKGROUP_SIZE + 1), 1, 1);
-	//}*/
 
 	//for (uint32_t j = 0; j < scene->GetFakeInstanceBuffer().size(); ++j) {
 	//	fakeBarriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
