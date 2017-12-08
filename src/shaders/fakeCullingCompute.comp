@@ -1,0 +1,156 @@
+#version 450
+#extension GL_ARB_separate_shader_objects : enable
+
+#define WORKGROUP_SIZE 32
+layout(local_size_x = WORKGROUP_SIZE, local_size_y = 1, local_size_z = 1) in;
+
+layout(set = 0, binding = 0) uniform CameraBufferObject {
+    mat4 view;
+    mat4 proj;
+	vec4 camPos;
+	vec4 camDir;
+} camera;
+
+layout(set = 1, binding = 0) uniform Time {
+    vec2 TimeInfo;
+	// 0: deltaTime 1: totalTime
+};
+
+struct InstanceData {
+	vec4 pos_scale;
+	vec4 tintColor_theta;
+};
+
+// TODO: Add bindings to:
+// 1. Store the input instance data Buffer
+// 2. Write out the culled blades
+// 3. Write the total number of blades remaining
+
+layout(set = 2, binding = 0) buffer Instances{
+    InstanceData instances[];
+};
+
+layout(set = 2, binding = 1) buffer CulledDataBufferLOD0LEAF{
+    InstanceData culledDataLOD0[];
+};
+
+layout(set = 2, binding = 2) buffer CulledDataBufferLOD1{
+    InstanceData culledDataLOD1[];
+};
+
+// The project is using vkCmdDrawIndirect to use a buffer as the arguments for a draw call
+// This is sort of an advanced feature so we've showed you what this buffer should look like
+//
+layout(set = 2, binding = 3) buffer NumDataBufferLOD0Bark {
+   uint indexCount;
+   uint instanceCount;
+   uint firstIndex;
+   uint vertexOffset;
+   uint firstInstance;
+} numDataLOD0Bark;
+
+layout(set = 2, binding = 4) buffer NumDataBufferLOD0Leaf {
+   uint indexCount;
+   uint instanceCount;
+   uint firstIndex;
+   uint vertexOffset;
+   uint firstInstance;
+} numDataLOD0Leaf;
+
+layout(set = 2, binding = 5) buffer NumDataBufferLOD1 {
+   uint indexCount;
+   uint instanceCount;
+   uint firstIndex;
+   uint vertexOffset;
+   uint firstInstance;
+} numDataLOD1;
+
+layout(set = 3, binding = 0) uniform LODINFO{
+	// 0: LOD0 1: LOD1 2: TreeHeight 3: NumTrees
+	vec4 LODInfo;
+};
+
+bool inBounds(vec3 pos, float tolerance) {
+    return (pos.x < 1+tolerance && pos.x > -1-tolerance 
+		&& pos.y < 1+tolerance && pos.y > -1-tolerance 
+		&& pos.z < 1+tolerance && pos.z > -tolerance);
+}
+
+void main() {
+    uint index = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * gl_NumWorkGroups.x * gl_WorkGroupSize.x;
+
+	// Reset the number of blades to 0
+    if (index == 0) {
+        atomicExchange(numDataLOD0Bark.instanceCount,0);
+        atomicExchange(numDataLOD0Leaf.instanceCount,0);;
+        atomicExchange(numDataLOD1.instanceCount,0);
+    }
+    barrier(); // Wait till all threads reach this point
+
+    // TODO: Apply forces on every blade and update the vertices in the buffer
+    
+	if(index >= LODInfo.w)
+		return;
+	InstanceData this_instance = instances[index];
+	vec3 this_pos = this_instance.pos_scale.xyz;
+	// basic computation of distance(doesn't care about the camera direction)
+	float distance = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(this_pos.x, this_pos.z));
+
+    // TODO: Cull instances that are too far away or not in the camera frustum and write them
+    // to the culled instances buffer
+    // Note: to do this, you will need to use an atomic operation to read and update numData.instanceCount
+    // You want to write the visible instances to the buffer without write conflicts between threads
+
+	//View-Frustum Culling
+	bool view_frustum_culled = true;
+	mat4 vp = camera.proj * camera.view;
+	float Tree_Height = LODInfo.z;
+	vec4 NDC_pos_bottom = vp * vec4(this_pos.x, this_pos.y, this_pos.z, 1.0f);
+	vec4 NDC_pos_up		= vp * vec4(this_pos.x, this_pos.y + Tree_Height, this_pos.z, 1.0f);
+	vec4 NDC_pos_left	= vp * vec4(this_pos.x - Tree_Height/2.0f, this_pos.y + Tree_Height/2.0f, this_pos.z, 1.0f);
+	vec4 NDC_pos_right	= vp * vec4(this_pos.x + Tree_Height/2.0f, this_pos.y + Tree_Height/2.0f, this_pos.z, 1.0f);
+	vec4 NDC_pos_forward= vp * vec4(this_pos.x, this_pos.y + Tree_Height/2.0f, this_pos.z + Tree_Height/2.0f, 1.0f);
+	vec4 NDC_pos_back	= vp * vec4(this_pos.x, this_pos.y + Tree_Height/2.0f, this_pos.z - Tree_Height/2.0f, 1.0f);
+	NDC_pos_bottom /= NDC_pos_bottom.w;
+	NDC_pos_up /= NDC_pos_up.w;
+	NDC_pos_left /= NDC_pos_left.w;
+	NDC_pos_right /= NDC_pos_right.w;
+	NDC_pos_forward /= NDC_pos_forward.w;
+	NDC_pos_back /= NDC_pos_back.w;
+
+	float tolerance = 0.1;
+	
+	if(inBounds(NDC_pos_bottom.xyz, tolerance) 
+	|| inBounds(NDC_pos_up.xyz, tolerance)
+	|| inBounds(NDC_pos_left.xyz, tolerance)
+	|| inBounds(NDC_pos_right.xyz, tolerance)
+	|| inBounds(NDC_pos_forward.xyz, tolerance)
+	|| inBounds(NDC_pos_back.xyz, tolerance)){
+			view_frustum_culled = false;
+	}
+	
+	//LOD Culling
+	bool LOD0_culled = false;
+	bool LOD1_culled = false;
+
+	float distanceLevel = distance / (512.0f);
+
+	if(distanceLevel > LODInfo.x){
+		LOD0_culled = true;
+	}
+	if(distanceLevel < LODInfo.y){
+		LOD1_culled = true;
+	}
+
+	//LOD 0
+	if(!LOD0_culled && !view_frustum_culled){
+		//Add to the culledDataLOD0
+		culledDataLOD0[atomicAdd(numDataLOD0Bark.instanceCount , 1)] = this_instance;
+		atomicAdd(numDataLOD0Leaf.instanceCount , 1);
+	}
+	//LOD 1
+	if(!LOD1_culled && !view_frustum_culled){
+		//Add to the culledDataLOD1
+		culledDataLOD1[atomicAdd(numDataLOD1.instanceCount , 1)] = this_instance;
+	}
+}
