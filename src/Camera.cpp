@@ -23,11 +23,12 @@ Camera::Camera(Device* device, float aspectRatio,int w,int h) : device(device),
     theta = 0.0f;
     phi = 0.0f;
 	RecomputeAttributes();
-    cameraBufferObject.viewMatrix = glm::lookAt(eye,ref,up);
+	float far_near_dis = (far_clip - near_clip)*abs(glm::dot(look, glm::normalize(glm::vec3(look.x, 0, look.z))));
+	cameraBufferObject.viewMatrix = glm::lookAt(eye,ref,up);
     cameraBufferObject.projectionMatrix = glm::perspective(glm::radians(fovy), aspect, near_clip, far_clip);
     cameraBufferObject.projectionMatrix[1][1] *= -1; // y-coordinate is flipped
-	cameraBufferObject.camPos = glm::vec4(eye, near_clip);
-	cameraBufferObject.camDir = glm::vec4(right, far_clip);
+	cameraBufferObject.camPos = glm::vec4(eye, far_near_dis);
+	cameraBufferObject.camDir = glm::vec4(right, 1.0f);
 
     BufferUtils::CreateBuffer(device, sizeof(CameraBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, bufferMemory);
     vkMapMemory(device->GetVkDevice(), bufferMemory, 0, sizeof(CameraBufferObject), 0, &mappedData);
@@ -49,16 +50,18 @@ void Camera::UpdateOrbit(float deltaX, float deltaY, float deltaZ) {
     glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), radTheta, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), radPhi, glm::vec3(1.0f, 0.0f, 0.0f));
 	glm::mat4 finalTransform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f)) * rotation * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, r));
 
-    cameraBufferObject.viewMatrix = glm::inverse(finalTransform);
-	cameraBufferObject.camPos = glm::vec4(eye, near_clip);
-	cameraBufferObject.camDir = glm::vec4(right, far_clip);
+	float far_near_dis = (far_clip - near_clip)*abs(glm::dot(look, glm::normalize(glm::vec3(look.x, 0, look.z))));
+	cameraBufferObject.viewMatrix = glm::lookAt(eye, ref, up);
+	cameraBufferObject.camPos = glm::vec4(eye, far_near_dis);
+	cameraBufferObject.camDir = glm::vec4(right, 1.0f);
     memcpy(mappedData, &cameraBufferObject, sizeof(CameraBufferObject));
 }
 
 void Camera::UpdateViewMatrix() {
+	float far_near_dis = (far_clip - near_clip)*abs(glm::dot(look, glm::normalize(glm::vec3(look.x, 0, look.z))));
 	cameraBufferObject.viewMatrix = glm::lookAt(eye, ref, up);
-	cameraBufferObject.camPos = glm::vec4(eye, near_clip);
-	cameraBufferObject.camDir = glm::vec4(right, far_clip);
+	cameraBufferObject.camPos = glm::vec4(eye, far_near_dis);
+	cameraBufferObject.camDir = glm::vec4(right, 1.0f);
 	//std::cout << look.x << " " << look.y << " " << look.z << std::endl;
 	//std::cout << up.x << " " << up.y << " " << up.z << std::endl;
 	//std::cout << right.x << " " << right.y << " " << right.z << std::endl;
@@ -87,6 +90,8 @@ void Camera::UpdateAspectRatio(float aspectRatio,int w,int h) {
 	height = h;
 	cameraBufferObject.projectionMatrix = glm::perspective(glm::radians(fovy), aspect, near_clip, far_clip);
 	cameraBufferObject.projectionMatrix[1][1] *= -1; // y-coordinate is flipped
+	float far_near_dis = (far_clip - near_clip)*abs(glm::dot(look, glm::normalize(glm::vec3(look.x, 0, look.z))));
+	printf("far_near_dis: %f \n", far_near_dis);
 	memcpy(mappedData, &cameraBufferObject, sizeof(CameraBufferObject));
 }
 

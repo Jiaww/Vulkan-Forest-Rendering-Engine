@@ -2460,49 +2460,6 @@ void Renderer::RecordComputeCommandBuffer() {
 
 	vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, barriers.size(), barriers.data(), 0, nullptr);
 #endif
-
-	////Fake Tree Compute Shader
-	//std::vector<VkBufferMemoryBarrier> fakeBarriers(scene->GetFakeInstanceBuffer().size());
-	//for (uint32_t j = 0; j < scene->GetFakeInstanceBuffer().size(); ++j) {
-	//	fakeBarriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-	//	fakeBarriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-	//	fakeBarriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-	//	fakeBarriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-	//	fakeBarriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-	//	fakeBarriers[j].buffer = scene->GetFakeInstanceBuffer()[j]->GetNumInstanceDataBuffer();
-	//	fakeBarriers[j].offset = 0;
-	//	fakeBarriers[j].size = sizeof(VkDrawIndexedIndirectCommand);
-	//}
-
-	//vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, fakeBarriers.size(), fakeBarriers.data(), 0, nullptr);
-
-	//// Bind to the compute pipeline
-	//vkCmdBindPipeline(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipeline);
-
-	//// Bind camera descriptor set
-	//vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
-
-	//// Bind descriptor set for time uniforms
-	//vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 1, 1, &timeDescriptorSet, 0, nullptr);
-
-	//for (int i = 0; i < scene->GetFakeInstanceBuffer().size(); ++i) {
-	//	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 2, 1, &fakeCullingComputeDescriptorSets[i], 0, nullptr);
-	//	vkCmdBindDescriptorSets(computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, fakeCullingComputePipelineLayout, 3, 1, &LODInfoDescriptorSets[scene->GetInstanceBuffer().size() + i], 0, nullptr);
-	//	vkCmdDispatch(computeCommandBuffer, (int)(scene->GetFakeInstanceBuffer()[i]->GetInstanceCount() / WORKGROUP_SIZE + 1), 1, 1);
-	//}
-
-	//for (uint32_t j = 0; j < scene->GetFakeInstanceBuffer().size(); ++j) {
-	//	fakeBarriers[j].sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-	//	fakeBarriers[j].srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-	//	fakeBarriers[j].dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-	//	fakeBarriers[j].srcQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Compute);
-	//	fakeBarriers[j].dstQueueFamilyIndex = device->GetQueueIndex(QueueFlags::Graphics);
-	//	fakeBarriers[j].buffer = scene->GetFakeInstanceBuffer()[j]->GetNumInstanceDataBuffer();
-	//	fakeBarriers[j].offset = 0;
-	//	fakeBarriers[j].size = sizeof(VkDrawIndexedIndirectCommand);
-	//}
-
-	//vkCmdPipelineBarrier(computeCommandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT, 0, 0, nullptr, fakeBarriers.size(), fakeBarriers.data(), 0, nullptr);
 	// ~ End recording ~
 	if (vkEndCommandBuffer(computeCommandBuffer) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to record compute command buffer");
@@ -2714,7 +2671,7 @@ void Renderer::RecordCommandBuffers() {
 			// Bind the vertex and index buffers
 			VkBuffer vertexBuffers[] = { scene->GetModels()[7 + k]->getVertexBuffer() };
 #if LOD_FRUSTUM_CULLING
-			VkBuffer instanceBuffer[] = { scene->GetFakeInstanceBuffer()[k]->GetInstanceDataBuffer() };
+			VkBuffer instanceBuffer[] = { scene->GetFakeInstanceBuffer()[k]->GetCulledInstanceDataBuffer() };
 #else
 			VkBuffer instanceBuffer[] = { scene->GetFakeInstanceBuffer()[k]->GetInstanceDataBuffer() };
 #endif

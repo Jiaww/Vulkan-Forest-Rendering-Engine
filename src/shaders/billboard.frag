@@ -42,7 +42,7 @@ void main() {
     vec4 diffuseColor = texture(texSampler, fragTexCoord);
 	
 	//Because the alpha level fake tree billboard we use here is different with models' billboards
-	float alphaThreshold = (0.85f-0.35f*flag);
+	float alphaThreshold = (0.85f-0.55f*flag);
 	if(diffuseColor.a < alphaThreshold)
 		discard;
 

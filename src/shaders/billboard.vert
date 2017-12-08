@@ -96,7 +96,8 @@ void main() {
 //LOD Effect
 	noiseTexCoord.x = (inPosition.x - inTransformPos_Scale.x) / (LODInfo.z * 1.1f) + 0.5f;
 	noiseTexCoord.y = (inPosition.y - inTransformPos_Scale.y) / LODInfo.z;
-	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / (512.0f);
+	//camera.camPos.w : far_near_distance
+	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / camera.camPos.w;
 // Fake Tree flag	
 	flag = 0;
 	if(inTintColor_Theta.w == -1)

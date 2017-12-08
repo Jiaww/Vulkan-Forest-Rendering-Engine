@@ -72,7 +72,6 @@ void main() {
 	InstanceData this_instance = instances[index];
 	vec3 this_pos = this_instance.pos_scale.xyz;
 	// basic computation of distance(doesn't care about the camera direction)
-	float distance = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(this_pos.x, this_pos.z));
 
     // TODO: Cull instances that are too far away or not in the camera frustum and write them
     // to the culled instances buffer
@@ -109,8 +108,9 @@ void main() {
 	
 	//LOD Culling
 	bool distanceCulled = false;
-
-	float distanceLevel = distance / (512.0f);
+	
+	float distance = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(this_pos.x, this_pos.z));
+	float distanceLevel = distance / camera.camPos.w;
 
 	if(distanceLevel < LODInfo.y){
 		distanceCulled = true;

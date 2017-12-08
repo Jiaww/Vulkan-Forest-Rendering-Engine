@@ -133,7 +133,7 @@ void main() {
 	bool LOD0_culled = false;
 	bool LOD1_culled = false;
 
-	float distanceLevel = distance / (512.0f);
+	float distanceLevel = distance / camera.camPos.w;
 
 	if(distanceLevel > LODInfo.x){
 		LOD0_culled = true;

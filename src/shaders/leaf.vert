@@ -213,7 +213,7 @@ void main() {
 //LOD Effect
 	noiseTexCoord.x = (vPos.x - inTransformPos_Scale.x) / (LODInfo.z/2.0f) + 0.5f;
 	noiseTexCoord.y = (vPos.y - inTransformPos_Scale.y) / LODInfo.z;
-	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / (512.0f);
+	distanceLevel = length(vec2(camera.camPos.x, camera.camPos.z) - vec2(worldPosition.x, worldPosition.z)) / camera.camPos.w;
 	
 // Tint Color
 	tintColor = inTintColor_Theta.xyz;

@@ -500,8 +500,8 @@ int main() {
 	scene->AddModel(bark2);
 	scene->AddModel(leaf2);
 	scene->AddModel(billboard2);
-	scene->AddModel(fakeTree2);
 	scene->AddModel(fakeTree);
+	scene->AddModel(fakeTree2);
 	scene->AddBlades(blades);
 	// Insert Trees
 	//Instance Data

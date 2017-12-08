@@ -101,9 +101,9 @@ bool Scene::InsertRandomTrees(int numTrees, float treeBaseScale, int modelId, De
 		glm::vec3 position(posX, posY, posZ);
 		float scale = 0.9f + float(rand() % 200) / 1000.0f;
 		scale *= treeBaseScale;
-		float r = (200 + float(rand() % 55)) / 255.0f;
-		float g = (200 + float(rand() % 55)) / 255.0f;
-		float b = (200 + float(rand() % 55)) / 255.0f;
+		float r = (175 + float(rand() % 80)) / 255.0f;
+		float g = (175 + float(rand() % 80)) / 255.0f;
+		float b = (175 + float(rand() % 80)) / 255.0f;
 		float theta = float(rand() % 3145) / 1000.0f;
 		printf("|| Tree No.%d: <position: %f %f %f> <scale: %f> <theta: %f> <tintColor: %f %f %f>||\n", i, posX, posY, posZ, scale, theta, r, g, b);
 		instanceData.push_back(InstanceData(glm::vec4(position, scale), glm::vec4(r, g, b, theta)));
@@ -152,7 +152,7 @@ void Scene::UpdateDensityDistribution(int x, int z) {
 	int influence_range_max = 8;
 	int influence_range_min = 5;
 	int nearbyDistance = 7;
-	int maxNumNearbyFake = 2;
+	int maxNumNearbyFake = 1;// 1 or 2
 	for (int m = int(x) - nearbyDistance; m <= int(x) + nearbyDistance; m++)
 		for (int n = int(z) - nearbyDistance; n <= int(z) + nearbyDistance; n++) {
 			if (m == int(x) && n == int(z))
@@ -194,9 +194,9 @@ void Scene::GatherFakeTrees(Device* device, VkCommandPool commandPool) {
 				float height = terrain->GetHeight(i, j);
 				glm::vec3 position(i, height, j);
 				float scale = 0.9f + float(rand() % 200) / 1000.0f;
-				float r = (200 + float(rand() % 55)) / 255.0f;
-				float g = (200 + float(rand() % 55)) / 255.0f;
-				float b = (200 + float(rand() % 55)) / 255.0f;
+				float r = (175 + float(rand() % 80)) / 255.0f;
+				float g = (175 + float(rand() % 80)) / 255.0f;
+				float b = (175 + float(rand() % 80)) / 255.0f;
 				// theta = -1 means fake trees
 				float theta = -1;
 				if(GetDensityMeshValue(i, j)%10 < 7)
