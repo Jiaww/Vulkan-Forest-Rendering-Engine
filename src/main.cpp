@@ -365,6 +365,29 @@ int main() {
 		noiseImage,
 		noiseImageMemory
 	);
+	//skybox Texture
+	VkImage skyboxImage;
+	VkDeviceMemory skyboxImageMemory;
+	std::vector<char*> cubemap_images = {
+		"../../media/textures/Skybox_jpg/left6.jpg",
+		"../../media/textures/Skybox_jpg/right6.jpg",
+		"../../media/textures/Skybox_jpg/up6.jpg",
+		"../../media/textures/Skybox_jpg/down6.jpg",
+		"../../media/textures/Skybox_jpg/front6.jpg",
+		"../../media/textures/Skybox_jpg/back6.jpg",
+	};
+	Image::FromMultiFile(device,
+		transferCommandPool,
+		cubemap_images,
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		skyboxImage,
+		skyboxImageMemory
+	);
+
 
 // Terrain Initializations
 	char* terrainPath = "../../media/terrain/heightMap03.png";
@@ -496,7 +519,7 @@ int main() {
 		7,3,0,4,7,0,//right
 		5,1,2,6,5,2,//left
 			} });
-
+	skybox->SetDiffuseMap(skyboxImage);
 	srand(213910);
 	// Blades
 	printf("Building Blades\n");
@@ -606,11 +629,12 @@ int main() {
 	vkDestroyImage(device->GetVkDevice(), faketreeNormalImage2, nullptr);
 	vkFreeMemory(device->GetVkDevice(), faketreeNormalImageMemory2, nullptr);
 
+
+	vkDestroyImage(device->GetVkDevice(), skyboxImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), skyboxImageMemory, nullptr);
 	vkDestroyImage(device->GetVkDevice(), noiseImage, nullptr);
 	vkFreeMemory(device->GetVkDevice(), noiseImageMemory, nullptr);
 
-	//vkDestroyImage(device->GetVkDevice(), SkyboxTexture, nullptr);
-	//vkFreeMemory(device->GetVkDevice(), SkyboxTextureMemory, nullptr);
 
 	delete scene;
 	delete plane;

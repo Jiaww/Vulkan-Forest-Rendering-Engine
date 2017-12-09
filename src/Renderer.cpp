@@ -394,6 +394,24 @@ void Renderer::CreateFakeCullingComputeDescriptorSetLayout() {
 
 void Renderer::CreateSkyboxDescriptorSetLayout()
 {
+	VkDescriptorSetLayoutBinding diffuseSamplerLayoutBinding = {};
+	diffuseSamplerLayoutBinding.binding = 0;
+	diffuseSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	diffuseSamplerLayoutBinding.descriptorCount = 1;
+	diffuseSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	diffuseSamplerLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = {diffuseSamplerLayoutBinding};
+
+	// Create the descriptor set layout
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(logicalDevice, &layoutInfo, nullptr, &skyboxDescriptorSetLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create descriptor set layout");
+	}
 }
 
 void Renderer::CreateTerrainDescriptorSetLayout() {
@@ -479,13 +497,16 @@ void Renderer::CreateDescriptorPool() {
 		// Terrain
 		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
 		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 2 },
+		
+		//skybox
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 1 }, 
 	};
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 22;//1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo
+	poolInfo.maxSets = 23;//1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo+1*skybox
 
 	if (vkCreateDescriptorPool(logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool");
@@ -958,6 +979,37 @@ void Renderer::CreateFakeCullingComputeDescriptorSets() {
 
 void Renderer::CreateSkyboxDescriptorSet()
 {
+	// Describe the desciptor set
+	VkDescriptorSetLayout layouts[] = { skyboxDescriptorSetLayout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(1);
+	allocInfo.pSetLayouts = layouts;
+
+	// Allocate descriptor set
+	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, &skyboxDescriptorSet) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate descriptor set");
+	}
+
+	std::vector<VkWriteDescriptorSet> descriptorWrites(1);
+	
+	// Bind image and sampler resources to the descriptor
+	VkDescriptorImageInfo diffuseMapInfo = {};
+	diffuseMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	diffuseMapInfo.imageView = scene->GetSkybox()->GetDiffuseMapView();
+	diffuseMapInfo.sampler = scene->GetSkybox()->GetDiffuseMapSampler();
+
+	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[0].dstSet = skyboxDescriptorSet;
+	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstArrayElement = 0;
+	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[0].descriptorCount = 1;
+	descriptorWrites[0].pImageInfo = &diffuseMapInfo;
+
+	// Update descriptor sets
+	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 void Renderer::CreateTerrainDescriptorSet() {
@@ -1848,7 +1900,7 @@ void Renderer::CreateSkyboxPipeline()
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout,skyboxDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -2410,10 +2462,10 @@ void Renderer::CreateFrameResources() {
 		depthImageMemory
 	);
 
-	depthImageView = Image::CreateView(device, depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+	depthImageView = Image::CreateView(device, depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT,false);
 
 	// Transition the image for use as depth-stencil
-	Image::TransitionLayout(device, graphicsCommandPool, depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+	Image::TransitionLayout(device, graphicsCommandPool, depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,false);
 
 
 	// CREATE FRAMEBUFFERS
@@ -2724,6 +2776,8 @@ void Renderer::RecordCommandBuffers() {
 
 			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
+
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxPipelineLayout, 1, 1, &skyboxDescriptorSet, 0, nullptr);
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetSkybox()->getIndices();

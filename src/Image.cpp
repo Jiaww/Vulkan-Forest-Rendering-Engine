@@ -44,7 +44,47 @@ void Image::Create(Device* device, uint32_t width, uint32_t height, VkFormat for
     vkBindImageMemory(device->GetVkDevice(), image, imageMemory, 0);
 }
 
-void Image::TransitionLayout(Device* device, VkCommandPool commandPool, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
+void Image::CreateCubeMapImage(Device * device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage & image, VkDeviceMemory & imageMemory)
+{
+	// Create Vulkan image
+	VkImageCreateInfo imageInfo = {};
+	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	imageInfo.imageType = VK_IMAGE_TYPE_2D;
+	imageInfo.extent.width = width;
+	imageInfo.extent.height = height;
+	imageInfo.extent.depth = 1;
+	imageInfo.mipLevels = 1;
+	imageInfo.arrayLayers = 6;
+	imageInfo.format = format;
+	imageInfo.tiling = tiling;
+	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imageInfo.usage = usage;
+	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+
+	if (vkCreateImage(device->GetVkDevice(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create image");
+	}
+
+	// Allocate memory for the image
+	VkMemoryRequirements memRequirements;
+	vkGetImageMemoryRequirements(device->GetVkDevice(), image, &memRequirements);
+
+	VkMemoryAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = device->GetInstance()->GetMemoryTypeIndex(memRequirements.memoryTypeBits, properties);
+
+	if (vkAllocateMemory(device->GetVkDevice(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate image memory");
+	}
+
+	// Bind the image
+	vkBindImageMemory(device->GetVkDevice(), image, imageMemory, 0);
+}
+
+void Image::TransitionLayout(Device* device, VkCommandPool commandPool, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout,bool cubemap) {
     auto hasStencilComponent = [](VkFormat format) {
         return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
   };
@@ -70,9 +110,9 @@ void Image::TransitionLayout(Device* device, VkCommandPool commandPool, VkImage 
     }
   
     barrier.subresourceRange.baseMipLevel = 0;
-    barrier.subresourceRange.levelCount = 1;
+    barrier.subresourceRange.levelCount = cubemap? VK_REMAINING_MIP_LEVELS:1;
     barrier.subresourceRange.baseArrayLayer = 0;
-    barrier.subresourceRange.layerCount = 1;
+    barrier.subresourceRange.layerCount = cubemap ? VK_REMAINING_ARRAY_LAYERS:1;
   
     VkPipelineStageFlags sourceStage;
     VkPipelineStageFlags destinationStage;
@@ -128,19 +168,19 @@ void Image::TransitionLayout(Device* device, VkCommandPool commandPool, VkImage 
     vkFreeCommandBuffers(device->GetVkDevice(), commandPool, 1, &commandBuffer);
 }
 
-VkImageView Image::CreateView(Device* device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) {
+VkImageView Image::CreateView(Device* device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags,bool cubemap) {
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
-    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    viewInfo.viewType = cubemap? VK_IMAGE_VIEW_TYPE_CUBE: VK_IMAGE_VIEW_TYPE_2D;
     viewInfo.format = format;
 
     // Describe the image's purpose and which part of the image should be accessed
     viewInfo.subresourceRange.aspectMask = aspectFlags;
     viewInfo.subresourceRange.baseMipLevel = 0;
-    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.levelCount = cubemap ? VK_REMAINING_MIP_LEVELS : 1;
     viewInfo.subresourceRange.baseArrayLayer = 0;
-    viewInfo.subresourceRange.layerCount = 1;
+    viewInfo.subresourceRange.layerCount = cubemap ? VK_REMAINING_ARRAY_LAYERS : 1;
 
     VkImageView imageView;
     if (vkCreateImageView(device->GetVkDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
@@ -194,6 +234,40 @@ void Image::CopyFromBuffer(Device* device, VkCommandPool commandPool, VkBuffer b
     vkFreeCommandBuffers(device->GetVkDevice(), commandPool, 1, &commandBuffer);
 }
 
+void Image::CopyFromBufferMultiRegions(Device * device, VkCommandPool commandPool, VkBuffer buffer, VkImage & image, 
+	uint32_t width, uint32_t height,std::vector<VkBufferImageCopy>regions)
+{
+	VkCommandBufferAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = commandPool;
+	allocInfo.commandBufferCount = 1;
+
+	VkCommandBuffer commandBuffer;
+	vkAllocateCommandBuffers(device->GetVkDevice(), &allocInfo, &commandBuffer);
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+	vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
+		static_cast<uint32_t>(regions.size()), regions.data());
+
+	vkEndCommandBuffer(commandBuffer);
+
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	vkQueueSubmit(device->GetQueue(QueueFlags::Transfer), 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(device->GetQueue(QueueFlags::Transfer));
+	vkFreeCommandBuffers(device->GetVkDevice(), commandPool, 1, &commandBuffer);
+
+}
+
 void Image::FromFile(Device* device, VkCommandPool commandPool, const char* path, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageLayout layout, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
     int texWidth, texHeight, texChannels;
     stbi_uc* pixels = stbi_load(path, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -225,13 +299,79 @@ void Image::FromFile(Device* device, VkCommandPool commandPool, const char* path
 
     // Copy the staging buffer to the texture image
     // --> First need to transition the texture image to VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
-    Image::TransitionLayout(device, commandPool, image, format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    Image::TransitionLayout(device, commandPool, image, format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,false);
     Image::CopyFromBuffer(device, commandPool, stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 
     // Transition texture image for shader access
-    Image::TransitionLayout(device, commandPool, image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layout);
+    Image::TransitionLayout(device, commandPool, image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layout,false);
 
     // No need for staging buffer anymore
     vkDestroyBuffer(device->GetVkDevice(), stagingBuffer, nullptr);
     vkFreeMemory(device->GetVkDevice(), stagingBufferMemory, nullptr);
+}
+
+void Image::FromMultiFile(Device * device, VkCommandPool commandPool, const std::vector<char*> paths, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageLayout layout, VkMemoryPropertyFlags properties, VkImage & image, VkDeviceMemory & imageMemory)
+{
+	int texWidth, texHeight, texChannels;
+	stbi_uc* pixels = stbi_load(paths[0], &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+	VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+	if (!pixels) {
+		throw std::runtime_error("Failed to load texture image");
+	}
+	// Create Vulkan image
+	Image::CreateCubeMapImage(device, texWidth, texHeight, format, tiling, VK_IMAGE_USAGE_TRANSFER_DST_BIT | usage, properties, image, imageMemory);
+	if(paths.size()<6) 
+		throw std::runtime_error("At least 6 images required to construct a cube map");
+	// Create staging buffer
+	for (int i = 0; i < 6; i++) {
+		pixels = stbi_load(paths[i], &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+
+		VkBufferUsageFlags stagingUsage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		VkMemoryPropertyFlags stagingProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		BufferUtils::CreateBuffer(device, imageSize, stagingUsage, stagingProperties, stagingBuffer, stagingBufferMemory);
+
+		// Copy pixel values to the buffer
+		void* data;
+		vkMapMemory(device->GetVkDevice(), stagingBufferMemory, 0, imageSize, 0, &data);
+		memcpy(data, pixels, static_cast<size_t>(imageSize));
+		vkUnmapMemory(device->GetVkDevice(), stagingBufferMemory);
+
+		// Free pixel array
+		stbi_image_free(pixels);
+
+		//Create image sublayer source
+		VkImageSubresourceLayers image_subresource = {
+			VK_IMAGE_ASPECT_COLOR_BIT,    // VkImageAspectFlags     aspectMask
+			0,                            // uint32_t               mipLevel
+			static_cast<uint32_t>(i),     // uint32_t               baseArrayLayer
+			1                             // uint32_t               layerCount
+		};
+
+		// Copy the staging buffer to the texture image
+		// --> First need to transition the texture image to VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+		Image::TransitionLayout(device, commandPool, image, format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, true);
+		Image::CopyFromBufferMultiRegions(device, commandPool, stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight),
+		{
+			{
+			0,                                        // VkDeviceSize               bufferOffset
+			0,                                        // uint32_t                   bufferRowLength
+			0,                                        // uint32_t                   bufferImageHeight
+			image_subresource,						  // VkImageSubresourceLayers   imageSubresource
+			{0,0,0},								  // VkOffset3D                 imageOffset
+			{ static_cast<uint32_t>(texWidth),
+			static_cast<uint32_t>(texHeight),1 }
+			}// VkExtent3D                 imageExtent
+		 });
+
+		// Transition texture image for shader access
+		Image::TransitionLayout(device, commandPool, image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layout, true);
+
+		// No need for staging buffer anymore
+		vkDestroyBuffer(device->GetVkDevice(), stagingBuffer, nullptr);
+		vkFreeMemory(device->GetVkDevice(), stagingBufferMemory, nullptr);
+	}
+
 }

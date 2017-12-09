@@ -58,7 +58,7 @@ Model::~Model() {
 
 void Model::SetDiffuseMap(VkImage texture) {
     this->diffuseMap = texture;
-    this->diffuseMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+    this->diffuseMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,false);
 
     // --- Specify all filters and transformations ---
     VkSamplerCreateInfo samplerInfo = {};
@@ -100,7 +100,7 @@ void Model::SetDiffuseMap(VkImage texture) {
 
 void Model::SetNormalMap(VkImage texture) {
 	this->normalMap = texture;
-	this->normalMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+	this->normalMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,false);
 
 	// --- Specify all filters and transformations ---
 	VkSamplerCreateInfo samplerInfo = {};
@@ -142,7 +142,7 @@ void Model::SetNormalMap(VkImage texture) {
 
 void Model::SetNoiseMap(VkImage texture) {
 	this->noiseMap = texture;
-	this->noiseMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+	this->noiseMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,false);
 
 	// --- Specify all filters and transformations ---
 	VkSamplerCreateInfo samplerInfo = {};
