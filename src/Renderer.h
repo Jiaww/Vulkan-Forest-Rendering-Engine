@@ -23,6 +23,7 @@ public:
 	void CreateComputeDescriptorSetLayout();
 	void CreateCullingComputeDescriptorSetLayout();
 	void CreateFakeCullingComputeDescriptorSetLayout();
+	void CreateSkyboxDescriptorSetLayout();
 	void CreateTerrainDescriptorSetLayout();
 	void CreateLODInfoDescriptorSetLayout();
 
@@ -36,6 +37,7 @@ public:
     void CreateComputeDescriptorSets();
 	void CreateCullingComputeDescriptorSets();
 	void CreateFakeCullingComputeDescriptorSets();
+	void CreateSkyboxDescriptorSet();
 	void CreateTerrainDescriptorSet();
 	void CreateLODInfoDescriptorSets();
 
@@ -48,6 +50,7 @@ public:
 	void CreateBarkPipeline();
 	void CreateLeafPipeline();
 	void CreateBillboardPipeline();
+	void CreateSkyboxPipeline();
 	void CreateTerrainPipeline();
 
     void CreateFrameResources();
@@ -80,6 +83,7 @@ private:
 	VkDescriptorSetLayout computeDescriptorSetLayout;
 	VkDescriptorSetLayout cullingComputeDescriptorSetLayout;
 	VkDescriptorSetLayout fakeCullingComputeDescriptorSetLayout;
+	VkDescriptorSetLayout skyboxDescriptorSetLayout;
 	VkDescriptorSetLayout terrainDescriptorSetLayout;
 	VkDescriptorSetLayout LODInfoDescriptorSetLayout;
 
@@ -93,6 +97,7 @@ private:
 	std::vector<VkDescriptorSet> computeDescriptorSets;
 	std::vector<VkDescriptorSet> cullingComputeDescriptorSets;
 	std::vector<VkDescriptorSet> fakeCullingComputeDescriptorSets;
+	VkDescriptorSet skyboxDescriptorSet;
 	VkDescriptorSet terrainDescriptorSet;
 	std::vector<VkDescriptorSet> LODInfoDescriptorSets;
 
@@ -105,6 +110,7 @@ private:
 	VkPipelineLayout computePipelineLayout;
 	VkPipelineLayout cullingComputePipelineLayout;
 	VkPipelineLayout fakeCullingComputePipelineLayout;
+	VkPipelineLayout skyboxPipelineLayout;
 	VkPipelineLayout terrainPipelineLayout;
 
 	VkPipeline graphicsPipeline;
@@ -115,6 +121,7 @@ private:
 	VkPipeline computePipeline;
 	VkPipeline cullingComputePipeline;
 	VkPipeline fakeCullingComputePipeline;
+	VkPipeline skyboxPipeline;
 	VkPipeline terrainPipeline;
 
     std::vector<VkImageView> imageViews;

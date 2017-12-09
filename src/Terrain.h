@@ -9,31 +9,31 @@
 #include "Model.h"
 #include <cstdio>
 
-class Terrain {
+class Terrain : public Model {
 protected:
-	Device* device;
+	//Device* device;
 
-	std::vector<Vertex> vertices;
-	VkBuffer vertexBuffer;
-	VkDeviceMemory vertexBufferMemory;
+	//std::vector<Vertex> vertices;
+	//VkBuffer vertexBuffer;
+	//VkDeviceMemory vertexBufferMemory;
 
-	std::vector<uint32_t> indices;
-	VkBuffer indexBuffer;
-	VkDeviceMemory indexBufferMemory;
+	//std::vector<uint32_t> indices;
+	//VkBuffer indexBuffer;
+	//VkDeviceMemory indexBufferMemory;
 
-	VkBuffer modelBuffer;
-	VkDeviceMemory modelBufferMemory;
+	//VkBuffer modelBuffer;
+	//VkDeviceMemory modelBufferMemory;
 
-	ModelBufferObject modelBufferObject;
+	//ModelBufferObject modelBufferObject;
 
-	// diffusse map
-	VkImage diffuseMap = VK_NULL_HANDLE;
-	VkImageView diffuseMapView = VK_NULL_HANDLE;
-	VkSampler diffuseMapSampler = VK_NULL_HANDLE;
-	// normal map
-	VkImage normalMap = VK_NULL_HANDLE;
-	VkImageView normalMapView = VK_NULL_HANDLE;
-	VkSampler normalMapSampler = VK_NULL_HANDLE;
+	//// diffusse map
+	//VkImage diffuseMap = VK_NULL_HANDLE;
+	//VkImageView diffuseMapView = VK_NULL_HANDLE;
+	//VkSampler diffuseMapSampler = VK_NULL_HANDLE;
+	//// normal map
+	//VkImage normalMap = VK_NULL_HANDLE;
+	//VkImageView normalMapView = VK_NULL_HANDLE;
+	//VkSampler normalMapSampler = VK_NULL_HANDLE;
 
 	int width, height;
 	float *heights;
@@ -45,7 +45,7 @@ public:
 	virtual ~Terrain();
 
 	static Terrain* LoadTerrain(Device* device, VkCommandPool commandPool, char *filePath, char *rawPath, float terrainDim);
-	void SetDiffuseMap(VkImage texture);
+	/*void SetDiffuseMap(VkImage texture);
 	void SetNormalMap(VkImage texture);
 
 	const std::vector<Vertex>& getVertices() const;
@@ -62,7 +62,7 @@ public:
 	VkImageView GetDiffuseMapView() const;
 	VkSampler GetDiffuseMapSampler() const;
 	VkImageView GetNormalMapView() const;
-	VkSampler GetNormalMapSampler() const;
+	VkSampler GetNormalMapSampler() const;*/
 
 	float GetHeight(float x, float z) const;
 	int GetTerrainDim() const { return terrainDim; }

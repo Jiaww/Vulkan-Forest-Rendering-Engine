@@ -12,6 +12,11 @@ const Terrain* Scene::GetTerrain() const {
 	return terrain;
 }
 
+const Skybox * Scene::GetSkybox() const
+{
+	return skybox;
+}
+
 const std::vector<Model*>& Scene::GetModels() const {
     return models;
 }
@@ -38,6 +43,10 @@ void Scene::SetTerrain(Terrain* terrain) {
 	/*densityVector.resize(meshDim);
 	for (int i = 0; i < meshDim; ++i)
 		densityVector[i].resize(meshDim, 0);*/
+}
+void Scene::SetSkybox(Skybox * skybox)
+{
+	this->skybox = skybox;
 }
 void Scene::AddModel(Model* model) {
     models.push_back(model);

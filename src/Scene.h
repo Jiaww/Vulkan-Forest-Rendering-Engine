@@ -9,6 +9,7 @@
 #include "Blades.h"
 #include "InstanceData.h"
 #include "Terrain.h"
+#include "skybox.h"
 
 using namespace std::chrono;
 
@@ -33,6 +34,7 @@ private:
 	std::vector<void*> LODmappedData;
 
 	Terrain* terrain;
+	Skybox* skybox;
     std::vector<Model*> models;
     std::vector<Blades*> blades;
 	std::vector<InstanceBuffer*> instanceBuffers;
@@ -52,6 +54,7 @@ public:
 
 
 	const Terrain* GetTerrain() const;
+	const Skybox* GetSkybox() const;
     const std::vector<Model*>& GetModels() const;
     const std::vector<Blades*>& GetBlades() const;
 	const std::vector<InstanceBuffer*>& GetInstanceBuffer() const;
@@ -59,6 +62,7 @@ public:
 	const std::vector<FakeInstanceBuffer*>& GetFakeInstanceBuffer() const;
 
 	void SetTerrain(Terrain* terrain);
+	void SetSkybox(Skybox* skybox);
     void AddModel(Model* model);
     void AddBlades(Blades* blades);
 	void AddInstanceBuffer(InstanceBuffer* Data);
