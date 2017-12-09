@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Vertex.h"
 #include "Device.h"
@@ -45,8 +46,9 @@ protected:
 
 public:
     Model() = delete;
-    Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices);
-    virtual ~Model();
+	Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices);
+	Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices, glm::vec3 position, float scale, float theta);
+	virtual ~Model();
 
     void SetDiffuseMap(VkImage texture);
 	void SetNormalMap(VkImage texture);

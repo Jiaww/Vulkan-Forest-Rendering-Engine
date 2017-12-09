@@ -17,6 +17,22 @@ Model::Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex
     BufferUtils::CreateBufferFromData(device, commandPool, &modelBufferObject, sizeof(ModelBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, modelBuffer, modelBufferMemory);
 }
 
+Model::Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices, glm::vec3 position, float scale, float theta)
+	: device(device), vertices(vertices), indices(indices) {
+
+	if (vertices.size() > 0) {
+		BufferUtils::CreateBufferFromData(device, commandPool, this->vertices.data(), vertices.size() * sizeof(Vertex), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertexBuffer, vertexBufferMemory);
+	}
+
+	if (indices.size() > 0) {
+		BufferUtils::CreateBufferFromData(device, commandPool, this->indices.data(), indices.size() * sizeof(uint32_t), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indexBuffer, indexBufferMemory);
+	}
+
+
+	modelBufferObject.modelMatrix = glm::translate(glm::mat4(1), position);
+	BufferUtils::CreateBufferFromData(device, commandPool, &modelBufferObject, sizeof(ModelBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, modelBuffer, modelBufferMemory);
+}
+
 Model::~Model() {
     if (indices.size() > 0) {
         vkDestroyBuffer(device->GetVkDevice(), indexBuffer, nullptr);
