@@ -8,6 +8,7 @@
 #include "Image.h"
 #include "FbxLoader.h"
 #include "Terrain.h"
+#include "skybox.h"
 
 Device* device;
 SwapChain* swapChain;
@@ -482,6 +483,19 @@ int main() {
 	fakeTree2->SetNormalMap(faketreeNormalImage2);
 	fakeTree2->SetNoiseMap(noiseImage);
 
+	//skybox
+	Skybox* skybox = new Skybox(device, transferCommandPool,
+	{
+		{ { 1,1,1,1 } },{ { -1,1,1,1 } },{ { -1,1,-1,1 } },{ { 1,1,-1,1 } },
+		{ { 1,-1,1,1 } },{ { -1,-1,1,1 } },{ { -1,-1,-1,1 } },{ { 1,-1,-1,1 } }
+	}
+		, { { 2,1,0,3,2,0,//top
+		4,5,6,4,6,7,//bottom
+		6,2,3,7,6,3,//front
+		0,1,5,0,5,4,//back
+		7,3,0,4,7,0,//right
+		5,1,2,6,5,2,//left
+			} });
 
 	srand(213910);
 	// Blades
@@ -493,6 +507,7 @@ int main() {
 // Scene Initialization
 	Scene* scene = new Scene(device);
 	scene->SetTerrain(terrain);
+	scene->SetSkybox(skybox);
 	scene->AddModel(plane);
 	scene->AddModel(bark);
 	scene->AddModel(leaf);
@@ -555,6 +570,48 @@ int main() {
 	vkDestroyImage(device->GetVkDevice(), grassImage, nullptr);
 	vkFreeMemory(device->GetVkDevice(), grassImageMemory, nullptr);
 
+	vkDestroyImage(device->GetVkDevice(), terrainImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), terrainImageMemory, nullptr);
+
+	vkDestroyImage(device->GetVkDevice(), barkImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), barkImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), barkNormalImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), barkNormalImageMemory, nullptr);
+
+	vkDestroyImage(device->GetVkDevice(), leafImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), leafImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), leafNormalImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), leafNormalImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), leafImage2, nullptr);
+	vkFreeMemory(device->GetVkDevice(), leafImageMemory2, nullptr);
+	vkDestroyImage(device->GetVkDevice(), leafNormalImage2, nullptr);
+	vkFreeMemory(device->GetVkDevice(), leafNormalImageMemory2, nullptr);
+
+
+	vkDestroyImage(device->GetVkDevice(), billboardImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), billboardImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), billboardNormalImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), billboardNormalImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), billboardImage2, nullptr);
+	vkFreeMemory(device->GetVkDevice(), billboardImageMemory2, nullptr);
+	vkDestroyImage(device->GetVkDevice(), billboardNormalImage2, nullptr);
+	vkFreeMemory(device->GetVkDevice(), billboardNormalImageMemory2, nullptr);
+
+	vkDestroyImage(device->GetVkDevice(), faketreeImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), faketreeImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), faketreeNormalImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), faketreeNormalImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), faketreeImage2, nullptr);
+	vkFreeMemory(device->GetVkDevice(), faketreeImageMemory2, nullptr);
+	vkDestroyImage(device->GetVkDevice(), faketreeNormalImage2, nullptr);
+	vkFreeMemory(device->GetVkDevice(), faketreeNormalImageMemory2, nullptr);
+
+	vkDestroyImage(device->GetVkDevice(), noiseImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), noiseImageMemory, nullptr);
+
+	//vkDestroyImage(device->GetVkDevice(), SkyboxTexture, nullptr);
+	//vkFreeMemory(device->GetVkDevice(), SkyboxTextureMemory, nullptr);
+
 	delete scene;
 	delete plane;
 	delete bark;
@@ -563,6 +620,8 @@ int main() {
 	delete bark2;
 	delete leaf2;
 	delete billboard2;
+	delete terrain;
+	delete skybox;
 	delete blades;
 	delete camera;
 	delete renderer;
