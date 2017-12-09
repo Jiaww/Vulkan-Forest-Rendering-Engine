@@ -50,7 +50,7 @@ Terrain::~Terrain() {
 
 //void Terrain::SetDiffuseMap(VkImage texture) {
 //	this->diffuseMap = texture;
-//	this->diffuseMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+//	this->diffuseMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,false);
 //
 //	// --- Specify all filters and transformations ---
 //	VkSamplerCreateInfo samplerInfo = {};
@@ -92,7 +92,7 @@ Terrain::~Terrain() {
 //
 //void Terrain::SetNormalMap(VkImage texture) {
 //	this->normalMap = texture;
-//	this->normalMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+//	this->normalMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,false);
 //
 //	// --- Specify all filters and transformations ---
 //	VkSamplerCreateInfo samplerInfo = {};

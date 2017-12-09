@@ -11,7 +11,7 @@ layout(set = 0, binding = 0) uniform CameraBufferObject {
 
 layout(location = 0) in vec4 inPosition;
 
-layout(location = 0) out vec4 fragColor;
+layout(location = 0) out vec4 vert_texcoord;
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -23,5 +23,5 @@ void main() {
 					inPosition.z+camera.camPos.z,1);
 	pos=camera.proj * camera.view*pos;
 	gl_Position=pos.xyww;
-	fragColor=normalize(camera.camPos);
+	vert_texcoord=inPosition;
 }

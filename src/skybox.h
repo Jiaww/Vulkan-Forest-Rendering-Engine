@@ -37,7 +37,9 @@ protected:
 public:
 	Skybox() = delete;
 	Skybox(Device* device, VkCommandPool commandPool, const std::vector<Position> &vertices, const std::vector<uint32_t> &indices);
+	virtual void SetDiffuseMap(VkImage texture);
 	const std::vector<Position>& getSkyboxVertices() const;
+	
 	virtual ~Skybox();
 
 

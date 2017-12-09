@@ -50,7 +50,7 @@ public:
 	Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices, glm::vec3 position, float scale, float theta);
 	virtual ~Model();
 
-    void SetDiffuseMap(VkImage texture);
+    virtual void SetDiffuseMap(VkImage texture);
 	void SetNormalMap(VkImage texture);
 	void SetNoiseMap(VkImage texture);
 
