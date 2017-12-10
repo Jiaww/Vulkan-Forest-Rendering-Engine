@@ -47,7 +47,7 @@ ___
 
 |**Density Multiplication**|
 |---|
-|<img src="./results/density.gif" width="1200" height="450">|
+|<img src="./results/density.gif" width="1200" height="500">|
 
 |**Close**|**Distant**|
 |---|---|
