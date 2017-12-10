@@ -24,11 +24,11 @@ ___
 
 |**Trees Rendering**|
 |---|
-|<img src="./results/allTrees.gif" width="800" height="600">|
+|<img src="./../results/allTrees.gif" width="800" height="600">|
 
 |**Single Tree**|
 |---|
-|<img src="./results/singleTree.gif" width="800" height="600">|
+|<img src="./../results/singleTree.gif" width="800" height="600">|
 
 ___
 ## Milestone 3 (12/04/2017)
@@ -50,21 +50,21 @@ ___
 
 |**Billbaord Culling**|**Model Culling**|
 |---|---|
-|<img src="./results/milestone3/LODCulling_billboard.gif" width="500" height="350">|<img src="./results/milestone3/LODCulling_model.gif" width="500" height="350">|
+|<img src="./../results/milestone3/LODCulling_billboard.gif" width="500" height="350">|<img src="./../results/milestone3/LODCulling_model.gif" width="500" height="350">|
 
 |**With Culling**|**Without Culling**|
 |---|---|
-|<img src="./results/milestone3/culling_perf.gif" width="500" height="350">|<img src="./results/milestone3/no_culling_perf.gif" width="500" height="350">|
+|<img src="./../results/milestone3/culling_perf.gif" width="500" height="350">|<img src="./../results/milestone3/no_culling_perf.gif" width="500" height="350">|
 
 |**Performance Comparision of LOD Culling(270 Trees and 270 Billboards)**|
 |---|
-|<img src="./results/milestone3/performance.png" width="750" height="480">|
+|<img src="./../results/milestone3/performance.png" width="750" height="480">|
 
 * **Morphing**:
 
 |**With Morphing**|**Without Morphing**|
 |---|---|
-|<img src="./results/milestone3/milestone2_result_with_morphing.gif" width="500" height="350">|<img src="./results/milestone3/milestone2_result_without_morphing.gif" width="500" height="350">|
+|<img src="./../results/milestone3/milestone2_result_with_morphing.gif" width="500" height="350">|<img src="./../results/milestone3/milestone2_result_without_morphing.gif" width="500" height="350">|
 
 * **Demo**
 
@@ -78,4 +78,4 @@ ___
   -   Fps
 
 ## Funny Bugs
-<img src="./results/milestone3/bugs.gif" width="800" height="600">
+<img src="./../results/milestone3/bugs.gif" width="800" height="600">
