@@ -33,11 +33,15 @@ class Skybox :public Model
 {
 protected:
 	std::vector<Position> skybox_vertices;
-
+	VkImage skyDiffuseMap[3] = {};
+	VkImageView skyDiffuseMapView[3] = {};
+	VkSampler skyDiffuseMapSampler[3] = {};
 public:
 	Skybox() = delete;
 	Skybox(Device* device, VkCommandPool commandPool, const std::vector<Position> &vertices, const std::vector<uint32_t> &indices);
-	virtual void SetDiffuseMap(VkImage texture);
+	void SetDiffuseMapIdx(VkImage texture, int idx);
+	VkImageView GetDiffuseMapViewIdx(int idx) const;
+	VkSampler GetDiffuseMapSamplerIdx(int idx) const;
 	const std::vector<Position>& getSkyboxVertices() const;
 	
 	virtual ~Skybox();

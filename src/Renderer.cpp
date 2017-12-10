@@ -394,14 +394,26 @@ void Renderer::CreateFakeCullingComputeDescriptorSetLayout() {
 
 void Renderer::CreateSkyboxDescriptorSetLayout()
 {
-	VkDescriptorSetLayoutBinding diffuseSamplerLayoutBinding = {};
-	diffuseSamplerLayoutBinding.binding = 0;
-	diffuseSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	diffuseSamplerLayoutBinding.descriptorCount = 1;
-	diffuseSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	diffuseSamplerLayoutBinding.pImmutableSamplers = nullptr;
+	VkDescriptorSetLayoutBinding diffuseSamplerLayoutBinding[3] = {};
+	diffuseSamplerLayoutBinding[0].binding = 0;
+	diffuseSamplerLayoutBinding[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	diffuseSamplerLayoutBinding[0].descriptorCount = 1;
+	diffuseSamplerLayoutBinding[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	diffuseSamplerLayoutBinding[0].pImmutableSamplers = nullptr;
 
-	std::vector<VkDescriptorSetLayoutBinding> bindings = {diffuseSamplerLayoutBinding};
+	diffuseSamplerLayoutBinding[1].binding = 1;
+	diffuseSamplerLayoutBinding[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	diffuseSamplerLayoutBinding[1].descriptorCount = 1;
+	diffuseSamplerLayoutBinding[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	diffuseSamplerLayoutBinding[1].pImmutableSamplers = nullptr;
+
+	diffuseSamplerLayoutBinding[2].binding = 2;
+	diffuseSamplerLayoutBinding[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	diffuseSamplerLayoutBinding[2].descriptorCount = 1;
+	diffuseSamplerLayoutBinding[2].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	diffuseSamplerLayoutBinding[2].pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = {diffuseSamplerLayoutBinding[0], diffuseSamplerLayoutBinding[1], diffuseSamplerLayoutBinding[2]};
 
 	// Create the descriptor set layout
 	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
@@ -499,14 +511,14 @@ void Renderer::CreateDescriptorPool() {
 		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 2 },
 		
 		//skybox
-		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 1 }, 
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 3 }, 
 	};
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 23;//1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo+1*skybox
+	poolInfo.maxSets = 23;//1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo+ 1*skybox
 
 	if (vkCreateDescriptorPool(logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool");
@@ -992,13 +1004,21 @@ void Renderer::CreateSkyboxDescriptorSet()
 		throw std::runtime_error("Failed to allocate descriptor set");
 	}
 
-	std::vector<VkWriteDescriptorSet> descriptorWrites(1);
+	std::vector<VkWriteDescriptorSet> descriptorWrites(3);
 	
 	// Bind image and sampler resources to the descriptor
-	VkDescriptorImageInfo diffuseMapInfo = {};
-	diffuseMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	diffuseMapInfo.imageView = scene->GetSkybox()->GetDiffuseMapView();
-	diffuseMapInfo.sampler = scene->GetSkybox()->GetDiffuseMapSampler();
+	VkDescriptorImageInfo diffuseMapInfo[3] = {};
+	diffuseMapInfo[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	diffuseMapInfo[0].imageView = scene->GetSkybox()->GetDiffuseMapViewIdx(0);
+	diffuseMapInfo[0].sampler = scene->GetSkybox()->GetDiffuseMapSamplerIdx(0);
+
+	diffuseMapInfo[1].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	diffuseMapInfo[1].imageView = scene->GetSkybox()->GetDiffuseMapViewIdx(1);
+	diffuseMapInfo[1].sampler = scene->GetSkybox()->GetDiffuseMapSamplerIdx(1);
+
+	diffuseMapInfo[2].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	diffuseMapInfo[2].imageView = scene->GetSkybox()->GetDiffuseMapViewIdx(2);
+	diffuseMapInfo[2].sampler = scene->GetSkybox()->GetDiffuseMapSamplerIdx(2);
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = skyboxDescriptorSet;
@@ -1006,8 +1026,23 @@ void Renderer::CreateSkyboxDescriptorSet()
 	descriptorWrites[0].dstArrayElement = 0;
 	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descriptorWrites[0].descriptorCount = 1;
-	descriptorWrites[0].pImageInfo = &diffuseMapInfo;
+	descriptorWrites[0].pImageInfo = &diffuseMapInfo[0];
 
+	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[1].dstSet = skyboxDescriptorSet;
+	descriptorWrites[1].dstBinding = 1;
+	descriptorWrites[1].dstArrayElement = 0;
+	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[1].descriptorCount = 1;
+	descriptorWrites[1].pImageInfo = &diffuseMapInfo[1];
+
+	descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[2].dstSet = skyboxDescriptorSet;
+	descriptorWrites[2].dstBinding = 2;
+	descriptorWrites[2].dstArrayElement = 0;
+	descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[2].descriptorCount = 1;
+	descriptorWrites[2].pImageInfo = &diffuseMapInfo[2];
 	// Update descriptor sets
 	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
@@ -1900,7 +1935,7 @@ void Renderer::CreateSkyboxPipeline()
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout,skyboxDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout,skyboxDescriptorSetLayout, timeDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -2376,7 +2411,7 @@ void Renderer::CreateTerrainPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, terrainDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, terrainDescriptorSetLayout, timeDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -2758,6 +2793,8 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 			// Bind the descriptor set for terrain
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipelineLayout, 1, 1, &terrainDescriptorSet, 0, nullptr);
+			// Bind the descriptor set for terrain
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetTerrain()->getIndices();
@@ -2778,6 +2815,8 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxPipelineLayout, 0, 1, &cameraDescriptorSet, 0, nullptr);
 
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxPipelineLayout, 1, 1, &skyboxDescriptorSet, 0, nullptr);
+			
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetSkybox()->getIndices();
@@ -2839,7 +2878,7 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
 #if LOD_FRUSTUM_CULLING
 				// Indirect Draw
-				//vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(0), 0, 1, 0);
+				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(0), 0, 1, 0);
 #else
 				// Draw
 				std::vector<uint32_t> indices = scene->GetModels()[3*k + 1]->getIndices();
@@ -2874,7 +2913,7 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
 #if LOD_FRUSTUM_CULLING
 				// Indirect Draw
-				//vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(1), 0, 1, 0);
+				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(1), 0, 1, 0);
 #else
 				// Draw
 				std::vector<uint32_t> indices = scene->GetModels()[3 *k + 2]->getIndices();
@@ -2909,7 +2948,7 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
 #if LOD_FRUSTUM_CULLING
 				// Indirect Draw
-				//vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(2), 0, 1, 0);
+				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(2), 0, 1, 0);
 #else
 				// Draw
 				std::vector<uint32_t> indices = scene->GetModels()[3*k + 3]->getIndices();
@@ -2945,7 +2984,7 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 3, 1, &LODInfoDescriptorSets[2 + k], 0, nullptr);
 #if LOD_FRUSTUM_CULLING
 			// Indirect Draw
-			//vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetFakeInstanceBuffer()[k]->GetNumInstanceDataBuffer(), 0, 1, 0);
+			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetFakeInstanceBuffer()[k]->GetNumInstanceDataBuffer(), 0, 1, 0);
 #else
 			// Draw
 			std::vector<uint32_t> indices = scene->GetModels()[3 * k + 3]->getIndices();

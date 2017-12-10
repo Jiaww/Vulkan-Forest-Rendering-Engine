@@ -12,10 +12,10 @@ Skybox::Skybox(Device* device, VkCommandPool commandPool, const std::vector<Posi
 	}
 }
 
-void Skybox::SetDiffuseMap(VkImage texture)
+void Skybox::SetDiffuseMapIdx(VkImage texture, int idx)
 {
-	this->diffuseMap = texture;
-	this->diffuseMapView = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,true);
+	this->skyDiffuseMap[idx] = texture;
+	this->skyDiffuseMapView[idx] = Image::CreateView(device, texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,true);
 
 	// --- Specify all filters and transformations ---
 	VkSamplerCreateInfo samplerInfo = {};
@@ -50,10 +50,18 @@ void Skybox::SetDiffuseMap(VkImage texture)
 	samplerInfo.minLod = 0.0f;
 	samplerInfo.maxLod = 0.0f;
 
-	if (vkCreateSampler(device->GetVkDevice(), &samplerInfo, nullptr, &diffuseMapSampler) != VK_SUCCESS) {
+	if (vkCreateSampler(device->GetVkDevice(), &samplerInfo, nullptr, &skyDiffuseMapSampler[idx]) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create texture sampler");
 	}
 
+}
+
+VkImageView Skybox::GetDiffuseMapViewIdx(int idx) const{
+	return skyDiffuseMapView[idx];
+}
+
+VkSampler Skybox::GetDiffuseMapSamplerIdx(int idx) const{
+	return skyDiffuseMapSampler[idx];
 }
 
 const std::vector<Position>& Skybox::getSkyboxVertices() const

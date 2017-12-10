@@ -514,9 +514,30 @@ int main() {
 		noiseImageMemory
 	);
 	//skybox Texture
-	VkImage skyboxImage;
-	VkDeviceMemory skyboxImageMemory;
-	std::vector<char*> cubemap_images = {
+	VkImage skyboxImageDay;
+	VkDeviceMemory skyboxImageDayMemory;
+	std::vector<char*> cubemap_images_day = {
+		"../../media/textures/Skybox_jpg/TropicalSunnyDay/TropicalSunnyDayLeft2048.png",
+		"../../media/textures/Skybox_jpg/TropicalSunnyDay/TropicalSunnyDayRight2048.png",
+		"../../media/textures/Skybox_jpg/TropicalSunnyDay/TropicalSunnyDayUp2048.png",
+		"../../media/textures/Skybox_jpg/TropicalSunnyDay/TropicalSunnyDayDown2048.png",
+		"../../media/textures/Skybox_jpg/TropicalSunnyDay/TropicalSunnyDayFront2048.png",
+		"../../media/textures/Skybox_jpg/TropicalSunnyDay/TropicalSunnyDayBack2048.png",
+	};
+	Image::FromMultiFile(device,
+		transferCommandPool,
+		cubemap_images_day,
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		skyboxImageDay,
+		skyboxImageDayMemory
+	);
+	VkImage skyboxImageAfternoon;
+	VkDeviceMemory skyboxImageAfternoonMemory;
+	std::vector<char*> cubemap_images_afternoon = {
 		"../../media/textures/Skybox_jpg/SunSet/SunSetLeft2048.png",
 		"../../media/textures/Skybox_jpg/SunSet/SunSetRight2048.png",
 		"../../media/textures/Skybox_jpg/SunSet/SunSetUp2048.png",
@@ -526,16 +547,36 @@ int main() {
 	};
 	Image::FromMultiFile(device,
 		transferCommandPool,
-		cubemap_images,
+		cubemap_images_afternoon,
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_IMAGE_USAGE_SAMPLED_BIT,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-		skyboxImage,
-		skyboxImageMemory
+		skyboxImageAfternoon,
+		skyboxImageAfternoonMemory
 	);
-
+	VkImage skyboxImageNight;
+	VkDeviceMemory skyboxImageNightMemory;
+	std::vector<char*> cubemap_images_night = {
+		"../../media/textures/Skybox_jpg/FullMoon/FullMoonLeft2048.png",
+		"../../media/textures/Skybox_jpg/FullMoon/FullMoonRight2048.png",
+		"../../media/textures/Skybox_jpg/FullMoon/FullMoonUp2048.png",
+		"../../media/textures/Skybox_jpg/FullMoon/FullMoonDown2048.png",
+		"../../media/textures/Skybox_jpg/FullMoon/FullMoonFront2048.png",
+		"../../media/textures/Skybox_jpg/FullMoon/FullMoonBack2048.png",
+	};
+	Image::FromMultiFile(device,
+		transferCommandPool,
+		cubemap_images_night,
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		skyboxImageNight,
+		skyboxImageNightMemory
+	);
 
 // Terrain Initializations
 	char* terrainPath = "../../media/terrain/heightMap03.png";
@@ -667,7 +708,9 @@ int main() {
 		7,3,0,4,7,0,//right
 		5,1,2,6,5,2,//left
 			} });
-	skybox->SetDiffuseMap(skyboxImage);
+	skybox->SetDiffuseMapIdx(skyboxImageDay, 0);
+	skybox->SetDiffuseMapIdx(skyboxImageAfternoon, 1);
+	skybox->SetDiffuseMapIdx(skyboxImageNight, 2);
 	srand(213910);
 	// Blades
 	printf("Building Blades\n");
@@ -781,8 +824,12 @@ int main() {
 	vkFreeMemory(device->GetVkDevice(), faketreeNormalImageMemory2, nullptr);
 
 
-	vkDestroyImage(device->GetVkDevice(), skyboxImage, nullptr);
-	vkFreeMemory(device->GetVkDevice(), skyboxImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), skyboxImageDay, nullptr);
+	vkFreeMemory(device->GetVkDevice(), skyboxImageDayMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), skyboxImageAfternoon, nullptr);
+	vkFreeMemory(device->GetVkDevice(), skyboxImageAfternoonMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), skyboxImageNight, nullptr);
+	vkFreeMemory(device->GetVkDevice(), skyboxImageNightMemory, nullptr);
 	vkDestroyImage(device->GetVkDevice(), noiseImage, nullptr);
 	vkFreeMemory(device->GetVkDevice(), noiseImageMemory, nullptr);
 
