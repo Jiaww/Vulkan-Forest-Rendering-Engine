@@ -56,6 +56,7 @@ ___
 ### Day & Night Cycle
 * We blend the skybox and change the light Color and intensity according to the time.
 * Example Gifs
+
 |**Day & Night (10s)**|
 |---|
 |<img src="./results/day_night_cycle.gif" width="1000" height="600">|
