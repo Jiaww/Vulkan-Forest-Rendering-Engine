@@ -517,12 +517,12 @@ int main() {
 	VkImage skyboxImage;
 	VkDeviceMemory skyboxImageMemory;
 	std::vector<char*> cubemap_images = {
-		"../../media/textures/Skybox_jpg/left6.jpg",
-		"../../media/textures/Skybox_jpg/right6.jpg",
-		"../../media/textures/Skybox_jpg/up6.jpg",
-		"../../media/textures/Skybox_jpg/down6.jpg",
-		"../../media/textures/Skybox_jpg/front6.jpg",
-		"../../media/textures/Skybox_jpg/back6.jpg",
+		"../../media/textures/Skybox_jpg/SunSet/SunSetLeft2048.png",
+		"../../media/textures/Skybox_jpg/SunSet/SunSetRight2048.png",
+		"../../media/textures/Skybox_jpg/SunSet/SunSetUp2048.png",
+		"../../media/textures/Skybox_jpg/SunSet/SunSetDown2048.png",
+		"../../media/textures/Skybox_jpg/SunSet/SunSetFront2048.png",
+		"../../media/textures/Skybox_jpg/SunSet/SunSetBack2048.png",
 	};
 	Image::FromMultiFile(device,
 		transferCommandPool,
