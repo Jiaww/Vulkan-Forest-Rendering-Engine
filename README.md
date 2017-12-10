@@ -4,7 +4,13 @@
 * 2017.11.25 - 2017.12.11
 ___
 ## Overview
-* The project is a high-performance forest rendering engine developed using Vulkan. We optimized the performance both for CPU part and GPU part. It contains **multiple LOD strategy** rendering(realized by compute shader in Vulkan), **nature Wind-zone** of forest(realized by vertex animation for each tree), **Density Multiplication Effect**('fake trees'), **Day&Night Cycle**, etc. The users can also use the GUI to modify the parameters to get the disired result effect they want in the demo.
+* The project is a high-performance **Real-time** forest rendering engine developed using Vulkan. We optimized the performance both for CPU part and GPU part. 
+* It contains **multiple LOD strategy** rendering(realized by compute shader in Vulkan), **nature Wind-zone** of forest(realized by vertex animation for each tree), **Density Multiplication Effect**('fake trees'), **Day&Night Cycle**, etc. 
+* The users can also use the GUI to modify the parameters to get the disired result effect they want in the demo.
+
+|**Final Rendering**|
+|---|
+|<img src="./results/final.png" width="800" height="600">|
 
 ___
 ## Features
