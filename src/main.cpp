@@ -286,7 +286,7 @@ namespace {
 
 int main() {
 	static constexpr char* applicationName = "Vulkan Grass Rendering";
-	int width = 1280, height = 960;
+	int width = 1920, height = 1080;
 	InitializeWindow(width, height, applicationName);
 
 	unsigned int glfwExtensionCount = 0;
@@ -783,7 +783,8 @@ int main() {
 
 	gui->SetFontTextureMap(FontTexture);
 
-	srand(213910);
+	//srand(213910);
+	srand((unsigned int)time(0));
 	// Blades
 	printf("Building Blades\n");
 	Blades* blades = new Blades(device, transferCommandPool, planeDim, terrain);
