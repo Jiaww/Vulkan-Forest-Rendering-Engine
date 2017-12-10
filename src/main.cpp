@@ -286,7 +286,7 @@ namespace {
 
 int main() {
 	static constexpr char* applicationName = "Vulkan Grass Rendering";
-	int width = 1920, height = 1080;
+	int width = 1280, height = 960;
 	InitializeWindow(width, height, applicationName);
 
 	unsigned int glfwExtensionCount = 0;

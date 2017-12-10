@@ -19,16 +19,17 @@ void main() {
 	// Day and Night Cycle
 	// 40s a day 
 	// a mod b : a - (b * floor(a/b))
-	float currentTime = TimeInfo[1] - (40 * floor(TimeInfo[1]/40));
+	float dayLength = 30;
+	float currentTime = TimeInfo[1] - (dayLength * floor(TimeInfo[1]/dayLength));
 	vec4 blendColor;
-	if(currentTime < 10){
-		blendColor = texture( Cubemap_Day, texcoord ) * (1.0 - (currentTime)/10.0) + texture( Cubemap_Afternoon, texcoord ) * (currentTime)/10.0; 
+	if(currentTime < (dayLength/4.0)){
+		blendColor = texture( Cubemap_Day, texcoord ) * (1.0 - (currentTime)/(dayLength/4.0)) + texture( Cubemap_Afternoon, texcoord ) * (currentTime)/(dayLength/4.0); 
 	}
-	else if(currentTime < 20){
-		blendColor = texture( Cubemap_Afternoon, texcoord ) * (1.0 - (currentTime-10)/10.0) + texture( Cubemap_Night, texcoord ) * (currentTime-10)/10.0; 
+	else if(currentTime < (dayLength/2.0)){
+		blendColor = texture( Cubemap_Afternoon, texcoord ) * (1.0 - (currentTime-(dayLength/4.0))/(dayLength/4.0)) + texture( Cubemap_Night, texcoord ) * (currentTime-(dayLength/4.0))/(dayLength/4.0); 
 	}
 	else{
-		blendColor = texture( Cubemap_Night, texcoord ) * (1.0 - (currentTime-20)/20.0) + texture( Cubemap_Day, texcoord ) * (currentTime-20)/20.0; 
+		blendColor = texture( Cubemap_Night, texcoord ) * (1.0 - (currentTime-(dayLength/2.0))/(dayLength/2.0)) + texture( Cubemap_Day, texcoord ) * (currentTime-(dayLength/2.0))/(dayLength/2.0); 
 	}
 	outColor = blendColor;
 }

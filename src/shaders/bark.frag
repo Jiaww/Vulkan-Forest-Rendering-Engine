@@ -54,20 +54,21 @@ void main() {
 	float ambientTerm = vertAmbient * 0.15f;
 
 	// Day and Night Cycle
-	float currentTime = TimeInfo[1] - (40 * floor(TimeInfo[1]/40));
+	float dayLength = 30;
+	float currentTime = TimeInfo[1] - (dayLength * floor(TimeInfo[1]/dayLength));
 	float lightIntensity = 1.0f;
 	vec3 lightColor;
-	if(currentTime < 10){
-		lightColor = lightColorDay * (1.0 - (currentTime)/10.0) + lightColorAfternoon * (currentTime)/10.0; 
-		lightIntensity = 1.1f * (1.0 - (currentTime)/10.0) + 0.9f * (currentTime)/10.0;
+	if(currentTime < (dayLength/4.0)){
+		lightColor = lightColorDay * (1.0 - (currentTime)/(dayLength/4.0)) + lightColorAfternoon * (currentTime)/(dayLength/4.0); 
+		lightIntensity = 1.1f * (1.0 - (currentTime)/(dayLength/4.0)) + 0.9f * (currentTime)/(dayLength/4.0);
 	}
-	else if(currentTime < 20){
-		lightColor = lightColorAfternoon * (1.0 - (currentTime-10)/10.0) + lightColorNight * (currentTime-10)/10.0; 
-		lightIntensity = 0.9f * (1.0 - (currentTime-10)/10.0) + 0.4f * (currentTime-10)/10.0;
+	else if(currentTime < (dayLength/2.0)){
+		lightColor = lightColorAfternoon * (1.0 - (currentTime-(dayLength/4.0))/(dayLength/4.0)) + lightColorNight * (currentTime-(dayLength/4.0))/(dayLength/4.0); 
+		lightIntensity = 0.9f * (1.0 - (currentTime-(dayLength/4.0))/(dayLength/4.0)) + 0.4f * (currentTime-(dayLength/4.0))/(dayLength/4.0);
 	}
 	else{
-		lightColor = lightColorNight * (1.0 - (currentTime-20)/20.0) + lightColorDay * (currentTime-20)/20.0; 
-		lightIntensity = 0.4f * (1.0 - (currentTime-20)/20.0) + 1.1f * (currentTime-20)/20.0;
+		lightColor = lightColorNight * (1.0 - (currentTime-(dayLength/2.0))/(dayLength/2.0)) + lightColorDay * (currentTime-(dayLength/2.0))/(dayLength/2.0); 
+		lightIntensity = 0.4f * (1.0 - (currentTime-(dayLength/2.0))/(dayLength/2.0)) + 1.1f * (currentTime-(dayLength/2.0))/(dayLength/2.0);
 	}
 
 	outColor = vec4(diffuseColor.rgb * lightColor * lightIntensity *(diffuseTerm + ambientTerm), diffuseColor.a);
