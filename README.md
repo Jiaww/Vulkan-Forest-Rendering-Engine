@@ -10,7 +10,7 @@ ___
 
 |**Final Rendering**|
 |---|
-|<img src="./results/final.jpg" width="1000" height="450">|
+|<img src="./results/final.jpg" width="1200" height="450">|
 
 ___
 ## Features
@@ -44,6 +44,14 @@ ___
 * This effect can be generated using "Fake Trees", which are also billboards but not the billboards for the real model, they will disappear when the players are close enough, and appear again when players are distant enough. Also, because they are far from the players, who are focus on the nearby things, most of them couldn't even be realized. 
 * For more specific algorithm to generate them, you can look into the code in 'Scene.cpp'
 * Example Gifs
+
+|**Density Multiplication**|
+|---|
+|<img src="./results/density.gif" width="1200" height="450">|
+
+|**Close**|**Distant**|
+|---|---|
+|<img src="./results/density01.jpg" width="500" height="450">|<img src="./results/density02.jpg" width="500" height="450">|
 
 ### Day & Night Cycle
 * We blend the skybox and change the light Color and intensity according to the time.
