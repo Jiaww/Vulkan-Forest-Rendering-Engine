@@ -5,6 +5,7 @@
 #include "Device.h"
 #include "Instance.h"
 #include "BufferUtils.h"
+#include "imgui.h"
 
 void Image::Create(Device* device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
     // Create Vulkan image
@@ -374,4 +375,50 @@ void Image::FromMultiFile(Device * device, VkCommandPool commandPool, const std:
 		vkFreeMemory(device->GetVkDevice(), stagingBufferMemory, nullptr);
 	}
 
+}
+
+void Image::FromGuiTexture(Device * device, VkCommandPool commandPool, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageLayout layout, VkMemoryPropertyFlags properties, VkImage & image, VkDeviceMemory & imageMemory)
+{
+	ImGuiIO& io = ImGui::GetIO();
+	unsigned char* pixels;
+	int texWidth, texHeight;
+	io.Fonts->GetTexDataAsRGBA32(&pixels, &texWidth, &texHeight);
+	VkDeviceSize imageSize = texWidth*texHeight * 4 * sizeof(char);
+	if (!pixels) {
+		throw std::runtime_error("Failed to load texture image");
+	}
+
+	// Create staging buffer
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+
+	VkBufferUsageFlags stagingUsage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+	VkMemoryPropertyFlags stagingProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	BufferUtils::CreateBuffer(device, imageSize, stagingUsage, stagingProperties, stagingBuffer, stagingBufferMemory);
+
+	// Copy pixel values to the buffer
+	void* data;
+	vkMapMemory(device->GetVkDevice(), stagingBufferMemory, 0, imageSize, 0, &data);
+	memcpy(data, pixels, static_cast<size_t>(imageSize));
+	vkUnmapMemory(device->GetVkDevice(), stagingBufferMemory);
+
+	// Free pixel array
+	//stbi_image_free(pixels);
+
+	// Create Vulkan image
+	Image::Create(device, texWidth, texHeight, format, tiling, VK_IMAGE_USAGE_TRANSFER_DST_BIT | usage, properties, image, imageMemory);
+
+	// Copy the staging buffer to the texture image
+	// --> First need to transition the texture image to VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+	Image::TransitionLayout(device, commandPool, image, format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, false);
+	Image::CopyFromBuffer(device, commandPool, stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+
+	// Transition texture image for shader access
+	Image::TransitionLayout(device, commandPool, image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layout, false);
+
+	// No need for staging buffer anymore
+	vkDestroyBuffer(device->GetVkDevice(), stagingBuffer, nullptr);
+	vkFreeMemory(device->GetVkDevice(), stagingBufferMemory, nullptr);
+
+	io.Fonts->TexID = (void *)(intptr_t)image;
 }

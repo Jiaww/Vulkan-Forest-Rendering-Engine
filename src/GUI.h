@@ -34,7 +34,7 @@ public:
 	GUI(Device* device);
 	virtual ~GUI();
 
-	virtual void SetFontTextureMap(VkImage texture);
+	void SetFontTextureMap(VkImage texture);
 	VkBuffer getVertexBuffer() const;
 	VkBuffer getIndexBuffer() const;
 	VkImageView GetFontTextureMapView() const;

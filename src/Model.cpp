@@ -46,7 +46,7 @@ Model::~Model() {
     vkDestroyBuffer(device->GetVkDevice(), modelBuffer, nullptr);
     vkFreeMemory(device->GetVkDevice(), modelBufferMemory, nullptr);
 
-    if (diffuseMapView != VK_NULL_HANDLE) {
+	if (diffuseMapView != VK_NULL_HANDLE) {
         vkDestroyImageView(device->GetVkDevice(), diffuseMapView, nullptr);
     }
 

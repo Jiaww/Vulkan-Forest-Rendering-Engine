@@ -17,6 +17,10 @@ SwapChain* swapChain;
 Renderer* renderer;
 Camera* camera;
 GUI* gui = new GUI(nullptr);
+static double       g_Time = 0.0f;
+static bool         g_MousePressed[3] = { false, false, false };
+static float        g_MouseWheel = 0.0f;
+
 static float LOD0 = 0.6;
 static float LOD1 = 0.43;
 
@@ -85,6 +89,7 @@ namespace {
 		camera->CameraScale(yoffset);
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////
 	//GUI
 	void ImGui_ImplGlfwVulkan_RenderDrawLists(ImDrawData * draw_data)
 	{
@@ -196,6 +201,51 @@ namespace {
 		return glfwGetClipboardString((GLFWwindow*)user_data);
 	}
 
+	void ImGui_ImplGlfwVulkan_NewFrame(GLFWwindow * window)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		// Setup display size (every frame to accommodate for window resizing)
+		int w, h;
+		int display_w, display_h;
+		glfwGetWindowSize(window, &w, &h);
+		glfwGetFramebufferSize(window, &display_w, &display_h);
+		io.DisplaySize = ImVec2((float)w, (float)h);
+		io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
+
+		// Setup time step
+		double current_time =  glfwGetTime();
+		io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f/60.0f);
+		g_Time = current_time;
+
+		// Setup inputs
+		// (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
+		if (glfwGetWindowAttrib(window, GLFW_FOCUSED))
+		{
+			double mouse_x, mouse_y;
+			glfwGetCursorPos(window, &mouse_x, &mouse_y);
+			io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);   // Mouse position in screen coordinates (set to -1,-1 if no mouse / on another screen, etc.)
+		}
+		else
+		{
+			io.MousePos = ImVec2(-FLT_MAX,-FLT_MAX);
+		}
+
+		for (int i = 0; i < 3; i++)
+		{
+			io.MouseDown[i] = g_MousePressed[i] || glfwGetMouseButton(window, i) != 0;    // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
+			g_MousePressed[i] = false;
+		}
+
+		io.MouseWheel = g_MouseWheel;
+		g_MouseWheel = 0.0f;
+
+		// Hide OS mouse cursor if ImGui is drawing it
+		glfwSetInputMode(window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+
+		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
+		ImGui::NewFrame();
+	}
 	bool ImGui_ImplGlfwVulkan_Init(GLFWwindow * window)
 	{
 
@@ -223,9 +273,10 @@ namespace {
 		io.RenderDrawListsFn = ImGui_ImplGlfwVulkan_RenderDrawLists;       // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
 		io.SetClipboardTextFn = ImGui_ImplGlfwVulkan_SetClipboardText;
 		io.GetClipboardTextFn = ImGui_ImplGlfwVulkan_GetClipboardText;
-
+		io.ClipboardUserData =  window;
 		return true;
 	}
+	//////////////////////////////////////////////////////////////////////////////////////////
 
 }
 
@@ -270,6 +321,10 @@ int main() {
 	if (vkCreateCommandPool(device->GetVkDevice(), &transferPoolInfo, nullptr, &transferCommandPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create command pool");
 	}
+
+//GUI Initialize
+	gui->device = device;
+	ImGui_ImplGlfwVulkan_Init(GetGLFWWindow());
 
 // Texture Loading
 	// Terrain
@@ -535,6 +590,18 @@ int main() {
 		skyboxImage,
 		skyboxImageMemory
 	);
+	VkImage FontTexture;
+	VkDeviceMemory FontTextureMemory;
+	Image::FromGuiTexture(device,
+		transferCommandPool,
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_IMAGE_TILING_OPTIMAL,
+		VK_IMAGE_USAGE_SAMPLED_BIT,
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		FontTexture,
+		FontTextureMemory
+	);
 
 
 // Terrain Initializations
@@ -668,16 +735,16 @@ int main() {
 		5,1,2,6,5,2,//left
 			} });
 	skybox->SetDiffuseMap(skyboxImage);
+
+	gui->SetFontTextureMap(FontTexture);
 	srand(213910);
 	// Blades
 	printf("Building Blades\n");
 	Blades* blades = new Blades(device, transferCommandPool, planeDim, terrain);
 	printf("Finish Building Blades\n");
 
-	gui->device = device;
-
 // Scene Initialization
-	ImGui_ImplGlfwVulkan_Init(GetGLFWWindow());
+
 	Scene* scene = new Scene(device);
 	scene->SetTerrain(terrain);
 	scene->SetSkybox(skybox);
@@ -723,6 +790,13 @@ int main() {
 
 	while (!ShouldQuit()) {
 		glfwPollEvents();
+		ImGui_ImplGlfwVulkan_NewFrame(GetGLFWWindow());
+		{
+			static float f = 0.0f;
+			ImGui::Text("Hello, world!");
+		}
+		ImGui::Render();
+
 		scene->UpdateTime();
 		//scene->UpdateLODInfo(LOD0, LOD1);
 		renderer->Frame();
@@ -737,6 +811,7 @@ int main() {
 			count = 0;
 			time_start = GetTickCount();
 		}
+		gui->g_FrameIndex = (gui->g_FrameIndex + 1) % IMGUI_VK_QUEUED_FRAMES;
 	}
 
 	vkDeviceWaitIdle(device->GetVkDevice());
@@ -781,10 +856,12 @@ int main() {
 	vkFreeMemory(device->GetVkDevice(), faketreeNormalImageMemory2, nullptr);
 
 
-	vkDestroyImage(device->GetVkDevice(), skyboxImage, nullptr);
-	vkFreeMemory(device->GetVkDevice(), skyboxImageMemory, nullptr);
 	vkDestroyImage(device->GetVkDevice(), noiseImage, nullptr);
 	vkFreeMemory(device->GetVkDevice(), noiseImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), skyboxImage, nullptr);
+	vkFreeMemory(device->GetVkDevice(), skyboxImageMemory, nullptr);
+	vkDestroyImage(device->GetVkDevice(), FontTexture, nullptr);
+	vkFreeMemory(device->GetVkDevice(), FontTextureMemory, nullptr);
 
 
 	delete scene;
@@ -799,8 +876,9 @@ int main() {
 	delete skybox;
 	delete blades;
 	delete camera;
-	delete renderer;
 	delete gui;
+	delete renderer;
+	ImGui::Shutdown();
 	delete swapChain;
 	delete device;
 	delete instance;
