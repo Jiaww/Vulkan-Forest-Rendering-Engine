@@ -10,11 +10,13 @@
 #include "Terrain.h"
 #include "skybox.h"
 
+#include "GUI.h"
+
 Device* device;
 SwapChain* swapChain;
 Renderer* renderer;
 Camera* camera;
-
+GUI* gui = new GUI(nullptr);
 static float LOD0 = 0.6;
 static float LOD1 = 0.43;
 
@@ -53,7 +55,6 @@ namespace {
 			}
 		}
 	}
-
 	void mouseMoveCallback(GLFWwindow* window, double xPosition, double yPosition) {
 		double sensitivity = 1;
 		float deltaX = static_cast<float>((previousX - xPosition) * sensitivity);
@@ -83,7 +84,154 @@ namespace {
 	{
 		camera->CameraScale(yoffset);
 	}
+
+	//GUI
+	void ImGui_ImplGlfwVulkan_RenderDrawLists(ImDrawData * draw_data)
+	{
+		if (!gui->device) return;
+		VkResult err;
+		ImGuiIO& io = ImGui::GetIO();
+
+		// Create the Vertex Buffer:
+		size_t vertex_size = draw_data->TotalVtxCount * sizeof(ImDrawVert);
+		if (!gui->g_VertexBuffer[gui->g_FrameIndex] || gui->g_VertexBufferSize[gui->g_FrameIndex] < vertex_size)
+		{
+			if (gui->g_VertexBuffer[gui->g_FrameIndex])
+				vkDestroyBuffer(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], nullptr);
+			if (gui->g_VertexBufferMemory[gui->g_FrameIndex])
+				vkFreeMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex], nullptr);
+			size_t vertex_buffer_size = ((vertex_size - 1) / gui->g_BufferMemoryAlignment + 1) * gui->g_BufferMemoryAlignment;
+			VkBufferCreateInfo buffer_info = {};
+			buffer_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+			buffer_info.size = vertex_buffer_size;
+			buffer_info.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+			buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			err = vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_VertexBuffer[gui->g_FrameIndex]);
+
+			//ImGui_ImplGlfwVulkan_VkResult(err);
+			VkMemoryRequirements req;
+			vkGetBufferMemoryRequirements(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], &req);
+			gui->g_BufferMemoryAlignment = (gui->g_BufferMemoryAlignment > req.alignment) ? gui->g_BufferMemoryAlignment : req.alignment;
+			VkMemoryAllocateInfo alloc_info = {};
+			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+			alloc_info.allocationSize = req.size;
+			alloc_info.memoryTypeIndex = gui->device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_VertexBufferMemory[gui->g_FrameIndex]);
+			//ImGui_ImplGlfwVulkan_VkResult(err);
+			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], gui->g_VertexBufferMemory[gui->g_FrameIndex], 0);
+			//ImGui_ImplGlfwVulkan_VkResult(err);
+			gui->g_VertexBufferSize[gui->g_FrameIndex] = vertex_buffer_size;
+		}
+
+		// Create the Index Buffer:
+		size_t index_size = draw_data->TotalIdxCount * sizeof(ImDrawIdx);
+		if (!gui->g_IndexBuffer[gui->g_FrameIndex] || gui->g_IndexBufferSize[gui->g_FrameIndex] < index_size)
+		{
+			if (gui->g_IndexBuffer[gui->g_FrameIndex])
+				vkDestroyBuffer(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], nullptr);
+			if (gui->g_IndexBufferMemory[gui->g_FrameIndex])
+				vkFreeMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex], nullptr);
+			size_t index_buffer_size = ((index_size - 1) / gui->g_BufferMemoryAlignment + 1) * gui->g_BufferMemoryAlignment;
+			VkBufferCreateInfo buffer_info = {};
+			buffer_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+			buffer_info.size = index_buffer_size;
+			buffer_info.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+			buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			err = vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_IndexBuffer[gui->g_FrameIndex]);
+
+
+			//ImGui_ImplGlfwVulkan_VkResult(err);		
+
+			VkMemoryRequirements req;
+			vkGetBufferMemoryRequirements(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], &req);
+			gui->g_BufferMemoryAlignment = (gui->g_BufferMemoryAlignment > req.alignment) ? gui->g_BufferMemoryAlignment : req.alignment;
+			VkMemoryAllocateInfo alloc_info = {};
+			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+			alloc_info.allocationSize = req.size;
+			alloc_info.memoryTypeIndex = gui->device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_IndexBufferMemory[gui->g_FrameIndex]);
+			//ImGui_ImplGlfwVulkan_VkResult(err);
+			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], gui->g_IndexBufferMemory[gui->g_FrameIndex], 0);
+			//ImGui_ImplGlfwVulkan_VkResult(err);
+			gui->g_IndexBufferSize[gui->g_FrameIndex] = index_buffer_size;
+		}
+
+		// Upload Vertex and index Data:
+		{
+			ImDrawVert* vtx_dst;
+			ImDrawIdx* idx_dst;
+			err = vkMapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex], 0, vertex_size, 0, (void**)(&vtx_dst));
+			//ImGui_ImplGlfwVulkan_VkResult(err);
+			err = vkMapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex], 0, index_size, 0, (void**)(&idx_dst));
+			//ImGui_ImplGlfwVulkan_VkResult(err);
+			for (int n = 0; n < draw_data->CmdListsCount; n++)
+			{
+				const ImDrawList* cmd_list = draw_data->CmdLists[n];
+				memcpy(vtx_dst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+				memcpy(idx_dst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+				vtx_dst += cmd_list->VtxBuffer.Size;
+				idx_dst += cmd_list->IdxBuffer.Size;
+			}
+			VkMappedMemoryRange range[2] = {};
+			range[0].sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+			range[0].memory = gui->g_VertexBufferMemory[gui->g_FrameIndex];
+			range[0].size = VK_WHOLE_SIZE;
+			range[1].sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+			range[1].memory = gui->g_IndexBufferMemory[gui->g_FrameIndex];
+			range[1].size = VK_WHOLE_SIZE;
+			err = vkFlushMappedMemoryRanges(gui->device->GetVkDevice(), 2, range);
+			//ImGui_ImplGlfwVulkan_VkResult(err);
+			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex]);
+			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex]);
+		}
+	}
+
+	void ImGui_ImplGlfwVulkan_SetClipboardText(void * user_data, const char * text)
+	{
+		glfwSetClipboardString((GLFWwindow*)user_data, text);
+	}
+
+	const char * ImGui_ImplGlfwVulkan_GetClipboardText(void * user_data)
+	{
+		return glfwGetClipboardString((GLFWwindow*)user_data);
+	}
+
+	bool ImGui_ImplGlfwVulkan_Init(GLFWwindow * window)
+	{
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;                         // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
+		io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
+		io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
+		io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
+		io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
+		io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
+		io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
+		io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
+		io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
+		io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
+		io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
+		io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
+		io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
+		io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
+		io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
+		io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
+		io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
+		io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
+		io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
+
+		io.RenderDrawListsFn = ImGui_ImplGlfwVulkan_RenderDrawLists;       // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
+		io.SetClipboardTextFn = ImGui_ImplGlfwVulkan_SetClipboardText;
+		io.GetClipboardTextFn = ImGui_ImplGlfwVulkan_GetClipboardText;
+
+		return true;
+	}
+
 }
+
+
+	
+
 
 int main() {
 	static constexpr char* applicationName = "Vulkan Grass Rendering";
@@ -526,11 +674,14 @@ int main() {
 	Blades* blades = new Blades(device, transferCommandPool, planeDim, terrain);
 	printf("Finish Building Blades\n");
 
+	gui->device = device;
 
 // Scene Initialization
+	ImGui_ImplGlfwVulkan_Init(GetGLFWWindow());
 	Scene* scene = new Scene(device);
 	scene->SetTerrain(terrain);
 	scene->SetSkybox(skybox);
+	scene->SetGui(gui);
 	scene->AddModel(plane);
 	scene->AddModel(bark);
 	scene->AddModel(leaf);
@@ -649,6 +800,7 @@ int main() {
 	delete blades;
 	delete camera;
 	delete renderer;
+	delete gui;
 	delete swapChain;
 	delete device;
 	delete instance;

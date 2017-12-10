@@ -67,7 +67,6 @@ void BufferUtils::CreateBufferFromData(Device* device, VkCommandPool commandPool
     // Create the staging buffer
     VkBuffer stagingBuffer;
     VkDeviceMemory stagingBufferMemory;
-
     VkBufferUsageFlags stagingUsage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
     VkMemoryPropertyFlags stagingProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
     BufferUtils::CreateBuffer(device, bufferSize, stagingUsage, stagingProperties, stagingBuffer, stagingBufferMemory);

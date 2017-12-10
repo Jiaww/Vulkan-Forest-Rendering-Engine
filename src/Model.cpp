@@ -8,7 +8,6 @@ Model::Model(Device* device, VkCommandPool commandPool, const std::vector<Vertex
     if (vertices.size() > 0) {
         BufferUtils::CreateBufferFromData(device, commandPool, this->vertices.data(), vertices.size() * sizeof(Vertex), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertexBuffer, vertexBufferMemory);
     }
-
     if (indices.size() > 0) {
         BufferUtils::CreateBufferFromData(device, commandPool, this->indices.data(), indices.size() * sizeof(uint32_t), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indexBuffer, indexBufferMemory);
     }

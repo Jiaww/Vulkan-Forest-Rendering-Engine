@@ -17,6 +17,11 @@ const Skybox * Scene::GetSkybox() const
 	return skybox;
 }
 
+const GUI * Scene::GetGui() const
+{
+	return gui;
+}
+
 const std::vector<Model*>& Scene::GetModels() const {
     return models;
 }
@@ -47,6 +52,10 @@ void Scene::SetTerrain(Terrain* terrain) {
 void Scene::SetSkybox(Skybox * skybox)
 {
 	this->skybox = skybox;
+}
+void Scene::SetGui(GUI * gui)
+{
+	this->gui = gui;
 }
 void Scene::AddModel(Model* model) {
     models.push_back(model);

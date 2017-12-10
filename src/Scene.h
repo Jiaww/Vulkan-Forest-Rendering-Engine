@@ -10,6 +10,7 @@
 #include "InstanceData.h"
 #include "Terrain.h"
 #include "skybox.h"
+#include "GUI.h"
 
 using namespace std::chrono;
 
@@ -35,6 +36,7 @@ private:
 
 	Terrain* terrain;
 	Skybox* skybox;
+	GUI* gui;
     std::vector<Model*> models;
     std::vector<Blades*> blades;
 	std::vector<InstanceBuffer*> instanceBuffers;
@@ -55,6 +57,7 @@ public:
 
 	const Terrain* GetTerrain() const;
 	const Skybox* GetSkybox() const;
+	const GUI* GetGui() const;
     const std::vector<Model*>& GetModels() const;
     const std::vector<Blades*>& GetBlades() const;
 	const std::vector<InstanceBuffer*>& GetInstanceBuffer() const;
@@ -63,6 +66,7 @@ public:
 
 	void SetTerrain(Terrain* terrain);
 	void SetSkybox(Skybox* skybox);
+	void SetGui(GUI* gui);
     void AddModel(Model* model);
     void AddBlades(Blades* blades);
 	void AddInstanceBuffer(InstanceBuffer* Data);
