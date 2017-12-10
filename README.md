@@ -58,5 +58,5 @@ ___
 * Example Gifs
 |**Day & Night (10s)**|
 |---|
-|<img src="./results/day_night_cycle.gif" width="1200" height="750">|
+|<img src="./results/day_night_cycle.gif" width="1000" height="600">|
 
