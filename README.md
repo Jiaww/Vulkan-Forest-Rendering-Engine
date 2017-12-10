@@ -10,7 +10,7 @@ ___
 
 |**Final Rendering**|
 |---|
-|<img src="./results/final.png" width="800" height="600">|
+|<img src="./results/final.jpg" width="1000" height="450">|
 
 ___
 ## Features
