@@ -51,7 +51,7 @@ ___
 
 |**Close**|**Distant**|
 |---|---|
-|<img src="./results/density01.jpg" width="500" height="450">|<img src="./results/density02.jpg" width="500" height="450">|
+|<img src="./results/density01.JPG" width="500" height="450">|<img src="./results/density02.JPG" width="500" height="450">|
 
 ### Day & Night Cycle
 * We blend the skybox and change the light Color and intensity according to the time.
