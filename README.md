@@ -10,7 +10,7 @@ ___
 
 |**Final Rendering**|
 |---|
-|<img src="./results/final.jpg" width="1200" height="450">|
+|<img src="./results/final02.JPG" width="1200" height="450">|
 
 ___
 ## Features
@@ -47,7 +47,7 @@ ___
 
 |**Density Multiplication**|
 |---|
-|<img src="./results/density.gif" width="1200" height="450">|
+|<img src="./results/density.gif" width="1200" height="500">|
 
 |**Close**|**Distant**|
 |---|---|
@@ -61,3 +61,9 @@ ___
 |---|
 |<img src="./results/day_night_cycle.gif" width="1000" height="600">|
 
+___
+## Performance Analysis
+### LOD vs Without LOD
+### Compute Shader Culling vs No Culling
+### Density Multiplication vs No DM
+### Visual Effect Comparision
