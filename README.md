@@ -73,11 +73,11 @@ Distance culling can improve the overall efficiency when the camera is far away 
 Distance Culling can bring benefits on both memory and rendering speed. For memory benefits, only the trees that is very near to the camera will be rendered as actual tree models( 4000+ vertices each) and the trees that is far away will be rendered as billboard(4 vertices each). We make a simple table to show the benefits 
 
 
-<img src="./results/Mermory Analysis.PNG" width="1200" height="400">
+<img src="./results/Mermory Analysis.PNG" width="1000" height="400">
 
 And here is the overall rendering efficiency plot
 
-<img src="./results/Distance LOD vs No culling .PNG" width="500" height="300">
+<img src="./results/Distance LOD vs No culling .PNG" width="800" height="600">
 
 #### Frustum culling 
 Frustrum culling can improve the overall efficiency when the camera is inside the forest . It will filter out the trees that are out of the view frustrum.
@@ -94,6 +94,8 @@ Here are the effects of Density Multiplication.
 |<img src="./results/DensityMultiplicationFar.PNG" width="500" height="300">|<img src="NoDensityMultiplicationFar.PNG" width="500" height="300">|
 |---|---|
 |<img src="./results/DensityMultiplicationNear.PNG" width="500" height="300">|<img src="NoDensityMultiplicationNear.PNG" width="500" height="300">|
+
+<img src="./results/DensityMultiplication.PNG" width="800" height="600">
 
 As the plot and picture shows, when the camera is far away from the forest, there is no great visual and efficiency difference between using and not using DM, but when the camera get closer to forest, DM will show its benefits, because the less trees need to be rendered.
 
