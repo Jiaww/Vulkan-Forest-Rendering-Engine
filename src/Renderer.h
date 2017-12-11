@@ -26,6 +26,8 @@ public:
 	void CreateSkyboxDescriptorSetLayout();
 	void CreateTerrainDescriptorSetLayout();
 	void CreateLODInfoDescriptorSetLayout();
+	void CreateGuiDescriptorSetLayout();
+
 
     void CreateDescriptorPool();
 
@@ -40,6 +42,7 @@ public:
 	void CreateSkyboxDescriptorSet();
 	void CreateTerrainDescriptorSet();
 	void CreateLODInfoDescriptorSets();
+	void CreateGuiDescriptorSets();
 
 // Funcs: Pipeline(Correspond to how many different shaders)
     void CreateGraphicsPipeline();
@@ -52,6 +55,7 @@ public:
 	void CreateBillboardPipeline();
 	void CreateSkyboxPipeline();
 	void CreateTerrainPipeline();
+	void CreateGuiPipeline();
 
     void CreateFrameResources();
     void DestroyFrameResources();
@@ -86,6 +90,7 @@ private:
 	VkDescriptorSetLayout skyboxDescriptorSetLayout;
 	VkDescriptorSetLayout terrainDescriptorSetLayout;
 	VkDescriptorSetLayout LODInfoDescriptorSetLayout;
+	VkDescriptorSetLayout GuiDescriptorSetLayout;
 
 	VkDescriptorPool descriptorPool;
 
@@ -100,6 +105,7 @@ private:
 	VkDescriptorSet skyboxDescriptorSet;
 	VkDescriptorSet terrainDescriptorSet;
 	std::vector<VkDescriptorSet> LODInfoDescriptorSets;
+	VkDescriptorSet guiDescriptorSet;
 
 // Vars: Pipeline Layout and pipeline
 	VkPipelineLayout graphicsPipelineLayout;
@@ -112,6 +118,7 @@ private:
 	VkPipelineLayout fakeCullingComputePipelineLayout;
 	VkPipelineLayout skyboxPipelineLayout;
 	VkPipelineLayout terrainPipelineLayout;
+	VkPipelineLayout guiPipelineLayout;
 
 	VkPipeline graphicsPipeline;
 	VkPipeline barkPipeline;
@@ -123,6 +130,7 @@ private:
 	VkPipeline fakeCullingComputePipeline;
 	VkPipeline skyboxPipeline;
 	VkPipeline terrainPipeline;
+	VkPipeline guiPipeline;
 
     std::vector<VkImageView> imageViews;
     VkImage depthImage;

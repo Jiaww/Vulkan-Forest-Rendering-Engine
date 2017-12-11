@@ -48,7 +48,7 @@ void GUI::SetFontTextureMap(VkImage texture)
 
 	// Anisotropic filtering
 	samplerInfo.anisotropyEnable = VK_TRUE;
-	samplerInfo.maxAnisotropy = 16;
+	samplerInfo.maxAnisotropy = 1;
 
 	// Border color
 	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
@@ -63,8 +63,8 @@ void GUI::SetFontTextureMap(VkImage texture)
 	// Mipmapping
 	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 	samplerInfo.mipLodBias = 0.0f;
-	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = 0.0f;
+	samplerInfo.minLod = -1000.0f;
+	samplerInfo.maxLod = 1000.0f;
 
 	if (vkCreateSampler(device->GetVkDevice(), &samplerInfo, nullptr, &FontTextureMapSampler) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create texture sampler");

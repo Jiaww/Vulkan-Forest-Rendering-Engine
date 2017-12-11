@@ -6,16 +6,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "imgui.h"
 #include "Device.h"
+#include "Instance.h"
 
 #define IMGUI_VK_QUEUED_FRAMES 2
-
-
 
 
 
 class GUI {
 public:
 	Device* device;
+	ImDrawData* draw_data;
 
 	VkBuffer               g_VertexBuffer[IMGUI_VK_QUEUED_FRAMES] = {};
 	VkBuffer               g_IndexBuffer[IMGUI_VK_QUEUED_FRAMES] = {};

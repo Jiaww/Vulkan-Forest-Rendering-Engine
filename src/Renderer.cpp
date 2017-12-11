@@ -30,6 +30,7 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateFakeCullingComputeDescriptorSetLayout();
 	CreateSkyboxDescriptorSetLayout();
 	CreateTerrainDescriptorSetLayout();
+	CreateGuiDescriptorSetLayout();
 	CreateLODInfoDescriptorSetLayout();
 
 	CreateDescriptorPool();
@@ -44,7 +45,9 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateFakeCullingComputeDescriptorSets();
 	CreateSkyboxDescriptorSet();
 	CreateTerrainDescriptorSet();
+	CreateGrassDescriptorSets();
 	CreateLODInfoDescriptorSets();
+	CreateGuiDescriptorSets();
 
 	CreateFrameResources();
 	
@@ -59,6 +62,7 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateFakeCullingComputePipeline();
 	CreateSkyboxPipeline();
 	CreateTerrainPipeline();
+	CreateGuiPipeline();
 
 	RecordCommandBuffers();
 	RecordComputeCommandBuffer();
@@ -482,6 +486,29 @@ void Renderer::CreateLODInfoDescriptorSetLayout() {
 	}
 }
 
+void Renderer::CreateGuiDescriptorSetLayout()
+{
+	VkSampler sampler[1] = { scene->GetGui()->GetFontTextureMapSampler() };
+	VkDescriptorSetLayoutBinding diffuseSamplerLayoutBinding = {};
+	diffuseSamplerLayoutBinding.binding = 0;
+	diffuseSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	diffuseSamplerLayoutBinding.descriptorCount = 1;
+	diffuseSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	diffuseSamplerLayoutBinding.pImmutableSamplers = sampler;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = { diffuseSamplerLayoutBinding };
+
+	// Create the descriptor set layout
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(logicalDevice, &layoutInfo, nullptr, &GuiDescriptorSetLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create descriptor set layout");
+	}
+}
+
 void Renderer::CreateDescriptorPool() {
 	// Describe which descriptor types that the descriptor sets will contain
 	std::vector<VkDescriptorPoolSize> poolSizes = {
@@ -512,13 +539,16 @@ void Renderer::CreateDescriptorPool() {
 		
 		//skybox
 		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 3 }, 
+
+		//gui
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 1 },
 	};
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 23;//1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo+ 1*skybox
+	poolInfo.maxSets = 35;//greater than 1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo+ 1*skybox+num**gui
 
 	if (vkCreateDescriptorPool(logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool");
@@ -1148,6 +1178,40 @@ void Renderer::CreateLODInfoDescriptorSets() {
 		// Update descriptor sets
 		vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 	}
+}
+
+void Renderer::CreateGuiDescriptorSets()
+{
+	VkDescriptorSetLayout layouts[] = { GuiDescriptorSetLayout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(1);
+	allocInfo.pSetLayouts = layouts;
+
+	// Allocate descriptor set
+	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, &guiDescriptorSet) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate descriptor set");
+	}
+
+	std::vector<VkWriteDescriptorSet> descriptorWrites(1);
+
+	// Bind image and sampler resources to the descriptor
+	VkDescriptorImageInfo diffuseMapInfo = {};
+	diffuseMapInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	diffuseMapInfo.imageView = scene->GetGui()->GetFontTextureMapView();
+	diffuseMapInfo.sampler = scene->GetGui()->GetFontTextureMapSampler();
+
+	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[0].dstSet = guiDescriptorSet;
+	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstArrayElement = 0;
+	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[0].descriptorCount = 1;
+	descriptorWrites[0].pImageInfo = &diffuseMapInfo;
+
+	// Update descriptor sets
+	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
 void Renderer::CreateGraphicsPipeline() {
@@ -2452,6 +2516,165 @@ void Renderer::CreateTerrainPipeline() {
 	vkDestroyShaderModule(logicalDevice, fragShaderModule, nullptr);
 }
 
+void Renderer::CreateGuiPipeline()
+{
+	VkShaderModule vertShaderModule = ShaderModule::Create("shaders/imgui.vert.spv", logicalDevice);
+	VkShaderModule fragShaderModule = ShaderModule::Create("shaders/imgui.frag.spv", logicalDevice);
+
+	// Assign each shader module to the appropriate stage in the pipeline
+	VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
+	vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+	vertShaderStageInfo.module = vertShaderModule;
+	vertShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo fragShaderStageInfo = {};
+	fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	fragShaderStageInfo.module = fragShaderModule;
+	fragShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+	// --- Set up fixed-function stages ---
+
+	// Vertex input
+	VkVertexInputBindingDescription binding_desc[1] = {};
+	binding_desc[0].stride = sizeof(ImDrawVert);
+	binding_desc[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+	VkVertexInputAttributeDescription attribute_desc[3] = {};
+	attribute_desc[0].location = 0;
+	attribute_desc[0].binding = binding_desc[0].binding;
+	attribute_desc[0].format = VK_FORMAT_R32G32_SFLOAT;
+	attribute_desc[0].offset = (size_t)(&((ImDrawVert*)0)->pos);
+	attribute_desc[1].location = 1;
+	attribute_desc[1].binding = binding_desc[0].binding;
+	attribute_desc[1].format = VK_FORMAT_R32G32_SFLOAT;
+	attribute_desc[1].offset = (size_t)(&((ImDrawVert*)0)->uv);
+	attribute_desc[2].location = 2;
+	attribute_desc[2].binding = binding_desc[0].binding;
+	attribute_desc[2].format = VK_FORMAT_R8G8B8A8_UNORM;
+	attribute_desc[2].offset = (size_t)(&((ImDrawVert*)0)->col);
+
+	VkPipelineVertexInputStateCreateInfo vertex_info = {};
+	vertex_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertex_info.vertexBindingDescriptionCount = 1;
+	vertex_info.pVertexBindingDescriptions = binding_desc;
+	vertex_info.vertexAttributeDescriptionCount = 3;
+	vertex_info.pVertexAttributeDescriptions = attribute_desc;
+
+
+	// Input assembly
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
+	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+
+	VkPipelineViewportStateCreateInfo viewportState = {};
+	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	viewportState.viewportCount = 1;
+	viewportState.scissorCount = 1;
+
+	// Rasterizer
+	VkPipelineRasterizationStateCreateInfo rasterizer = {};
+	rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+	rasterizer.lineWidth = 1.0f;
+	rasterizer.cullMode = VK_CULL_MODE_NONE;
+	//rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+
+
+	// Multisampling (turned off here)
+	VkPipelineMultisampleStateCreateInfo multisampling = {};
+	multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+	// Depth testing
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	depthStencil.depthTestEnable = VK_TRUE;
+	depthStencil.depthWriteEnable = VK_TRUE;
+	depthStencil.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+	depthStencil.depthBoundsTestEnable = VK_FALSE;
+	depthStencil.minDepthBounds = 0.0f;
+	depthStencil.maxDepthBounds = 1.0f;
+	depthStencil.stencilTestEnable = VK_FALSE;
+
+	// Color blending (turned off here, but showing options for learning)
+	// --> Configuration per attached framebuffer
+	VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.blendEnable = VK_TRUE;
+	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+	// --> Global color blending settings
+	VkPipelineColorBlendStateCreateInfo colorBlending = {};
+	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlending.logicOpEnable = VK_FALSE;
+	colorBlending.logicOp = VK_LOGIC_OP_COPY;
+	colorBlending.attachmentCount = 1;
+	colorBlending.pAttachments = &colorBlendAttachment;
+
+	VkDynamicState dynamic_states[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	VkPipelineDynamicStateCreateInfo dynamic_state = {};
+	dynamic_state.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamic_state.dynamicStateCount = 2;
+	dynamic_state.pDynamicStates = dynamic_states;
+
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { GuiDescriptorSetLayout };
+
+	// Pipeline layout: used to specify uniform values
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
+	VkPushConstantRange push_constants[1] = {};
+	push_constants[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	push_constants[0].offset = sizeof(float) * 0;
+	push_constants[0].size = sizeof(float) * 4;
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+	pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+	pipelineLayoutInfo.pushConstantRangeCount = 1;
+	pipelineLayoutInfo.pPushConstantRanges = push_constants;
+
+
+	if (vkCreatePipelineLayout(logicalDevice, &pipelineLayoutInfo, nullptr, &guiPipelineLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create pipeline layout");
+	}
+
+	// --- Create graphics pipeline ---
+	VkGraphicsPipelineCreateInfo pipelineInfo = {};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount = 2;
+	pipelineInfo.pStages = shaderStages;
+	pipelineInfo.pVertexInputState = &vertex_info;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pViewportState = &viewportState;
+	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pMultisampleState = &multisampling;
+	pipelineInfo.pDepthStencilState = &depthStencil;
+	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.pDynamicState = &dynamic_state;
+	pipelineInfo.layout = guiPipelineLayout;
+	pipelineInfo.renderPass = renderPass;
+	pipelineInfo.subpass = 0;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+	pipelineInfo.basePipelineIndex = -1;
+
+	if (vkCreateGraphicsPipelines(logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &guiPipeline) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create graphics pipeline");
+	}
+
+	vkDestroyShaderModule(logicalDevice, vertShaderModule, nullptr);
+	vkDestroyShaderModule(logicalDevice, fragShaderModule, nullptr);
+
+}
+
 void Renderer::CreateFrameResources() {
 	imageViews.resize(swapChain->GetCount());
 
@@ -2550,10 +2773,6 @@ void Renderer::RecreateFrameResources() {
 	vkDestroyPipeline(logicalDevice, skyboxPipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, terrainPipeline, nullptr);
 
-	//vkDestroyPipeline(logicalDevice, computePipeline, nullptr);
-	//vkDestroyPipeline(logicalDevice, cullingComputePipeline, nullptr);
-	//vkDestroyPipeline(logicalDevice, fakeCullingComputePipeline, nullptr);
-
 	vkDestroyPipelineLayout(logicalDevice, graphicsPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, grassPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, barkPipelineLayout, nullptr);
@@ -2562,9 +2781,6 @@ void Renderer::RecreateFrameResources() {
 	vkDestroyPipelineLayout(logicalDevice, skyboxPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, terrainPipelineLayout, nullptr);
 
-	/*vkDestroyPipelineLayout(logicalDevice, computePipelineLayout, nullptr);
-	vkDestroyPipelineLayout(logicalDevice, cullingComputePipelineLayout, nullptr);
-	vkDestroyPipelineLayout(logicalDevice, fakeCullingComputePipelineLayout, nullptr);*/
 
 	vkFreeCommandBuffers(logicalDevice, graphicsCommandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
@@ -2574,9 +2790,6 @@ void Renderer::RecreateFrameResources() {
 	CreateBarkPipeline();
 	CreateLeafPipeline();
 	CreateGrassPipeline();
-	//CreateComputePipeline();
-	//CreateCullingComputePipeline();
-	//CreateFakeCullingComputePipeline();
 	CreateBillboardPipeline();
 	CreateSkyboxPipeline();
 	CreateTerrainPipeline();
@@ -2824,6 +3037,75 @@ void Renderer::RecordCommandBuffers() {
 
 		}
 
+		//Gui
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, guiPipeline);
+
+			// Bind the vertex and index buffers
+			VkBuffer vertexBuffers[] = { scene->GetGui()->getVertexBuffer() };
+			VkDeviceSize offsets[] = { 0 };
+			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
+			vkCmdBindIndexBuffer(commandBuffers[i], scene->GetGui()->getIndexBuffer(), 0, VK_INDEX_TYPE_UINT16);
+
+			// Bind the camera descriptor set. This is set 0 in all pipelines so it will be inherited
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, guiPipelineLayout, 0, 1, &guiDescriptorSet, 0, nullptr);
+
+			// Setup viewport:
+			{
+				VkViewport viewport;
+				viewport.x = 0;
+				viewport.y = 0;
+				viewport.width = ImGui::GetIO().DisplaySize.x;
+				viewport.height = ImGui::GetIO().DisplaySize.y;
+				viewport.minDepth = 0.0f;
+				viewport.maxDepth = 1.0f;
+				vkCmdSetViewport(commandBuffers[i], 0, 1, &viewport);
+			}
+
+			// Setup scale and translation:
+			{
+				float scale[2];
+				scale[0] = 2.0f/io.DisplaySize.x;
+				scale[1] = 2.0f/io.DisplaySize.y;
+				float translate[2];
+				translate[0] = -1.0f;
+				translate[1] = -1.0f;
+				vkCmdPushConstants(commandBuffers[i], guiPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(float) * 0, sizeof(float) * 2, scale);
+				vkCmdPushConstants(commandBuffers[i], guiPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(float) * 2, sizeof(float) * 2, translate);
+			}
+
+			// Render the command lists:
+			int vtx_offset = 0;
+			int idx_offset = 0;
+			for (int n = 0; n < scene->GetGui()->draw_data->CmdListsCount; n++)
+			{
+				const ImDrawList* cmd_list = scene->GetGui()->draw_data->CmdLists[n];
+				for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+				{
+					const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
+					if (pcmd->UserCallback)
+					{
+						pcmd->UserCallback(cmd_list, pcmd);
+					}
+					else
+					{
+						VkRect2D scissor;
+						scissor.offset.x = (int32_t)(pcmd->ClipRect.x) > 0 ? (int32_t)(pcmd->ClipRect.x) : 0;
+						scissor.offset.y = (int32_t)(pcmd->ClipRect.y) > 0 ? (int32_t)(pcmd->ClipRect.y) : 0;
+						scissor.extent.width = (uint32_t)(pcmd->ClipRect.z - pcmd->ClipRect.x);
+						scissor.extent.height = (uint32_t)(pcmd->ClipRect.w - pcmd->ClipRect.y + 1); // FIXME: Why +1 here?
+						vkCmdSetScissor(commandBuffers[i], 0, 1, &scissor);
+						vkCmdDrawIndexed(commandBuffers[i], pcmd->ElemCount, 1, idx_offset, vtx_offset, 0);
+					}
+					idx_offset += pcmd->ElemCount;
+				}
+				vtx_offset += cmd_list->VtxBuffer.Size;
+			}
+
+		}
+
 		//Planes: graphics
 		{
 			// Bind the graphics pipeline
@@ -2845,6 +3127,7 @@ void Renderer::RecordCommandBuffers() {
 			std::vector<uint32_t> indices = scene->GetModels()[0]->getIndices();
 			//vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		}
+
 
 		// Iterate through different types of tree
 		for (int k = 0; k < scene->GetInstanceBuffer().size(); k++) {
@@ -3083,6 +3366,7 @@ Renderer::~Renderer() {
 	vkDestroyPipeline(logicalDevice, computePipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, cullingComputePipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, fakeCullingComputePipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, guiPipeline, nullptr);
 
 
 	vkDestroyPipelineLayout(logicalDevice, graphicsPipelineLayout, nullptr);
@@ -3095,6 +3379,7 @@ Renderer::~Renderer() {
 	vkDestroyPipelineLayout(logicalDevice, computePipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, cullingComputePipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, fakeCullingComputePipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, guiPipelineLayout, nullptr);
 
 	vkDestroyDescriptorSetLayout(logicalDevice, cameraDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, modelDescriptorSetLayout, nullptr);
@@ -3105,7 +3390,7 @@ Renderer::~Renderer() {
 	vkDestroyDescriptorSetLayout(logicalDevice, computeDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, cullingComputeDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, fakeCullingComputeDescriptorSetLayout, nullptr);
-
+	vkDestroyDescriptorSetLayout(logicalDevice, GuiDescriptorSetLayout, nullptr);
 
 	vkDestroyDescriptorPool(logicalDevice, descriptorPool, nullptr);
 

@@ -24,6 +24,15 @@ static float        g_MouseWheel = 0.0f;
 static float LOD0 = 0.6;
 static float LOD1 = 0.43;
 
+static bool DistanceCulling = true;
+static bool FrustrumCulling = true;
+static bool BarkModel = true;
+static bool LeaveModel = true;
+static bool BillboardModel = true;
+
+static int plotIdx = 0;
+static float fps[90] = { 0 };
+
 namespace {
 	void resizeCallback(GLFWwindow* window, int width, int height) {
 		if (width == 0 || height == 0) return;
@@ -91,10 +100,10 @@ namespace {
 
 	/////////////////////////////////////////////////////////////////////////////////
 	//GUI
+
 	void ImGui_ImplGlfwVulkan_RenderDrawLists(ImDrawData * draw_data)
 	{
 		if (!gui->device) return;
-		VkResult err;
 		ImGuiIO& io = ImGui::GetIO();
 
 		// Create the Vertex Buffer:
@@ -111,20 +120,17 @@ namespace {
 			buffer_info.size = vertex_buffer_size;
 			buffer_info.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 			buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-			err = vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_VertexBuffer[gui->g_FrameIndex]);
+			vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_VertexBuffer[gui->g_FrameIndex]);
 
-			//ImGui_ImplGlfwVulkan_VkResult(err);
 			VkMemoryRequirements req;
 			vkGetBufferMemoryRequirements(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], &req);
 			gui->g_BufferMemoryAlignment = (gui->g_BufferMemoryAlignment > req.alignment) ? gui->g_BufferMemoryAlignment : req.alignment;
 			VkMemoryAllocateInfo alloc_info = {};
 			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			alloc_info.allocationSize = req.size;
-			alloc_info.memoryTypeIndex = gui->device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_VertexBufferMemory[gui->g_FrameIndex]);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
-			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], gui->g_VertexBufferMemory[gui->g_FrameIndex], 0);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
+			alloc_info.memoryTypeIndex = device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT); 
+			vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_VertexBufferMemory[gui->g_FrameIndex]);
+			vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], gui->g_VertexBufferMemory[gui->g_FrameIndex], 0);
 			gui->g_VertexBufferSize[gui->g_FrameIndex] = vertex_buffer_size;
 		}
 
@@ -142,10 +148,7 @@ namespace {
 			buffer_info.size = index_buffer_size;
 			buffer_info.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
 			buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-			err = vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_IndexBuffer[gui->g_FrameIndex]);
-
-
-			//ImGui_ImplGlfwVulkan_VkResult(err);		
+			vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_IndexBuffer[gui->g_FrameIndex]);		
 
 			VkMemoryRequirements req;
 			vkGetBufferMemoryRequirements(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], &req);
@@ -153,11 +156,10 @@ namespace {
 			VkMemoryAllocateInfo alloc_info = {};
 			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			alloc_info.allocationSize = req.size;
-			alloc_info.memoryTypeIndex = gui->device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_IndexBufferMemory[gui->g_FrameIndex]);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
-			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], gui->g_IndexBufferMemory[gui->g_FrameIndex], 0);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
+			alloc_info.memoryTypeIndex = device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT); 
+			vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_IndexBufferMemory[gui->g_FrameIndex]);
+
+			vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], gui->g_IndexBufferMemory[gui->g_FrameIndex], 0);
 			gui->g_IndexBufferSize[gui->g_FrameIndex] = index_buffer_size;
 		}
 
@@ -165,10 +167,9 @@ namespace {
 		{
 			ImDrawVert* vtx_dst;
 			ImDrawIdx* idx_dst;
-			err = vkMapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex], 0, vertex_size, 0, (void**)(&vtx_dst));
-			//ImGui_ImplGlfwVulkan_VkResult(err);
-			err = vkMapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex], 0, index_size, 0, (void**)(&idx_dst));
-			//ImGui_ImplGlfwVulkan_VkResult(err);
+			vkMapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex], 0, vertex_size, 0, (void**)(&vtx_dst));
+			vkMapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex], 0, index_size, 0, (void**)(&idx_dst));
+
 			for (int n = 0; n < draw_data->CmdListsCount; n++)
 			{
 				const ImDrawList* cmd_list = draw_data->CmdLists[n];
@@ -184,11 +185,12 @@ namespace {
 			range[1].sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 			range[1].memory = gui->g_IndexBufferMemory[gui->g_FrameIndex];
 			range[1].size = VK_WHOLE_SIZE;
-			err = vkFlushMappedMemoryRanges(gui->device->GetVkDevice(), 2, range);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
+			vkFlushMappedMemoryRanges(gui->device->GetVkDevice(), 2, range);
+
 			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex]);
 			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex]);
 		}
+		gui->draw_data = draw_data;
 	}
 
 	void ImGui_ImplGlfwVulkan_SetClipboardText(void * user_data, const char * text)
@@ -275,6 +277,28 @@ namespace {
 		io.GetClipboardTextFn = ImGui_ImplGlfwVulkan_GetClipboardText;
 		io.ClipboardUserData =  window;
 		return true;
+	}
+	
+	void InitialGuiContent() {
+		ImGui::Text("Vulkan Forest Rendering Engine");
+		ImGui::SliderFloat("LOD0", &LOD0, 0.0f, 1.0f);
+		ImGui::SliderFloat("LOD1", &LOD1, 0.0f, 1.0f);
+		ImGui::Checkbox("Frustrum Culling", &FrustrumCulling);
+		ImGui::Checkbox("Distance Culling", &FrustrumCulling);
+		ImGui::Checkbox("Bark Model", &BarkModel);
+		ImGui::Checkbox("Leaves Model", &LeaveModel);
+		ImGui::Checkbox("Billboard Model", &BillboardModel);
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Performance");
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Spacing();
+		if (plotIdx >= 90) plotIdx = 0;
+		fps[plotIdx] = ImGui::GetIO().Framerate;
+		plotIdx++;
+		static int offset = 0;
+		ImGui::PlotLines("FPS", fps, IM_ARRAYSIZE(fps), offset, "", 0.0f, 400.0f, ImVec2(0, 100));
+
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -811,10 +835,10 @@ int main() {
 	printf("Starting Insert Trees Randomly\n");
 	//srand((unsigned int)time(0));
 	printf("Tree 1\n");
-	scene->InsertRandomTrees(100, 0.015f, 1, device, transferCommandPool);
+	scene->InsertRandomTrees(400, 0.015f, 1, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[0]->GetInstanceCount()));
 	printf("Tree 2\n");
-	scene->InsertRandomTrees(35, 0.021f, 4, device, transferCommandPool);
+	scene->InsertRandomTrees(100, 0.021f, 4, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[1]->GetInstanceCount()));
 	printf("Finish Insert Trees Randomly\n");
 	printf("Gathering Fake Trees\n");
@@ -825,8 +849,15 @@ int main() {
 	//float yy = scene->GetTerrain()->GetHeight(0.25,0.25);
 	//scene->InsertRandomTrees(20, device, transferCommandPool);
 
-	renderer = new Renderer(device, swapChain, scene, camera);
+	//First Initialization
+	ImGui_ImplGlfwVulkan_NewFrame(GetGLFWWindow());
+	InitialGuiContent();
+	ImGui::Render();
+	
 
+	renderer = new Renderer(device, swapChain, scene, camera);
+	gui->g_FrameIndex = (gui->g_FrameIndex + 1) % IMGUI_VK_QUEUED_FRAMES;
+	
 	glfwSetWindowSizeCallback(GetGLFWWindow(), resizeCallback);
 	glfwSetMouseButtonCallback(GetGLFWWindow(), mouseDownCallback);
 	glfwSetCursorPosCallback(GetGLFWWindow(), mouseMoveCallback);
@@ -838,10 +869,8 @@ int main() {
 	while (!ShouldQuit()) {
 		glfwPollEvents();
 		ImGui_ImplGlfwVulkan_NewFrame(GetGLFWWindow());
-		{
-			static float f = 0.0f;
-			ImGui::Text("Hello, world!");
-		}
+
+		InitialGuiContent();
 		ImGui::Render();
 
 		scene->UpdateTime();
@@ -849,12 +878,12 @@ int main() {
 		renderer->Frame();
 		count++;
 		if (count == 100) {
-			int total_time = GetTickCount() - time_start;
+		//	int total_time = GetTickCount() - time_start;
 			float distance = glm::length(glm::vec3(128,0,128)-camera->GetEyePos());
 			printf("Camera Distance %f\n", distance);
-			printf("Total Time for 100 frames: %d\n", total_time);
-			printf("Time per frame: %f\n", float(total_time) / 100.0f);
-			printf("fps: %f\n", 100000.0 / float(total_time));
+		//	printf("Total Time for 100 frames: %d\n", total_time);
+		//	printf("Time per frame: %f\n", float(total_time) / 100.0f);
+		//	printf("fps: %f\n", 100000.0 / float(total_time));
 			count = 0;
 			time_start = GetTickCount();
 		}
