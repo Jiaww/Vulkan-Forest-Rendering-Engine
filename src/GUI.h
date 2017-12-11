@@ -16,6 +16,7 @@
 class GUI {
 public:
 	Device* device;
+	ImDrawData* draw_data;
 
 	VkBuffer               g_VertexBuffer[IMGUI_VK_QUEUED_FRAMES] = {};
 	VkBuffer               g_IndexBuffer[IMGUI_VK_QUEUED_FRAMES] = {};

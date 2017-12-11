@@ -189,6 +189,7 @@ namespace {
 			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex]);
 			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex]);
 		}
+		gui->draw_data = draw_data;
 	}
 
 	void ImGui_ImplGlfwVulkan_SetClipboardText(void * user_data, const char * text)
@@ -275,6 +276,11 @@ namespace {
 		io.GetClipboardTextFn = ImGui_ImplGlfwVulkan_GetClipboardText;
 		io.ClipboardUserData =  window;
 		return true;
+	}
+	
+	void InitialGuiContent() {
+		//static float f = 0.0f;
+		ImGui::Text("Hello, world!");
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -810,10 +816,10 @@ int main() {
 	printf("Starting Insert Trees Randomly\n");
 	//srand((unsigned int)time(0));
 	printf("Tree 1\n");
-	scene->InsertRandomTrees(100, 0.015f, 1, device, transferCommandPool);
+	scene->InsertRandomTrees(250, 0.015f, 1, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[0]->GetInstanceCount()));
 	printf("Tree 2\n");
-	scene->InsertRandomTrees(35, 0.021f, 4, device, transferCommandPool);
+	scene->InsertRandomTrees(50, 0.021f, 4, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[1]->GetInstanceCount()));
 	printf("Finish Insert Trees Randomly\n");
 	printf("Gathering Fake Trees\n");
@@ -824,8 +830,15 @@ int main() {
 	//float yy = scene->GetTerrain()->GetHeight(0.25,0.25);
 	//scene->InsertRandomTrees(20, device, transferCommandPool);
 
-	renderer = new Renderer(device, swapChain, scene, camera);
+	//First Initialization
+	ImGui_ImplGlfwVulkan_NewFrame(GetGLFWWindow());
+	InitialGuiContent();
+	ImGui::Render();
+	
 
+	renderer = new Renderer(device, swapChain, scene, camera);
+	gui->g_FrameIndex = (gui->g_FrameIndex + 1) % IMGUI_VK_QUEUED_FRAMES;
+	
 	glfwSetWindowSizeCallback(GetGLFWWindow(), resizeCallback);
 	glfwSetMouseButtonCallback(GetGLFWWindow(), mouseDownCallback);
 	glfwSetCursorPosCallback(GetGLFWWindow(), mouseMoveCallback);
@@ -837,10 +850,8 @@ int main() {
 	while (!ShouldQuit()) {
 		glfwPollEvents();
 		ImGui_ImplGlfwVulkan_NewFrame(GetGLFWWindow());
-		{
-			static float f = 0.0f;
-			ImGui::Text("Hello, world!");
-		}
+
+		InitialGuiContent();
 		ImGui::Render();
 
 		scene->UpdateTime();
