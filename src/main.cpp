@@ -24,6 +24,10 @@ static float        g_MouseWheel = 0.0f;
 static float LOD0 = 0.6;
 static float LOD1 = 0.43;
 
+static bool DistanceCulling = true;
+static bool FrustrumCulling = true;
+
+
 namespace {
 	void resizeCallback(GLFWwindow* window, int width, int height) {
 		if (width == 0 || height == 0) return;
@@ -91,6 +95,7 @@ namespace {
 
 	/////////////////////////////////////////////////////////////////////////////////
 	//GUI
+
 	void ImGui_ImplGlfwVulkan_RenderDrawLists(ImDrawData * draw_data)
 	{
 		if (!gui->device) return;
@@ -120,7 +125,7 @@ namespace {
 			VkMemoryAllocateInfo alloc_info = {};
 			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			alloc_info.allocationSize = req.size;
-			alloc_info.memoryTypeIndex = gui->device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			alloc_info.memoryTypeIndex = ImGui_ImplGlfwVulkan_MemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits,device);
 			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_VertexBufferMemory[gui->g_FrameIndex]);
 			//ImGui_ImplGlfwVulkan_VkResult(err);
 			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], gui->g_VertexBufferMemory[gui->g_FrameIndex], 0);
@@ -153,7 +158,7 @@ namespace {
 			VkMemoryAllocateInfo alloc_info = {};
 			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			alloc_info.allocationSize = req.size;
-			alloc_info.memoryTypeIndex = gui->device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			alloc_info.memoryTypeIndex = ImGui_ImplGlfwVulkan_MemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits,device);
 			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_IndexBufferMemory[gui->g_FrameIndex]);
 			//ImGui_ImplGlfwVulkan_VkResult(err);
 			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], gui->g_IndexBufferMemory[gui->g_FrameIndex], 0);
@@ -189,6 +194,7 @@ namespace {
 			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex]);
 			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex]);
 		}
+		gui->draw_data = draw_data;
 	}
 
 	void ImGui_ImplGlfwVulkan_SetClipboardText(void * user_data, const char * text)
@@ -275,6 +281,16 @@ namespace {
 		io.GetClipboardTextFn = ImGui_ImplGlfwVulkan_GetClipboardText;
 		io.ClipboardUserData =  window;
 		return true;
+	}
+	
+	void InitialGuiContent() {
+		static float f = 0.0f;
+		ImGui::Text("Hello, world!");
+		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+		if (ImGui::Button("Close Frustrum Culling")) FrustrumCulling=!FrustrumCulling;
+		if (ImGui::Button("Close Distance Culling")) DistanceCulling =!DistanceCulling;
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -811,10 +827,10 @@ int main() {
 	printf("Starting Insert Trees Randomly\n");
 	//srand((unsigned int)time(0));
 	printf("Tree 1\n");
-	scene->InsertRandomTrees(100, 0.015f, 1, device, transferCommandPool);
+	scene->InsertRandomTrees(250, 0.015f, 1, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[0]->GetInstanceCount()));
 	printf("Tree 2\n");
-	scene->InsertRandomTrees(35, 0.021f, 4, device, transferCommandPool);
+	scene->InsertRandomTrees(50, 0.021f, 4, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[1]->GetInstanceCount()));
 	printf("Finish Insert Trees Randomly\n");
 	printf("Gathering Fake Trees\n");
@@ -825,8 +841,15 @@ int main() {
 	//float yy = scene->GetTerrain()->GetHeight(0.25,0.25);
 	//scene->InsertRandomTrees(20, device, transferCommandPool);
 
-	renderer = new Renderer(device, swapChain, scene, camera);
+	//First Initialization
+	ImGui_ImplGlfwVulkan_NewFrame(GetGLFWWindow());
+	InitialGuiContent();
+	ImGui::Render();
+	
 
+	renderer = new Renderer(device, swapChain, scene, camera);
+	gui->g_FrameIndex = (gui->g_FrameIndex + 1) % IMGUI_VK_QUEUED_FRAMES;
+	
 	glfwSetWindowSizeCallback(GetGLFWWindow(), resizeCallback);
 	glfwSetMouseButtonCallback(GetGLFWWindow(), mouseDownCallback);
 	glfwSetCursorPosCallback(GetGLFWWindow(), mouseMoveCallback);
@@ -838,10 +861,8 @@ int main() {
 	while (!ShouldQuit()) {
 		glfwPollEvents();
 		ImGui_ImplGlfwVulkan_NewFrame(GetGLFWWindow());
-		{
-			static float f = 0.0f;
-			ImGui::Text("Hello, world!");
-		}
+
+		InitialGuiContent();
 		ImGui::Render();
 
 		scene->UpdateTime();
