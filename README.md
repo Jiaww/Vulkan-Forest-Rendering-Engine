@@ -71,10 +71,12 @@ To improve the rendering efficiency, we implement the compute shader culling to 
 Distance culling can improve the overall efficiency when the camera is far away from the forest(God view). It will filter out the trees that are far away from the camera.
 
 Distance Culling can bring benefits on both memory and rendering speed. For memory benefits, only the trees that is very near to the camera will be rendered as actual tree models( 4000+ vertices each) and the trees that is far away will be rendered as billboard(4 vertices each). We make a simple table to show the benefits 
-|---|
+
+
 |<img src="./results/Mermory Analysis.PNG" width="1200" height="500">|
 
 And here is the overall rendering efficiency plot
+
 |<img src="./results/Distance LOD vs No culling.PNG" width="1200" height="500">|
 
  *Frustrum culling*
