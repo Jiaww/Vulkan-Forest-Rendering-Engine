@@ -72,7 +72,7 @@ Distance culling can improve the overall efficiency when the camera is far away 
 
 Distance Culling can bring benefits on both memory and rendering speed. For memory benefits, only the trees that is very near to the camera will be rendered as actual tree models( 4000+ vertices each) and the trees that is far away will be rendered as billboard(4 vertices each). We make a simple table to show the benefits 
 
-<img src="./results/Mermory Analysis.PNG" width="1000" height="400">
+<img src="./results/Mermory Analysis.PNG" width="900" height="400">
 
 And here is the overall rendering efficiency plot
 
@@ -80,7 +80,7 @@ And here is the overall rendering efficiency plot
 
 ### Density Multiplication vs No DM
 Density multiplication is used to provide better view effect of the forest. Different from LOD, the density multiplication works on the density of trees instead of the detail of the tree model. The technique produce multiple fake trees around each actual tree model when the camera is far away, and delete those fake tree and only shows actual tree models when the camera is near to the forest. When camera is far away from the forest, you can see a great forest coverage.When you actually walk into the forest, the number of actual tree models is not that many but it is not easy to identify.
-Here are the effects of Density Multiplication. Since all fake trees are just billboards, there is great difference on the overal memroy cost, and we will only compare the fps here.
+Here are the effects of Density Multiplication. The memory cost is somehow similar with the memory discussion in *Distance LOD culling* part and here we will only compare the fps.
 
 |**DM**|**No DM**|
 |---|---|
