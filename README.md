@@ -67,7 +67,7 @@ ___
 ### Compute Shader Culling vs No Culling
 To improve the rendering efficiency, we implement the compute shader culling to filter out the trees that we don't need to render for the current frame and render them as billboard or directly ignore them. We implement 2 kinds of culling, frustrum culling and distance culling. Here is the performance analysis.
 
-#### Distance culling 
+#### Distance LOD culling 
 Distance culling can improve the overall efficiency when the camera is far away from the forest(God view). It will filter out the trees that are far away from the camera.
 
 Distance Culling can bring benefits on both memory and rendering speed. For memory benefits, only the trees that is very near to the camera will be rendered as actual tree models( 4000+ vertices each) and the trees that is far away will be rendered as billboard(4 vertices each). We make a simple table to show the benefits 
@@ -79,10 +79,6 @@ And here is the overall rendering efficiency plot
 
 <img src="./results/Distance LODvsNo culling.PNG" width="800" height="600">
 
-#### Frustum culling 
-Frustrum culling can improve the overall efficiency when the camera is inside the forest . It will filter out the trees that are out of the view frustrum.
-
-
 
 
 ### Density Multiplication vs No DM
@@ -91,9 +87,9 @@ Here are the effects of Density Multiplication.
 
 |**DM**|**No DM**|
 |---|---|
-|<img src="./results/DensityMultiplicationFar.PNG" width="600" height="400">|<img src="./results/NoDensityMultiplicationFar.PNG" width="500" height="300">|
+|<img src="./results/DensityMultiplicationFar.PNG" width="500" height="250">|<img src="./results/NoDensityMultiplicationFar.PNG" width="500" height="250">|
 |---|---|
-|<img src="./results/DensityMultiplicationNear.PNG" width="600" height="400">|<img src=""./results/NoDensityMultiplicationNear.PNG" width="500" height="300">|
+|<img src="./results/DensityMultiplicationNear.PNG" width="500" height="250">|<img src="./results/NoDensityMultiplicationNear.PNG" width="500" height="250">|
 
 <img src="./results/DensityMultiplication2.PNG" width="800" height="600">
 
