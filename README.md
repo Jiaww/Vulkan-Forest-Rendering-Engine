@@ -72,18 +72,15 @@ Distance culling can improve the overall efficiency when the camera is far away 
 
 Distance Culling can bring benefits on both memory and rendering speed. For memory benefits, only the trees that is very near to the camera will be rendered as actual tree models( 4000+ vertices each) and the trees that is far away will be rendered as billboard(4 vertices each). We make a simple table to show the benefits 
 
-
 <img src="./results/Mermory Analysis.PNG" width="1000" height="400">
 
 And here is the overall rendering efficiency plot
 
-<img src="./results/Distance LODvsNo culling.PNG" width="800" height="600">
-
-
+<img src="./results/Distance LODvsNo culling.PNG" width="800" height="500">
 
 ### Density Multiplication vs No DM
 Density multiplication is used to provide better view effect of the forest. Different from LOD, the density multiplication works on the density of trees instead of the detail of the tree model. The technique produce multiple fake trees around each actual tree model when the camera is far away, and delete those fake tree and only shows actual tree models when the camera is near to the forest. When camera is far away from the forest, you can see a great forest coverage.When you actually walk into the forest, the number of actual tree models is not that many but it is not easy to identify.
-Here are the effects of Density Multiplication. 
+Here are the effects of Density Multiplication. Since all fake trees are just billboards, there is great difference on the overal memroy cost, and we will only compare the fps here.
 
 |**DM**|**No DM**|
 |---|---|
@@ -91,7 +88,7 @@ Here are the effects of Density Multiplication.
 |---|---|
 |<img src="./results/DensityMultiplicationNear.PNG" width="500" height="250">|<img src="./results/NoDensityMultiplicationNear.PNG" width="500" height="250">|
 
-<img src="./results/DensityMultiplication2.PNG" width="800" height="600">
+<img src="./results/DensityMultiplication2.PNG" width="800" height="500">
 
 As the plot and picture shows, when the camera is far away from the forest, there is no great visual and efficiency difference between using and not using DM, but when the camera get closer to forest, DM will show its benefits, because the less trees need to be rendered.
 
@@ -99,4 +96,3 @@ As the plot and picture shows, when the camera is far away from the forest, ther
 ## Credits
 * [Vulkan examples](https://github.com/SaschaWillems/Vulkan) by [SaschaWillems](https://github.com/SaschaWillems)
 * [Imgui](https://github.com/ocornut/imgui)
-* 
