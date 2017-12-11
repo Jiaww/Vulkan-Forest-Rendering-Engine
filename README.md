@@ -91,9 +91,9 @@ Here are the effects of Density Multiplication.
 
 |**DM**|**No DM**|
 |---|---|
-|<img src="./results/DensityMultiplicationFar.PNG" width="500" height="300">|<img src="NoDensityMultiplicationFar.PNG" width="500" height="300">|
+|<img src="./results/DensityMultiplicationFar.PNG" width="600" height="400">|<img src="./results/NoDensityMultiplicationFar.PNG" width="500" height="300">|
 |---|---|
-|<img src="./results/DensityMultiplicationNear.PNG" width="500" height="300">|<img src="NoDensityMultiplicationNear.PNG" width="500" height="300">|
+|<img src="./results/DensityMultiplicationNear.PNG" width="600" height="400">|<img src=""./results/NoDensityMultiplicationNear.PNG" width="500" height="300">|
 
 <img src="./results/DensityMultiplication2.PNG" width="800" height="600">
 
