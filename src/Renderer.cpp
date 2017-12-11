@@ -25,6 +25,8 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateModelDescriptorSetLayout();
 	CreateGrassDescriptorSetLayout();
 	CreateTimeDescriptorSetLayout();
+	CreateWindDescriptorSetLayout();
+	CreateDayNightDescriptorSetLayout();
 	CreateComputeDescriptorSetLayout();
 	CreateCullingComputeDescriptorSetLayout();
 	CreateFakeCullingComputeDescriptorSetLayout();
@@ -40,6 +42,8 @@ Renderer::Renderer(Device* device, SwapChain* swapChain, Scene* scene, Camera* c
 	CreateModelDescriptorSets();
 	CreateGrassDescriptorSets();
 	CreateTimeDescriptorSet();
+	CreateWindDescriptorSet();
+	CreateDayNightDescriptorSet();
 	CreateComputeDescriptorSets();
 	CreateCullingComputeDescriptorSets();
 	CreateFakeCullingComputeDescriptorSets();
@@ -238,6 +242,52 @@ void Renderer::CreateTimeDescriptorSetLayout() {
 	layoutInfo.pBindings = bindings.data();
 
 	if (vkCreateDescriptorSetLayout(logicalDevice, &layoutInfo, nullptr, &timeDescriptorSetLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create descriptor set layout");
+	}
+}
+
+void Renderer::CreateWindDescriptorSetLayout() {
+	// Describe the binding of the descriptor set layout
+	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
+	uboLayoutBinding.binding = 0;
+	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	uboLayoutBinding.descriptorCount = 1;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_ALL;
+	;
+	uboLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding };
+
+	// Create the descriptor set layout
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(logicalDevice, &layoutInfo, nullptr, &windDescriptorSetLayout) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create descriptor set layout");
+	}
+}
+
+void Renderer::CreateDayNightDescriptorSetLayout() {
+	// Describe the binding of the descriptor set layout
+	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
+	uboLayoutBinding.binding = 0;
+	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	uboLayoutBinding.descriptorCount = 1;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_ALL;
+	;
+	uboLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::vector<VkDescriptorSetLayoutBinding> bindings = { uboLayoutBinding };
+
+	// Create the descriptor set layout
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(logicalDevice, &layoutInfo, nullptr, &dayNightDescriptorSetLayout) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor set layout");
 	}
 }
@@ -542,13 +592,20 @@ void Renderer::CreateDescriptorPool() {
 
 		//gui
 		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER , 1 },
+
+		//Wind
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
+
+		//Day Night
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER , 1 },
+
 	};
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 35;//greater than 1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo+ 1*skybox+num**gui
+	poolInfo.maxSets = 37;//greater than 1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo + 1 * wind, 1 * daynight, 1*skybox+num**gui 
 
 	if (vkCreateDescriptorPool(logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool");
@@ -739,6 +796,76 @@ void Renderer::CreateTimeDescriptorSet() {
 	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrites[0].descriptorCount = 1;
 	descriptorWrites[0].pBufferInfo = &timeBufferInfo;
+	descriptorWrites[0].pImageInfo = nullptr;
+	descriptorWrites[0].pTexelBufferView = nullptr;
+
+	// Update descriptor sets
+	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void Renderer::CreateWindDescriptorSet() {
+	// Describe the desciptor set
+	VkDescriptorSetLayout layouts[] = { windDescriptorSetLayout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = descriptorPool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts = layouts;
+
+	// Allocate descriptor sets
+	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, &windDescriptorSet) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate descriptor set");
+	}
+
+	// Configure the descriptors to refer to buffers
+	VkDescriptorBufferInfo windBufferInfo = {};
+	windBufferInfo.buffer = scene->GetWindBuffer();
+	windBufferInfo.offset = 0;
+	windBufferInfo.range = sizeof(WindInfo);
+
+	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
+	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[0].dstSet = windDescriptorSet;
+	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstArrayElement = 0;
+	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrites[0].descriptorCount = 1;
+	descriptorWrites[0].pBufferInfo = &windBufferInfo;
+	descriptorWrites[0].pImageInfo = nullptr;
+	descriptorWrites[0].pTexelBufferView = nullptr;
+
+	// Update descriptor sets
+	vkUpdateDescriptorSets(logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+
+void Renderer::CreateDayNightDescriptorSet() {
+	// Describe the desciptor set
+	VkDescriptorSetLayout layouts[] = { dayNightDescriptorSetLayout };
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = descriptorPool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts = layouts;
+
+	// Allocate descriptor sets
+	if (vkAllocateDescriptorSets(logicalDevice, &allocInfo, &dayNightDescriptorSet) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate descriptor set");
+	}
+
+	// Configure the descriptors to refer to buffers
+	VkDescriptorBufferInfo dayNightBufferInfo = {};
+	dayNightBufferInfo.buffer = scene->GetDayNightBuffer();
+	dayNightBufferInfo.offset = 0;
+	dayNightBufferInfo.range = sizeof(DayNightInfo);
+
+	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
+	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[0].dstSet = dayNightDescriptorSet;
+	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstArrayElement = 0;
+	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrites[0].descriptorCount = 1;
+	descriptorWrites[0].pBufferInfo = &dayNightBufferInfo;
 	descriptorWrites[0].pImageInfo = nullptr;
 	descriptorWrites[0].pTexelBufferView = nullptr;
 
@@ -1501,7 +1628,7 @@ void Renderer::CreateBarkPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout, dayNightDescriptorSetLayout, windDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -1668,7 +1795,7 @@ void Renderer::CreateLeafPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout, dayNightDescriptorSetLayout, windDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -1834,7 +1961,7 @@ void Renderer::CreateBillboardPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, modelDescriptorSetLayout, timeDescriptorSetLayout , LODInfoDescriptorSetLayout, dayNightDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -1999,7 +2126,7 @@ void Renderer::CreateSkyboxPipeline()
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout,skyboxDescriptorSetLayout, timeDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout,skyboxDescriptorSetLayout, timeDescriptorSetLayout, dayNightDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -2475,7 +2602,7 @@ void Renderer::CreateTerrainPipeline() {
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, terrainDescriptorSetLayout, timeDescriptorSetLayout };
+	std::vector<VkDescriptorSetLayout> descriptorSetLayouts = { cameraDescriptorSetLayout, terrainDescriptorSetLayout, timeDescriptorSetLayout, dayNightDescriptorSetLayout };
 
 	// Pipeline layout: used to specify uniform values
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -3008,6 +3135,8 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipelineLayout, 1, 1, &terrainDescriptorSet, 0, nullptr);
 			// Bind the descriptor set for terrain
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
+			// Bind the descriptor set for terrain
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, terrainPipelineLayout, 3, 1, &dayNightDescriptorSet, 0, nullptr);
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetTerrain()->getIndices();
@@ -3030,6 +3159,8 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxPipelineLayout, 1, 1, &skyboxDescriptorSet, 0, nullptr);
 			
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
+
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, skyboxPipelineLayout, 3, 1, &dayNightDescriptorSet, 0, nullptr);
 
 			// Draw
 			std::vector<uint32_t> indices = scene->GetSkybox()->getIndices();
@@ -3159,6 +3290,11 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 				// Bind the LOD descriptor
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+				// Bind the Day Night descriptor
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 4, 1, &dayNightDescriptorSet, 0, nullptr);
+				// Bind the Wind descriptor
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, barkPipelineLayout, 5, 1, &windDescriptorSet, 0, nullptr);
+
 #if LOD_FRUSTUM_CULLING
 				// Indirect Draw
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(0), 0, 1, 0);
@@ -3194,6 +3330,11 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 				// Bind the LOD descriptor
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+				// Bind the Day Night descriptor
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 4, 1, &dayNightDescriptorSet, 0, nullptr);
+				// Bind the Wind descriptor
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, leafPipelineLayout, 5, 1, &windDescriptorSet, 0, nullptr);
+
 #if LOD_FRUSTUM_CULLING
 				// Indirect Draw
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(1), 0, 1, 0);
@@ -3229,6 +3370,8 @@ void Renderer::RecordCommandBuffers() {
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 				// Bind the LOD descriptor
 				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 3, 1, &LODInfoDescriptorSets[k], 0, nullptr);
+				// Bind the Day Night descriptor
+				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 4, 1, &dayNightDescriptorSet, 0, nullptr);
 #if LOD_FRUSTUM_CULLING
 				// Indirect Draw
 				vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetInstanceBuffer()[k]->GetNumInstanceDataBuffer(2), 0, 1, 0);
@@ -3265,6 +3408,8 @@ void Renderer::RecordCommandBuffers() {
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 2, 1, &timeDescriptorSet, 0, nullptr);
 			// Bind the LOD descriptor
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 3, 1, &LODInfoDescriptorSets[2 + k], 0, nullptr);
+			// Bind the Day Night descriptor
+			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, billboardPipelineLayout, 4, 1, &dayNightDescriptorSet, 0, nullptr);
 #if LOD_FRUSTUM_CULLING
 			// Indirect Draw
 			vkCmdDrawIndexedIndirect(commandBuffers[i], scene->GetFakeInstanceBuffer()[k]->GetNumInstanceDataBuffer(), 0, 1, 0);
@@ -3384,6 +3529,8 @@ Renderer::~Renderer() {
 	vkDestroyDescriptorSetLayout(logicalDevice, cameraDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, modelDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, timeDescriptorSetLayout, nullptr);
+	vkDestroyDescriptorSetLayout(logicalDevice, windDescriptorSetLayout, nullptr);
+	vkDestroyDescriptorSetLayout(logicalDevice, dayNightDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, grassDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, skyboxDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, terrainDescriptorSetLayout, nullptr);

@@ -33,6 +33,15 @@ static bool BillboardModel = true;
 static int plotIdx = 0;
 static float fps[90] = { 0 };
 
+//Wind
+static float WindDirection[3] = { 0.5, 0.0, 1.0 };
+static float windForce = 15.0f;
+static float windSpeed = 12.0f;
+static float waveInterval = 15.0f;
+//Day&Night
+static float Daylength = 30.0f;
+static bool DayNightActivation = true;
+
 namespace {
 	void resizeCallback(GLFWwindow* window, int width, int height) {
 		if (width == 0 || height == 0) return;
@@ -288,17 +297,25 @@ namespace {
 		ImGui::Checkbox("Bark Model", &BarkModel);
 		ImGui::Checkbox("Leaves Model", &LeaveModel);
 		ImGui::Checkbox("Billboard Model", &BillboardModel);
+		ImGui::Text("Wind");
+		ImGui::SliderFloat3("Wind Direction", WindDirection, -1.0f, 1.0f);
+		ImGui::SliderFloat("Wind Force", &windForce, 0.0f, 100.0f);
+		ImGui::SliderFloat("Wind Speed", &windSpeed, 0.1f, 100.0f);
+		ImGui::SliderFloat("Wave Interval", &waveInterval, 0.1f, 100.0f);
+		ImGui::Text("Day & Night");
+		ImGui::SliderFloat("Day Length", &Daylength, 10.0f, 200.0f);
+		ImGui::Checkbox("Day & Night Cycle", &DayNightActivation);
 		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Text("Performance");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Spacing();
-		if (plotIdx >= 90) plotIdx = 0;
+		/*if (plotIdx >= 90) plotIdx = 0;
 		fps[plotIdx] = ImGui::GetIO().Framerate;
 		plotIdx++;
 		static int offset = 0;
 		ImGui::PlotLines("FPS", fps, IM_ARRAYSIZE(fps), offset, "", 0.0f, 400.0f, ImVec2(0, 100));
-
+*/
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -835,10 +852,10 @@ int main() {
 	printf("Starting Insert Trees Randomly\n");
 	//srand((unsigned int)time(0));
 	printf("Tree 1\n");
-	scene->InsertRandomTrees(400, 0.015f, 1, device, transferCommandPool);
+	scene->InsertRandomTrees(150, 0.015f, 1, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[0]->GetInstanceCount()));
 	printf("Tree 2\n");
-	scene->InsertRandomTrees(100, 0.021f, 4, device, transferCommandPool);
+	scene->InsertRandomTrees(40, 0.021f, 4, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[1]->GetInstanceCount()));
 	printf("Finish Insert Trees Randomly\n");
 	printf("Gathering Fake Trees\n");
@@ -874,7 +891,9 @@ int main() {
 		ImGui::Render();
 
 		scene->UpdateTime();
-		//scene->UpdateLODInfo(LOD0, LOD1);
+		scene->UpdateLODInfo(LOD0, LOD1);
+		scene->UpdateWindInfo(glm::vec4(WindDirection[0],  WindDirection[1], WindDirection[2], 1.0f), glm::vec4(windForce, windSpeed, waveInterval, 1.0f));
+		scene->UpdateDayNightInfo(Daylength, DayNightActivation);
 		renderer->Frame();
 		count++;
 		if (count == 100) {

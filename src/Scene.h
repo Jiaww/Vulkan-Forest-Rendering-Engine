@@ -19,20 +19,41 @@ struct Time {
 	// 0: deltaTime 1: totalTime
 };
 
+struct WindInfo {
+	glm::vec4 WindDir = glm::vec4(0.5, 0.0, 1.0, 1.0);
+	//0: windFroce(power), 1: windSpeed, 2: waveInterval
+	glm::vec4 WindData = glm::vec4(15.0, 12.0, 15.0, 1.0);
+};
+
+struct DayNightInfo {
+	//0: Daylength, 1: Activate
+	glm::vec2 DayNightData = glm::vec2(30, 1);
+};
+
 class Scene {
 private:
     Device* device;
-    
+    //Time
     VkBuffer timeBuffer;
     VkDeviceMemory timeBufferMemory;
     Time time;
-
+	//LOD
 	std::vector<VkBuffer> LODInfoBuffer;
 	std::vector<VkDeviceMemory> LODInfoBufferMemory;
 	std::vector<glm::vec4> LODInfoVec;
+	//Wind
+	VkBuffer windBuffer;
+	VkDeviceMemory windBufferMemory;
+	WindInfo wind;
+	//Day&Night Cycle
+	VkBuffer dayNightBuffer;
+	VkDeviceMemory dayNightBufferMemory;
+	DayNightInfo dayNight;
 
     void* mappedData;
 	std::vector<void*> LODmappedData;
+	void* WindmappedData;
+	void* DayNightmappedData;
 
 	Terrain* terrain;
 	Skybox* skybox;
@@ -61,7 +82,6 @@ public:
     const std::vector<Model*>& GetModels() const;
     const std::vector<Blades*>& GetBlades() const;
 	const std::vector<InstanceBuffer*>& GetInstanceBuffer() const;
-    std::vector<VkBuffer> GetLODInfoBuffer() const;
 	const std::vector<FakeInstanceBuffer*>& GetFakeInstanceBuffer() const;
 
 	void SetTerrain(Terrain* terrain);
@@ -73,9 +93,14 @@ public:
 	bool InsertRandomTrees(int numTrees, float treeBaseScale, int modelId, Device* device, VkCommandPool commandPool);
     VkBuffer GetTimeBuffer() const;
 	void AddLODInfoBuffer(glm::vec4 LODInfo);
+	std::vector<VkBuffer> GetLODInfoBuffer() const;
+	VkBuffer GetWindBuffer() const;
+	VkBuffer GetDayNightBuffer() const;
 
     void UpdateTime();
 	void UpdateLODInfo(float LOD0, float LOD1);
+	void UpdateWindInfo(glm::vec4 dir, glm::vec4 data);
+	void UpdateDayNightInfo(float dlen, bool act);
 
 	int GetDensityMeshValue(int x, int z);
 	void SetDensityMeshValue(int x, int z, int value);

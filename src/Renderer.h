@@ -20,6 +20,8 @@ public:
     void CreateModelDescriptorSetLayout();
     void CreateGrassDescriptorSetLayout();
 	void CreateTimeDescriptorSetLayout();
+	void CreateWindDescriptorSetLayout();
+	void CreateDayNightDescriptorSetLayout();
 	void CreateComputeDescriptorSetLayout();
 	void CreateCullingComputeDescriptorSetLayout();
 	void CreateFakeCullingComputeDescriptorSetLayout();
@@ -35,8 +37,10 @@ public:
     void CreateCameraDescriptorSet();
     void CreateModelDescriptorSets();
     void CreateGrassDescriptorSets();
-    void CreateTimeDescriptorSet();
-    void CreateComputeDescriptorSets();
+	void CreateTimeDescriptorSet();
+	void CreateWindDescriptorSet();
+	void CreateDayNightDescriptorSet();
+	void CreateComputeDescriptorSets();
 	void CreateCullingComputeDescriptorSets();
 	void CreateFakeCullingComputeDescriptorSets();
 	void CreateSkyboxDescriptorSet();
@@ -84,6 +88,8 @@ private:
 	VkDescriptorSetLayout modelDescriptorSetLayout;
 	VkDescriptorSetLayout grassDescriptorSetLayout;
 	VkDescriptorSetLayout timeDescriptorSetLayout;
+	VkDescriptorSetLayout windDescriptorSetLayout;
+	VkDescriptorSetLayout dayNightDescriptorSetLayout;
 	VkDescriptorSetLayout computeDescriptorSetLayout;
 	VkDescriptorSetLayout cullingComputeDescriptorSetLayout;
 	VkDescriptorSetLayout fakeCullingComputeDescriptorSetLayout;
@@ -98,6 +104,8 @@ private:
 	VkDescriptorSet cameraDescriptorSet;
 	std::vector<VkDescriptorSet> modelDescriptorSets;
 	VkDescriptorSet timeDescriptorSet;
+	VkDescriptorSet windDescriptorSet;
+	VkDescriptorSet dayNightDescriptorSet;
 	std::vector<VkDescriptorSet> grassDescriptorSets;
 	std::vector<VkDescriptorSet> computeDescriptorSets;
 	std::vector<VkDescriptorSet> cullingComputeDescriptorSets;

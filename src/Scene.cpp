@@ -2,9 +2,19 @@
 #include "BufferUtils.h"
 
 Scene::Scene(Device* device) : device(device) {
-    BufferUtils::CreateBuffer(device, sizeof(Time), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, timeBuffer, timeBufferMemory);
+    //Time buffer Initialization
+	BufferUtils::CreateBuffer(device, sizeof(Time), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, timeBuffer, timeBufferMemory);
     vkMapMemory(device->GetVkDevice(), timeBufferMemory, 0, sizeof(Time), 0, &mappedData);
     memcpy(mappedData, &time, sizeof(Time));
+	//Wind buffer
+	BufferUtils::CreateBuffer(device, sizeof(WindInfo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, windBuffer, windBufferMemory);
+	vkMapMemory(device->GetVkDevice(), windBufferMemory, 0, sizeof(WindInfo), 0, &WindmappedData);
+	memcpy(WindmappedData, &wind, sizeof(WindInfo));
+	//Day&Night buffer
+	BufferUtils::CreateBuffer(device, sizeof(DayNightInfo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, dayNightBuffer, dayNightBufferMemory);
+	vkMapMemory(device->GetVkDevice(), dayNightBufferMemory, 0, sizeof(DayNightInfo), 0, &DayNightmappedData);
+	memcpy(DayNightmappedData, &dayNight, sizeof(DayNightInfo));
+
 	numFakeTree = 0;
 }
 
@@ -102,6 +112,13 @@ std::vector<VkBuffer> Scene::GetLODInfoBuffer() const {
 	return LODInfoBuffer;
 }
 
+VkBuffer Scene::GetWindBuffer() const {
+	return windBuffer;
+}
+VkBuffer Scene::GetDayNightBuffer() const {
+	return dayNightBuffer;
+}
+
 void Scene::UpdateLODInfo(float LOD0, float LOD1) {
 	for (int i = 0; i < LODInfoVec.size(); i++) {
 		LODInfoVec[i][0] = LOD0;
@@ -109,6 +126,20 @@ void Scene::UpdateLODInfo(float LOD0, float LOD1) {
 		memcpy(LODmappedData[i], &LODInfoVec[i], sizeof(glm::vec4));
 	}
 }
+
+
+void Scene::UpdateWindInfo(glm::vec4 dir, glm::vec4 data) {
+	wind.WindDir = dir;
+	wind.WindData = data;
+	memcpy(WindmappedData, &wind, sizeof(WindInfo));
+}
+
+void Scene::UpdateDayNightInfo(float dlen, bool act) {
+	dayNight.DayNightData[0] = dlen;
+	dayNight.DayNightData[1] = act;
+	memcpy(DayNightmappedData, &dayNight, sizeof(DayNightInfo));
+}
+
 bool Scene::InsertRandomTrees(int numTrees, float treeBaseScale, int modelId, Device* device, VkCommandPool commandPool) {
 	std::vector<InstanceData> instanceData;
 	int randRange = terrain->GetTerrainDim() - 2;

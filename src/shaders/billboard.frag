@@ -15,6 +15,11 @@ layout(set = 3, binding = 0) uniform LODINFO{
 	vec4 LODInfo;
 };
 
+layout(set = 4, binding = 0) uniform DayNightInfo{
+	//0: Daylength, 1: Activate
+	vec2 DayNightData;
+};
+
 layout(location = 0) in vec3 vertColor;
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 worldPosition;
@@ -62,7 +67,7 @@ void main() {
 	float ambientTerm = vertAmbient * (0.15f) + 0.2f*flag;
 
 	// Day and Night Cycle
-	float dayLength = 30;
+	float dayLength = DayNightData.x;
 	float currentTime = TimeInfo[1] - (dayLength * floor(TimeInfo[1]/dayLength));
 	float lightIntensity = 1.0f;
 	vec3 lightColor;
@@ -79,6 +84,9 @@ void main() {
 		lightIntensity = 0.4f * (1.0 - (currentTime-(dayLength/2.0))/(dayLength/2.0)) + 1.1f * (currentTime-(dayLength/2.0))/(dayLength/2.0);
 	}
 
+	float dayNightAct = DayNightData.y;
+	lightColor = lightColor * dayNightAct + lightColorDay * (1.0f - dayNightAct);
+	lightIntensity = lightIntensity * dayNightAct + 1.0f * (1.0f - dayNightAct);
 	//Because there is no normal map of fake tree billboard here
 	outColor = vec4(diffuseColor.rgb * tintColor * lightColor * lightIntensity *((diffuseTerm + ambientTerm)*(1 - flag) + 1.2f*flag), diffuseColor.a);
 	//outColor=vec4(0.0f, abs(test[2]), 0.0f,1.0);

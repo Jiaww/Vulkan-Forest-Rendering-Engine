@@ -11,6 +11,11 @@ layout(set = 2, binding = 0) uniform Time {
 	// 0: deltaTime 1: totalTime
 };
 
+layout(set = 3, binding = 0) uniform DayNightInfo{
+	//0: Daylength, 1: Activate
+	vec2 DayNightData;
+};
+
 layout(location = 0) in vec4 vert_texcoord;
 layout(location = 0) out vec4 outColor;
 
@@ -19,7 +24,7 @@ void main() {
 	// Day and Night Cycle
 	// 40s a day 
 	// a mod b : a - (b * floor(a/b))
-	float dayLength = 30;
+	float dayLength = DayNightData.x;
 	float currentTime = TimeInfo[1] - (dayLength * floor(TimeInfo[1]/dayLength));
 	vec4 blendColor;
 	if(currentTime < (dayLength/4.0)){
@@ -31,5 +36,7 @@ void main() {
 	else{
 		blendColor = texture( Cubemap_Night, texcoord ) * (1.0 - (currentTime-(dayLength/2.0))/(dayLength/2.0)) + texture( Cubemap_Day, texcoord ) * (currentTime-(dayLength/2.0))/(dayLength/2.0); 
 	}
-	outColor = blendColor;
+
+	float dayNightAct = DayNightData.y;
+	outColor = blendColor*dayNightAct + texture( Cubemap_Day, texcoord ) * (1.0f-dayNightAct);
 }

@@ -22,6 +22,12 @@ layout(set = 3, binding = 0) uniform LODINFO{
 	vec4 LODInfo;
 };
 
+layout(set = 5, binding = 0) uniform WindInfo{
+	vec4 WindDir;
+	//0: windFroce(power), 1: windSpeed, 2: waveInterval
+	vec4 WindData;
+}windInfo;
+
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec4 inColor;
 layout(location = 2) in vec2 inTexCoord;
@@ -101,12 +107,12 @@ void main() {
 	float BendScale=0.024;
 	
 	//Wind
-	vec3 wind_dir = normalize(vec3(0.5, 0, 1));
-    float wind_speed = 12.0;
-    float wave_division_width = 15.0;
+	vec3 wind_dir = normalize(windInfo.WindDir.xyz);
+    float wind_speed = windInfo.WindData.y;
+    float wave_division_width = windInfo.WindData.z;
     float wave_info = (cos((dot(objectPosition, wind_dir) - wind_speed * TimeInfo[1]) / wave_division_width) + 0.7);
 	
-	float wind_power = 15.0f;
+	float wind_power = windInfo.WindData.x;
     //vec3 w = wind_dir * wind_power * wave_info * fd * fr;
 	vec3 w=wind_dir * wind_power * wave_info*0.05;
 	vec2 Wind=vec2(w.x,w.z);
