@@ -26,7 +26,12 @@ static float LOD1 = 0.43;
 
 static bool DistanceCulling = true;
 static bool FrustrumCulling = true;
+static bool BarkModel = true;
+static bool LeaveModel = true;
+static bool BillboardModel = true;
 
+static int plotIdx = 0;
+static float fps[90] = { 0 };
 
 namespace {
 	void resizeCallback(GLFWwindow* window, int width, int height) {
@@ -99,7 +104,6 @@ namespace {
 	void ImGui_ImplGlfwVulkan_RenderDrawLists(ImDrawData * draw_data)
 	{
 		if (!gui->device) return;
-
 		ImGuiIO& io = ImGui::GetIO();
 
 		// Create the Vertex Buffer:
@@ -276,12 +280,24 @@ namespace {
 	}
 	
 	void InitialGuiContent() {
-		static float f = 0.0f;
 		ImGui::Text("Vulkan Forest Rendering Engine");
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-		if (ImGui::Button("Close Frustrum Culling")) FrustrumCulling=!FrustrumCulling;
-		if (ImGui::Button("Close Distance Culling")) DistanceCulling =!DistanceCulling;
+		ImGui::SliderFloat("LOD0", &LOD0, 0.0f, 1.0f);
+		ImGui::SliderFloat("LOD1", &LOD1, 0.0f, 1.0f);
+		ImGui::Checkbox("Frustrum Culling", &FrustrumCulling);
+		ImGui::Checkbox("Distance Culling", &FrustrumCulling);
+		ImGui::Checkbox("Bark Model", &BarkModel);
+		ImGui::Checkbox("Leaves Model", &LeaveModel);
+		ImGui::Checkbox("Billboard Model", &BillboardModel);
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Performance");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Spacing();
+		if (plotIdx >= 90) plotIdx = 0;
+		fps[plotIdx] = ImGui::GetIO().Framerate;
+		plotIdx++;
+		static int offset = 0;
+		ImGui::PlotLines("FPS", fps, IM_ARRAYSIZE(fps), offset, "", 0.0f, 400.0f, ImVec2(0, 100));
 
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -819,10 +835,10 @@ int main() {
 	printf("Starting Insert Trees Randomly\n");
 	//srand((unsigned int)time(0));
 	printf("Tree 1\n");
-	scene->InsertRandomTrees(250, 0.015f, 1, device, transferCommandPool);
+	scene->InsertRandomTrees(400, 0.015f, 1, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[0]->GetInstanceCount()));
 	printf("Tree 2\n");
-	scene->InsertRandomTrees(50, 0.021f, 4, device, transferCommandPool);
+	scene->InsertRandomTrees(100, 0.021f, 4, device, transferCommandPool);
 	scene->AddLODInfoBuffer(glm::vec4(LOD0, LOD1, 20.0f, scene->GetInstanceBuffer()[1]->GetInstanceCount()));
 	printf("Finish Insert Trees Randomly\n");
 	printf("Gathering Fake Trees\n");
@@ -862,12 +878,12 @@ int main() {
 		renderer->Frame();
 		count++;
 		if (count == 100) {
-			int total_time = GetTickCount() - time_start;
+		//	int total_time = GetTickCount() - time_start;
 			float distance = glm::length(glm::vec3(128,0,128)-camera->GetEyePos());
 			printf("Camera Distance %f\n", distance);
-			printf("Total Time for 100 frames: %d\n", total_time);
-			printf("Time per frame: %f\n", float(total_time) / 100.0f);
-			printf("fps: %f\n", 100000.0 / float(total_time));
+		//	printf("Total Time for 100 frames: %d\n", total_time);
+		//	printf("Time per frame: %f\n", float(total_time) / 100.0f);
+		//	printf("fps: %f\n", 100000.0 / float(total_time));
 			count = 0;
 			time_start = GetTickCount();
 		}

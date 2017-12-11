@@ -64,6 +64,25 @@ ___
 ___
 ## Performance Analysis
 ### LOD vs Without LOD
+
 ### Compute Shader Culling vs No Culling
+To improve the rendering efficiency, we implement the compute shader culling to filter out the trees that we don't need to render for the current frame and render them as billboard or directly ignore them. We implement 2 kinds of culling, frustrum culling and distance culling. Here is the performance analysis.
+
+** Distance culling 
+Distance culling can improve the overall efficiency when the camera is far away from the forest(God view). It will filter out the trees that are far away from the camera.
+
+
+** Frustrum culling
+Frustrum culling can improve the overall efficiency when the camera is inside the forest . It will filter out the trees that are out of the view frustrum.
+
+
+
+
 ### Density Multiplication vs No DM
 ### Visual Effect Comparision
+
+
+## Credits
+* [Vulkan examples](https://github.com/SaschaWillems/Vulkan) by [SaschaWillems](https://github.com/SaschaWillems)
+* [Imgui](https://github.com/ocornut/imgui)
+* 

@@ -548,7 +548,7 @@ void Renderer::CreateDescriptorPool() {
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 30;//greater than 1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo+ 1*skybox+1*gui
+	poolInfo.maxSets = 35;//greater than 1*camera + 7*model + 2*model(faketrees) + 1*grass + 1*time + 1*compute + 1*terrain + 2*cullingCompute + 2*fakeCullingCompute + 4 * LODInfo+ 1*skybox+num**gui
 
 	if (vkCreateDescriptorPool(logicalDevice, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create descriptor pool");
@@ -2773,10 +2773,6 @@ void Renderer::RecreateFrameResources() {
 	vkDestroyPipeline(logicalDevice, skyboxPipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, terrainPipeline, nullptr);
 
-	//vkDestroyPipeline(logicalDevice, computePipeline, nullptr);
-	//vkDestroyPipeline(logicalDevice, cullingComputePipeline, nullptr);
-	//vkDestroyPipeline(logicalDevice, fakeCullingComputePipeline, nullptr);
-
 	vkDestroyPipelineLayout(logicalDevice, graphicsPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, grassPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, barkPipelineLayout, nullptr);
@@ -2785,9 +2781,6 @@ void Renderer::RecreateFrameResources() {
 	vkDestroyPipelineLayout(logicalDevice, skyboxPipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, terrainPipelineLayout, nullptr);
 
-	/*vkDestroyPipelineLayout(logicalDevice, computePipelineLayout, nullptr);
-	vkDestroyPipelineLayout(logicalDevice, cullingComputePipelineLayout, nullptr);
-	vkDestroyPipelineLayout(logicalDevice, fakeCullingComputePipelineLayout, nullptr);*/
 
 	vkFreeCommandBuffers(logicalDevice, graphicsCommandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
@@ -2797,9 +2790,6 @@ void Renderer::RecreateFrameResources() {
 	CreateBarkPipeline();
 	CreateLeafPipeline();
 	CreateGrassPipeline();
-	//CreateComputePipeline();
-	//CreateCullingComputePipeline();
-	//CreateFakeCullingComputePipeline();
 	CreateBillboardPipeline();
 	CreateSkyboxPipeline();
 	CreateTerrainPipeline();
@@ -3376,7 +3366,7 @@ Renderer::~Renderer() {
 	vkDestroyPipeline(logicalDevice, computePipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, cullingComputePipeline, nullptr);
 	vkDestroyPipeline(logicalDevice, fakeCullingComputePipeline, nullptr);
-	//vkDestroyPipeline(logicalDevice, guiPipeline, nullptr);
+	vkDestroyPipeline(logicalDevice, guiPipeline, nullptr);
 
 
 	vkDestroyPipelineLayout(logicalDevice, graphicsPipelineLayout, nullptr);
@@ -3389,7 +3379,7 @@ Renderer::~Renderer() {
 	vkDestroyPipelineLayout(logicalDevice, computePipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, cullingComputePipelineLayout, nullptr);
 	vkDestroyPipelineLayout(logicalDevice, fakeCullingComputePipelineLayout, nullptr);
-	//vkDestroyPipelineLayout(logicalDevice, guiPipelineLayout, nullptr);
+	vkDestroyPipelineLayout(logicalDevice, guiPipelineLayout, nullptr);
 
 	vkDestroyDescriptorSetLayout(logicalDevice, cameraDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, modelDescriptorSetLayout, nullptr);
@@ -3400,7 +3390,7 @@ Renderer::~Renderer() {
 	vkDestroyDescriptorSetLayout(logicalDevice, computeDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, cullingComputeDescriptorSetLayout, nullptr);
 	vkDestroyDescriptorSetLayout(logicalDevice, fakeCullingComputeDescriptorSetLayout, nullptr);
-	//vkDestroyDescriptorSetLayout(logicalDevice, GuiDescriptorSetLayout, nullptr);
+	vkDestroyDescriptorSetLayout(logicalDevice, GuiDescriptorSetLayout, nullptr);
 
 	vkDestroyDescriptorPool(logicalDevice, descriptorPool, nullptr);
 
