@@ -24,6 +24,10 @@ static float        g_MouseWheel = 0.0f;
 static float LOD0 = 0.6;
 static float LOD1 = 0.43;
 
+static bool DistanceCulling = true;
+static bool FrustrumCulling = true;
+
+
 namespace {
 	void resizeCallback(GLFWwindow* window, int width, int height) {
 		if (width == 0 || height == 0) return;
@@ -91,6 +95,7 @@ namespace {
 
 	/////////////////////////////////////////////////////////////////////////////////
 	//GUI
+
 	void ImGui_ImplGlfwVulkan_RenderDrawLists(ImDrawData * draw_data)
 	{
 		if (!gui->device) return;
@@ -120,7 +125,7 @@ namespace {
 			VkMemoryAllocateInfo alloc_info = {};
 			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			alloc_info.allocationSize = req.size;
-			alloc_info.memoryTypeIndex = gui->device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			alloc_info.memoryTypeIndex = ImGui_ImplGlfwVulkan_MemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits,device);
 			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_VertexBufferMemory[gui->g_FrameIndex]);
 			//ImGui_ImplGlfwVulkan_VkResult(err);
 			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], gui->g_VertexBufferMemory[gui->g_FrameIndex], 0);
@@ -153,7 +158,7 @@ namespace {
 			VkMemoryAllocateInfo alloc_info = {};
 			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			alloc_info.allocationSize = req.size;
-			alloc_info.memoryTypeIndex = gui->device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			alloc_info.memoryTypeIndex = ImGui_ImplGlfwVulkan_MemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits,device);
 			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_IndexBufferMemory[gui->g_FrameIndex]);
 			//ImGui_ImplGlfwVulkan_VkResult(err);
 			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], gui->g_IndexBufferMemory[gui->g_FrameIndex], 0);
@@ -279,8 +284,13 @@ namespace {
 	}
 	
 	void InitialGuiContent() {
-		//static float f = 0.0f;
+		static float f = 0.0f;
 		ImGui::Text("Hello, world!");
+		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+		if (ImGui::Button("Close Frustrum Culling")) FrustrumCulling=!FrustrumCulling;
+		if (ImGui::Button("Close Distance Culling")) DistanceCulling =!DistanceCulling;
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 

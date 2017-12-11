@@ -18,7 +18,6 @@ layout(location = 0) out struct{
     vec4 Color;
     vec2 UV;
 } Out;
-
 void main()
 {
     Out.Color = aColor;

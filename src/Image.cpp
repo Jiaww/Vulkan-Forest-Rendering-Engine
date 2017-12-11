@@ -6,6 +6,7 @@
 #include "Instance.h"
 #include "BufferUtils.h"
 #include "imgui.h"
+#include "GUI.h"
 
 void Image::Create(Device* device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
     // Create Vulkan image
@@ -379,11 +380,14 @@ void Image::FromMultiFile(Device * device, VkCommandPool commandPool, const std:
 
 void Image::FromGuiTexture(Device * device, VkCommandPool commandPool, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageLayout layout, VkMemoryPropertyFlags properties, VkImage & image, VkDeviceMemory & imageMemory)
 {
+	VkResult err;
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* pixels;
 	int texWidth, texHeight;
 	io.Fonts->GetTexDataAsRGBA32(&pixels, &texWidth, &texHeight);
-	VkDeviceSize imageSize = texWidth*texHeight * 4 * sizeof(char);
+	
+
+	VkDeviceSize imageSize = texWidth*texHeight * 4 ;
 	if (!pixels) {
 		throw std::runtime_error("Failed to load texture image");
 	}

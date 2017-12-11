@@ -488,12 +488,13 @@ void Renderer::CreateLODInfoDescriptorSetLayout() {
 
 void Renderer::CreateGuiDescriptorSetLayout()
 {
+	VkSampler sampler[1] = { scene->GetGui()->GetFontTextureMapSampler() };
 	VkDescriptorSetLayoutBinding diffuseSamplerLayoutBinding = {};
 	diffuseSamplerLayoutBinding.binding = 0;
 	diffuseSamplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	diffuseSamplerLayoutBinding.descriptorCount = 1;
 	diffuseSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	diffuseSamplerLayoutBinding.pImmutableSamplers = nullptr;
+	diffuseSamplerLayoutBinding.pImmutableSamplers = sampler;
 
 	std::vector<VkDescriptorSetLayoutBinding> bindings = { diffuseSamplerLayoutBinding };
 
@@ -2617,10 +2618,10 @@ void Renderer::CreateGuiPipeline()
 	VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
 	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
 	colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
 	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
@@ -2631,10 +2632,6 @@ void Renderer::CreateGuiPipeline()
 	colorBlending.logicOp = VK_LOGIC_OP_COPY;
 	colorBlending.attachmentCount = 1;
 	colorBlending.pAttachments = &colorBlendAttachment;
-	colorBlending.blendConstants[0] = 0.0f;
-	colorBlending.blendConstants[1] = 0.0f;
-	colorBlending.blendConstants[2] = 0.0f;
-	colorBlending.blendConstants[3] = 0.0f;
 
 	VkDynamicState dynamic_states[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
 	VkPipelineDynamicStateCreateInfo dynamic_state = {};
