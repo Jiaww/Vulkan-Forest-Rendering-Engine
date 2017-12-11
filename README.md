@@ -90,7 +90,7 @@ Here are the effects of Density Multiplication. The memory cost is somehow simil
 
 <img src="./results/DensityMultiplication2.PNG" width="750" height="450">
 
-As the plot and picture shows, when the camera is far away from the forest, there is no great visual and efficiency difference between using and not using DM, but when the camera get closer to forest, DM will show its benefits, because the less trees need to be rendered.
+As the plot and picture shows, when the camera is far away from the forest, there is no great visual and efficiency difference between using and not using DM, but when the camera get closer to forest, DM will show its benefits, because less trees need to be rendered.
 
 
 ## Credits
