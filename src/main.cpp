@@ -895,7 +895,7 @@ int main() {
 		scene->UpdateWindInfo(glm::vec4(WindDirection[0],  WindDirection[1], WindDirection[2], 1.0f), glm::vec4(windForce, windSpeed, waveInterval, 1.0f));
 		scene->UpdateDayNightInfo(Daylength, DayNightActivation);
 		renderer->Frame();
-		/*count++;
+		count++;
 		if (count == 100) {
 			int total_time = GetTickCount() - time_start;
 			float distance = glm::length(glm::vec3(128,0,128)-camera->GetEyePos());
@@ -905,7 +905,7 @@ int main() {
 			printf("fps: %f\n", 100000.0 / float(total_time));
 			count = 0;
 			time_start = GetTickCount();
-		}*/
+		}
 		gui->g_FrameIndex = (gui->g_FrameIndex + 1) % IMGUI_VK_QUEUED_FRAMES;
 	}
 
