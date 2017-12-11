@@ -67,25 +67,33 @@ ___
 ### Compute Shader Culling vs No Culling
 To improve the rendering efficiency, we implement the compute shader culling to filter out the trees that we don't need to render for the current frame and render them as billboard or directly ignore them. We implement 2 kinds of culling, frustrum culling and distance culling. Here is the performance analysis.
 
-** Distance culling 
+ *Distance culling* 
 Distance culling can improve the overall efficiency when the camera is far away from the forest(God view). It will filter out the trees that are far away from the camera.
 
 Distance Culling can bring benefits on both memory and rendering speed. For memory benefits, only the trees that is very near to the camera will be rendered as actual tree models( 4000+ vertices each) and the trees that is far away will be rendered as billboard(4 vertices each). We make a simple table to show the benefits 
+|---|
+|<img src="./results/Mermory Analysis.PNG" width="1200" height="500">|
 
+And here is the overall rendering efficiency plot
+|<img src="./results/Distance LOD vs No culling.PNG" width="1200" height="500">|
 
-** Frustrum culling
+ *Frustrum culling*
 Frustrum culling can improve the overall efficiency when the camera is inside the forest . It will filter out the trees that are out of the view frustrum.
 
 
 
 
 ### Density Multiplication vs No DM
-Density multiplication is used to provide better view effect of the forest. Different from LOD, the density multiplication works on the number of trees instead of the detail of the tree model. The technique produce multiple fake trees around each actual tree model when the camera is far away, and delete those fake tree and only shows actual tree models when the camera is near to the forest. When camera is far away from the forest, you can see a great forest coverage.When you actually walk into the forest, the number of actual tree models is not that many but it is not easy to identify.
+Density multiplication is used to provide better view effect of the forest. Different from LOD, the density multiplication works on the density of trees instead of the detail of the tree model. The technique produce multiple fake trees around each actual tree model when the camera is far away, and delete those fake tree and only shows actual tree models when the camera is near to the forest. When camera is far away from the forest, you can see a great forest coverage.When you actually walk into the forest, the number of actual tree models is not that many but it is not easy to identify.
 Here are the effects of Density Multiplication. 
 
-As the plot and picture shows, when the camera is far away from the forest, there is no great visual and efficiency difference between using and not using  
+|**DM**|***No DM*|
+|---|---|
+|<img src="./results/DensityMultiplicationFar.PNG" width="500" height="300">|<img src="NoDensityMultiplicationFar" width="500" height="300">|
 
-### Visual Effect Comparision
+|<img src="./results/DensityMultiplicationNear.PNG" width="500" height="300">|<img src="NoDensityMultiplicationNear" width="500" height="300">|
+
+As the plot and picture shows, when the camera is far away from the forest, there is no great visual and efficiency difference between using and not using DM, but when the camera get closer to forest, DM will show its benefits, because the less trees need to be rendered.
 
 
 ## Credits
