@@ -380,7 +380,6 @@ void Image::FromMultiFile(Device * device, VkCommandPool commandPool, const std:
 
 void Image::FromGuiTexture(Device * device, VkCommandPool commandPool, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkImageLayout layout, VkMemoryPropertyFlags properties, VkImage & image, VkDeviceMemory & imageMemory)
 {
-	VkResult err;
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* pixels;
 	int texWidth, texHeight;

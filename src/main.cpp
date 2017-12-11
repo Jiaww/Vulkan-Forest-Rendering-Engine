@@ -99,7 +99,7 @@ namespace {
 	void ImGui_ImplGlfwVulkan_RenderDrawLists(ImDrawData * draw_data)
 	{
 		if (!gui->device) return;
-		VkResult err;
+
 		ImGuiIO& io = ImGui::GetIO();
 
 		// Create the Vertex Buffer:
@@ -116,20 +116,17 @@ namespace {
 			buffer_info.size = vertex_buffer_size;
 			buffer_info.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 			buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-			err = vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_VertexBuffer[gui->g_FrameIndex]);
+			vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_VertexBuffer[gui->g_FrameIndex]);
 
-			//ImGui_ImplGlfwVulkan_VkResult(err);
 			VkMemoryRequirements req;
 			vkGetBufferMemoryRequirements(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], &req);
 			gui->g_BufferMemoryAlignment = (gui->g_BufferMemoryAlignment > req.alignment) ? gui->g_BufferMemoryAlignment : req.alignment;
 			VkMemoryAllocateInfo alloc_info = {};
 			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			alloc_info.allocationSize = req.size;
-			alloc_info.memoryTypeIndex = ImGui_ImplGlfwVulkan_MemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits,device);
-			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_VertexBufferMemory[gui->g_FrameIndex]);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
-			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], gui->g_VertexBufferMemory[gui->g_FrameIndex], 0);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
+			alloc_info.memoryTypeIndex = device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT); 
+			vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_VertexBufferMemory[gui->g_FrameIndex]);
+			vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_VertexBuffer[gui->g_FrameIndex], gui->g_VertexBufferMemory[gui->g_FrameIndex], 0);
 			gui->g_VertexBufferSize[gui->g_FrameIndex] = vertex_buffer_size;
 		}
 
@@ -147,10 +144,7 @@ namespace {
 			buffer_info.size = index_buffer_size;
 			buffer_info.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
 			buffer_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-			err = vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_IndexBuffer[gui->g_FrameIndex]);
-
-
-			//ImGui_ImplGlfwVulkan_VkResult(err);		
+			vkCreateBuffer(gui->device->GetVkDevice(), &buffer_info, nullptr, &gui->g_IndexBuffer[gui->g_FrameIndex]);		
 
 			VkMemoryRequirements req;
 			vkGetBufferMemoryRequirements(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], &req);
@@ -158,11 +152,10 @@ namespace {
 			VkMemoryAllocateInfo alloc_info = {};
 			alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 			alloc_info.allocationSize = req.size;
-			alloc_info.memoryTypeIndex = ImGui_ImplGlfwVulkan_MemoryType(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, req.memoryTypeBits,device);
-			err = vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_IndexBufferMemory[gui->g_FrameIndex]);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
-			err = vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], gui->g_IndexBufferMemory[gui->g_FrameIndex], 0);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
+			alloc_info.memoryTypeIndex = device->GetInstance()->GetMemoryTypeIndex(req.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT); 
+			vkAllocateMemory(gui->device->GetVkDevice(), &alloc_info, nullptr, &gui->g_IndexBufferMemory[gui->g_FrameIndex]);
+
+			vkBindBufferMemory(gui->device->GetVkDevice(), gui->g_IndexBuffer[gui->g_FrameIndex], gui->g_IndexBufferMemory[gui->g_FrameIndex], 0);
 			gui->g_IndexBufferSize[gui->g_FrameIndex] = index_buffer_size;
 		}
 
@@ -170,10 +163,9 @@ namespace {
 		{
 			ImDrawVert* vtx_dst;
 			ImDrawIdx* idx_dst;
-			err = vkMapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex], 0, vertex_size, 0, (void**)(&vtx_dst));
-			//ImGui_ImplGlfwVulkan_VkResult(err);
-			err = vkMapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex], 0, index_size, 0, (void**)(&idx_dst));
-			//ImGui_ImplGlfwVulkan_VkResult(err);
+			vkMapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex], 0, vertex_size, 0, (void**)(&vtx_dst));
+			vkMapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex], 0, index_size, 0, (void**)(&idx_dst));
+
 			for (int n = 0; n < draw_data->CmdListsCount; n++)
 			{
 				const ImDrawList* cmd_list = draw_data->CmdLists[n];
@@ -189,8 +181,8 @@ namespace {
 			range[1].sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 			range[1].memory = gui->g_IndexBufferMemory[gui->g_FrameIndex];
 			range[1].size = VK_WHOLE_SIZE;
-			err = vkFlushMappedMemoryRanges(gui->device->GetVkDevice(), 2, range);
-			//ImGui_ImplGlfwVulkan_VkResult(err);
+			vkFlushMappedMemoryRanges(gui->device->GetVkDevice(), 2, range);
+
 			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_VertexBufferMemory[gui->g_FrameIndex]);
 			vkUnmapMemory(gui->device->GetVkDevice(), gui->g_IndexBufferMemory[gui->g_FrameIndex]);
 		}
@@ -285,7 +277,7 @@ namespace {
 	
 	void InitialGuiContent() {
 		static float f = 0.0f;
-		ImGui::Text("Hello, world!");
+		ImGui::Text("Vulkan Forest Rendering Engine");
 		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 		if (ImGui::Button("Close Frustrum Culling")) FrustrumCulling=!FrustrumCulling;
 		if (ImGui::Button("Close Distance Culling")) DistanceCulling =!DistanceCulling;
@@ -301,7 +293,7 @@ namespace {
 
 
 int main() {
-	static constexpr char* applicationName = "Vulkan Grass Rendering";
+	static constexpr char* applicationName = "Vulkan Forest Rendering Engine";
 	int width = 1920, height = 1080;
 	InitializeWindow(width, height, applicationName);
 

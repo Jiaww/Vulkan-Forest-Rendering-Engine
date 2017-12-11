@@ -11,16 +11,6 @@
 #define IMGUI_VK_QUEUED_FRAMES 2
 
 
-static uint32_t ImGui_ImplGlfwVulkan_MemoryType(VkMemoryPropertyFlags properties, uint32_t type_bits, Device* device)
-{
-	VkPhysicalDeviceMemoryProperties prop;
-	vkGetPhysicalDeviceMemoryProperties(device->GetInstance()->GetPhysicalDevice(), &prop);
-	for (uint32_t i = 0; i < prop.memoryTypeCount; i++)
-		if ((prop.memoryTypes[i].propertyFlags & properties) == properties && type_bits & (1 << i))
-			return i;
-	return 0xffffffff; // Unable to find memoryType
-}
-
 
 class GUI {
 public:
