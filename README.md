@@ -72,7 +72,7 @@ Distance culling can improve the overall efficiency when the camera is far away 
 
 Distance Culling can bring benefits on both memory and rendering speed. For memory benefits, only the trees that is very near to the camera will be rendered as actual tree models( 4000+ vertices each) and the trees that is far away will be rendered as billboard(4 vertices each). We make a simple table to show the benefits 
 
-<img src="./results/Mermory Analysis.PNG" width="750" height="450">
+<img src="./results/Mermory Analysis.PNG" width="750" height="350">
 
 And here is the overall rendering efficiency plot
 
