@@ -77,7 +77,7 @@ Distance Culling can bring benefits on both memory and rendering speed. For memo
 
 And here is the overall rendering efficiency plot
 
-![](./renders/Distance LOD vs No culling .PNG)
+![](./results/Distance LOD vs No culling .PNG)
 
 #### Frustum culling 
 Frustrum culling can improve the overall efficiency when the camera is inside the forest . It will filter out the trees that are out of the view frustrum.
