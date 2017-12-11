@@ -285,7 +285,7 @@ namespace {
 
 
 int main() {
-	static constexpr char* applicationName = "Vulkan Grass Rendering";
+	static constexpr char* applicationName = "Vulkan Forest Render Engine";
 	int width = 1920, height = 1080;
 	InitializeWindow(width, height, applicationName);
 
