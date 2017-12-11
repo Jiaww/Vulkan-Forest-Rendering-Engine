@@ -89,7 +89,7 @@ Frustrum culling can improve the overall efficiency when the camera is inside th
 Density multiplication is used to provide better view effect of the forest. Different from LOD, the density multiplication works on the density of trees instead of the detail of the tree model. The technique produce multiple fake trees around each actual tree model when the camera is far away, and delete those fake tree and only shows actual tree models when the camera is near to the forest. When camera is far away from the forest, you can see a great forest coverage.When you actually walk into the forest, the number of actual tree models is not that many but it is not easy to identify.
 Here are the effects of Density Multiplication. 
 
-|**DM**|***No DM*|
+|**DM**|**No DM**|
 |---|---|
 |<img src="./results/DensityMultiplicationFar.PNG" width="500" height="300">|<img src="NoDensityMultiplicationFar.PNG" width="500" height="300">|
 |---|---|
